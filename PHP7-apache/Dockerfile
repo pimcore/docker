@@ -6,7 +6,7 @@ RUN a2enmod rewrite
 RUN apt-get update && apt-get install -y --no-install-recommends \
     autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
     zlib1g-dev libicu-dev libbz2-dev libmagickwand-dev libpng-dev libc-client-dev \
-    libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all lsb_release
+    libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all lsb-release
 
 RUN apt-get autoremove -y && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
         && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
