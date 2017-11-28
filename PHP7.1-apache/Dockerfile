@@ -8,9 +8,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev libicu-dev libbz2-dev libmagickwand-dev libpng-dev libc-client-dev \
     libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all lsb-release
 
-RUN apt-get autoremove -y && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
-        && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
+RUN echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" \
+    > /etc/apt/sources.list.d/backports.list
+RUN apt-get update && apt-get install -y ffmpeg
+    
 # Install PHP
 RUN docker-php-ext-install intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
     && docker-php-ext-enable intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip
