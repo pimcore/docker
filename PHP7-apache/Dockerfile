@@ -6,7 +6,10 @@ RUN a2enmod rewrite
 RUN apt-get update && apt-get install -y --no-install-recommends \
     autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
     zlib1g-dev libicu-dev libbz2-dev libmagickwand-dev libpng-dev libc-client-dev \
-    libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all
+    libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all lsb_release
+
+RUN apt-get autoremove -y && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
+        && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 # Install PHP
 RUN docker-php-ext-install intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
@@ -67,8 +70,9 @@ RUN wget http://prdownloads.sourceforge.net/advancemame/advancecomp-1.17.tar.gz 
         && rm -rf advancecomp-1.17
 
 # Cleanup
-RUN apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
-        && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+RUN apt-get autoremove -y \ 
+    && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
+    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 
 RUN echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
