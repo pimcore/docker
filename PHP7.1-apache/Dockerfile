@@ -1,6 +1,6 @@
 FROM php:7.1.12-apache
 
-apt-get update && apt-get install -y lsb-release \
+RUN apt-get update && apt-get install -y lsb-release \
     && echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update && apt-get install -y --no-install-recommends \
       autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
