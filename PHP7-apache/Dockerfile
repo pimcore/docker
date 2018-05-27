@@ -11,8 +11,8 @@ RUN  apt-get update && apt-get install -y lsb-release \
     && a2enmod rewrite \
     && docker-php-ext-install intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
     && docker-php-ext-enable intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
-    && pecl install xdebug redis imagick \
-    && docker-php-ext-enable xdebug redis imagick \
+    && pecl install redis imagick \
+    && docker-php-ext-enable redis imagick \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install imap \
     && docker-php-ext-enable imap \
@@ -62,12 +62,8 @@ RUN usermod -u 1000 www-data \
   && usermod -G staff www-data
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/web
-ENV PHP_DEBUG 0
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
   && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-COPY entrypoint.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["apache2-foreground"]
