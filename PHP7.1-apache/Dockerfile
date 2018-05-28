@@ -56,7 +56,7 @@ RUN apt-get update && apt-get install -y lsb-release \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     \
     && a2enmod rewrite \
-      && a2enmod ssl  \
+      && a2enmod ssl \
       && mkdir /etc/apache2/ssl \
       && touch /etc/apache2/ssl/localhost.key \
       && touch /etc/apache2/ssl/localhost.crt \
