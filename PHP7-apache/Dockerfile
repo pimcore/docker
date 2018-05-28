@@ -3,7 +3,7 @@ FROM php:7.0.26-apache
 RUN  apt-get update && apt-get install -y lsb-release \
     && echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update && apt-get install -y --no-install-recommends \
-      autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
+      autoconf automake libtool nasm make pkg-config libz-dev build-essential openssl g++ \
       zlib1g-dev libicu-dev libbz2-dev libmagickwand-dev libpng-dev libc-client-dev \
       libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
       ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
@@ -54,6 +54,14 @@ RUN  apt-get update && apt-get install -y lsb-release \
       && cd .. \
       && rm -rf advancecomp-1.17 \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    \
+    && a2enmod rewrite \
+      && a2enmod ssl \
+      && mkdir /etc/apache2/ssl \
+      && touch /etc/apache2/ssl/localhost.key \
+      && touch /etc/apache2/ssl/localhost.crt \
+      && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/localhost.key \
+        -subj '/C=UK/ST=London/L=London/O=Digital Web Ltd./CN=localhost/' -out /etc/apache2/ssl/localhost.crt \
     && apt-get autoremove -y \ 
       && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
       && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
