@@ -1,7 +1,12 @@
 FROM dpfaffenbauer/pimcore-docker-php-fpm:PHP7.1-apache
 
-RUN pecl install xdebug \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
+    && pecl install xdebug \
     && docker-php-ext-enable xdebug
+    && apt-get autoremove -y \
+    && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
+    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
 
 RUN echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
     echo "xdebug.default_enable = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
