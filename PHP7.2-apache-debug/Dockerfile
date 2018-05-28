@@ -1,9 +1,9 @@
-FROM dpfaffenbauer/pimcore-docker-php-fpm:PHP7.2-apache
+FROM dpfaffenbauer/pimcore:PHP7.2-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
       autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
     && pecl install xdebug \
-    && docker-php-ext-enable xdebug
+    && docker-php-ext-enable xdebug \
     && apt-get autoremove -y \
     && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
