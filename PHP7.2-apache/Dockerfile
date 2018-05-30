@@ -1,4 +1,7 @@
-FROM php:7.2.2-apache
+FROM php:7.2-apache-stretch
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV APACHE_DOCUMENT_ROOT /var/www/html/web
 
 RUN apt-get update && apt-get install -y lsb-release \
     && echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list \
@@ -65,14 +68,10 @@ RUN apt-get update && apt-get install -y lsb-release \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && apt-get autoremove -y \ 
       && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
-      && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
-
-RUN usermod -u 1000 www-data
-RUN usermod -G staff www-data
-
-ENV APACHE_DOCUMENT_ROOT /var/www/html/web
-
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+      && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer \
+      && usermod -u 1000 www-data \
+      && usermod -G staff www-data \
+      && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+      && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 CMD ["apache2-foreground"]

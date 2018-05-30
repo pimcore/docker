@@ -1,13 +1,25 @@
-FROM php:7.0.26-apache
+FROM php:7.0-apache-stretch
 
-RUN  apt-get update && apt-get install -y lsb-release \
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV APACHE_DOCUMENT_ROOT /var/www/html/web
+
+RUN apt-get update && apt-get install -y lsb-release \
     && echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update && apt-get install -y --no-install-recommends \
       autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
-      zlib1g-dev libicu-dev libbz2-dev libmagickwand-dev libpng-dev libc-client-dev \
+      zlib1g-dev libicu-dev libbz2-dev libpng-dev libc-client-dev \
       libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
       ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
-    \
+      libx11-dev libjpeg-dev\
+    && wget http://www.imagemagick.org/download/ImageMagick.tar.gz \
+      && tar -xvf ImageMagick.tar.gz \
+      && cd ImageMagick-7.* \
+      && ./configure \
+      && make \
+      && make install \
+      && ldconfig /usr/local/lib \
+      && cd .. \
+      && rm -rf ImageMagick* \
     && a2enmod rewrite \
     && docker-php-ext-install intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
     && docker-php-ext-enable intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
@@ -56,14 +68,10 @@ RUN  apt-get update && apt-get install -y lsb-release \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && apt-get autoremove -y \ 
       && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
-      && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
-
-RUN usermod -u 1000 www-data \
-  && usermod -G staff www-data
-
-ENV APACHE_DOCUMENT_ROOT /var/www/html/web
-
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
-  && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+      && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer \
+      && usermod -u 1000 www-data \
+      && usermod -G staff www-data \
+      && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+      && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 CMD ["apache2-foreground"]
