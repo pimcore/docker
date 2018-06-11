@@ -75,13 +75,13 @@ RUN apt-get update && apt-get install -y lsb-release \
       && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/localhost.key \
         -subj '/C=UK/ST=London/L=London/O=Digital Web Ltd./CN=localhost/' -out /etc/apache2/ssl/localhost.crt \
       && chmod 600 /etc/apache2/ssl/* && \
-    && apt-get autoremove -y \ 
+      && apt-get autoremove -y \
       && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
       && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer \
       && usermod -u 1000 www-data \
       && usermod -G staff www-data \
       && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
-      && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+      && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
       && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
 
 COPY 001-ssl.conf /etc/apache2/sites-enabled
