@@ -74,7 +74,7 @@ RUN apt-get update && apt-get install -y lsb-release \
       && touch /etc/apache2/ssl/localhost.crt \
       && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/localhost.key \
         -subj '/C=UK/ST=London/L=London/O=Digital Web Ltd./CN=localhost/' -out /etc/apache2/ssl/localhost.crt \
-      && chmod 600 /etc/apache2/ssl/* && \
+      && chmod 600 /etc/apache2/ssl/* \
       && apt-get autoremove -y \
       && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
       && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer \
