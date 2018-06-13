@@ -18,12 +18,13 @@ RUN apt-get update && apt-get install -y lsb-release \
       && make \
       && make install \
       && ldconfig /usr/local/lib \
+      && pecl install imagick \
       && cd .. \
       && rm -rf ImageMagick* \
     && a2enmod rewrite \
     && docker-php-ext-install intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
     && docker-php-ext-enable intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
-    && pecl install redis imagick \
+    && pecl install redis \
     && docker-php-ext-enable redis imagick \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install imap \
@@ -81,5 +82,7 @@ RUN apt-get update && apt-get install -y lsb-release \
       && usermod -G staff www-data \
       && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
       && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+COPY 001-ssl.conf /etc/apache2/sites-enabled
 
 CMD ["apache2-foreground"]
