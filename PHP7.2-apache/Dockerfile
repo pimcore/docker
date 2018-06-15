@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y lsb-release \
       zlib1g-dev libicu-dev libbz2-dev libpng-dev libc-client-dev \
       libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
       ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
-      libx11-dev libjpeg-dev\
+      libx11-dev libjpeg-dev python3-pip opencv-data \
     && wget http://www.imagemagick.org/download/ImageMagick.tar.gz \
       && tar -xvf ImageMagick.tar.gz \
       && cd ImageMagick-7.* \
@@ -46,6 +46,12 @@ RUN apt-get update && apt-get install -y lsb-release \
       && ln -s /opt/mozjpeg/bin/cjpeg /usr/bin/cjpeg \
       && cd .. \
       && rm -rf mozjpeg \
+    && git clone https://github.com/wavexx/facedetect \
+      && pip3 install numpy opencv-python \
+      && cd facedetect \
+      && cp facedetect /usr/local/bin \
+      && cd .. \
+      && rm -rf facedetect \  && cp facedetect /usr/local/bin \
     && git clone https://github.com/google/zopfli.git \
       && cd zopfli \
       && make \
