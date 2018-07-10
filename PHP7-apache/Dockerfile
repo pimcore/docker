@@ -19,13 +19,14 @@ RUN apt-get update && apt-get install -y lsb-release \
       && make install \
       && ldconfig /usr/local/lib \
       && pecl install imagick \
+      && pecl install apcu \
       && cd .. \
       && rm -rf ImageMagick* \
     && a2enmod rewrite \
     && docker-php-ext-install intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
     && docker-php-ext-enable intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip \
     && pecl install redis \
-    && docker-php-ext-enable redis imagick \
+    && docker-php-ext-enable redis imagick apcu \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install imap \
     && docker-php-ext-enable imap \
