@@ -1,7 +1,7 @@
 FROM dpfaffenbauer/pimcore:PHP7.1-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
+      autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ iproute2 \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && apt-get autoremove -y \
