@@ -1,6 +1,7 @@
 FROM php:7.0-apache-stretch
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_MEMORY_LIMIT -1
 ENV APACHE_DOCUMENT_ROOT /var/www/html/web
 
 RUN apt-get update && apt-get install -y lsb-release \
