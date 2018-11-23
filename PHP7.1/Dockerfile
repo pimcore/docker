@@ -20,7 +20,7 @@ RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkh
 # Install Mozjpeg
 RUN git clone https://github.com/mozilla/mozjpeg.git  \
         && cd mozjpeg \
-        && autoreconf -fiv \
+        && cmake -G"Unix Makefiles" \
         && ./configure \
         && make \
         && make install \

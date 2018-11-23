@@ -41,7 +41,7 @@ RUN apt-get update && apt-get install -y lsb-release \
     \
     && git clone https://github.com/mozilla/mozjpeg.git  \
       && cd mozjpeg \
-      && autoreconf -fiv \
+      && cmake -G"Unix Makefiles" \
       && ./configure \
       && make \
       && make install \
