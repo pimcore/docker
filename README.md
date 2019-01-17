@@ -6,9 +6,11 @@
  - PHP7.0-Apache [PHP7-apache/Dockerfile](PHP7-apache/Dockerfile)
  - PHP7.1-Apache [PHP7.1-apache/Dockerfile](PHP7.1-apache/Dockerfile)
  - PHP7.2-Apache [PHP7.2-apache/Dockerfile](PHP7.2-apache/Dockerfile)
+ - PHP7.3-Apache [PHP7.2-apache/Dockerfile](PHP7.3-apache/Dockerfile)
  - PHP7.0-Apache-debug [PHP7-apache-debug/Dockerfile](PHP7-apache-debug/Dockerfile)
  - PHP7.1-Apache-debug [PHP7.1-apache-debug/Dockerfile](PHP7.1-apache-debug/Dockerfile)
  - PHP7.2-Apache-debug [PHP7.2-apache-debug/Dockerfile](PHP7.2-apache-debug/Dockerfile)
+ - PHP7.3-Apache-debug [PHP7.2-apache-debug/Dockerfile](PHP7.3-apache-debug/Dockerfile)
 
 > These images are supposed to be used for DEV only. Because they include and activate Xdebug by default!
 
