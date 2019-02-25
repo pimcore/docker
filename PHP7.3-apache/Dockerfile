@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y lsb-release \
       zlib1g-dev libicu-dev libbz2-dev libpng-dev libc-client-dev \
       libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
       ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
-      libx11-dev libjpeg-dev python3-pip opencv-data webp graphviz cmake libzip-dev unzip \
+      libx11-dev libjpeg-dev python3-pip opencv-data webp graphviz cmake libzip-dev unzip cron \
     && wget http://www.imagemagick.org/download/ImageMagick.tar.gz \
       && tar -xvf ImageMagick.tar.gz \
       && cd ImageMagick-7.* \
