@@ -15,4 +15,4 @@
     - fpm
 
 ## Debug Images
-Images suffiex with debug have xdebug installed. You can deactivate xdebug with env variable `PHP_DEBUG=0`.
+All of the above mentioned Images also come with a debug version where xdebug is enabled automatically. You can use the debug image by prefixing the tab with `-debug` (eg. `PHP7.3-apache-debug`)
