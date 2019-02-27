@@ -21,9 +21,6 @@ env:
   - VERSION=7.1 VARIANT=fpm/debug
   - VERSION=7.1 VARIANT=fpm/no-debug
 
-install:
-  - git clone https://github.com/docker-library/official-images.git ~/official-images
-
 before_script:
   - env | sort
   - wget -qO- 'https://github.com/tianon/pgp-happy-eyeballs/raw/master/hack-my-builds.sh' | bash
