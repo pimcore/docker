@@ -1,0 +1,39 @@
+language: bash
+services: docker
+
+env:
+  - VERSION=7.3 VARIANT=cli/debug
+  - VERSION=7.3 VARIANT=cli/no-debug
+  - VERSION=7.3 VARIANT=apache/debug
+  - VERSION=7.3 VARIANT=apache/no-debug
+  - VERSION=7.3 VARIANT=fpm/debug
+  - VERSION=7.3 VARIANT=fpm/no-debug
+  - VERSION=7.2 VARIANT=cli/debug
+  - VERSION=7.2 VARIANT=cli/no-debug
+  - VERSION=7.2 VARIANT=apache/debug
+  - VERSION=7.2 VARIANT=apache/no-debug
+  - VERSION=7.2 VARIANT=fpm/debug
+  - VERSION=7.2 VARIANT=fpm/no-debug
+  - VERSION=7.1 VARIANT=cli/debug
+  - VERSION=7.1 VARIANT=cli/no-debug
+  - VERSION=7.1 VARIANT=apache/debug
+  - VERSION=7.1 VARIANT=apache/no-debug
+  - VERSION=7.1 VARIANT=fpm/debug
+  - VERSION=7.1 VARIANT=fpm/no-debug
+
+before_script:
+  - env | sort
+  - wget -qO- 'https://github.com/tianon/pgp-happy-eyeballs/raw/master/hack-my-builds.sh' | bash
+  - cd "$VERSION/$VARIANT"
+  - slash='/'; image="php:${VERSION}-${VARIANT//$slash/-}"
+
+script:
+  - |
+    (
+      set -Eeuo pipefail
+      set -x
+      docker build -t "$image" .
+    )
+
+after_script:
+  - docker images
