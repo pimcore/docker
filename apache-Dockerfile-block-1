@@ -1,6 +1,7 @@
 ENV APACHE_DOCUMENT_ROOT /var/www/html/web
 
-RUN a2enmod ssl \
+RUN a2enmod rewrite \
+      && a2enmod ssl \
       && mkdir /etc/apache2/ssl \
       && touch /etc/apache2/ssl/localhost.key \
       && touch /etc/apache2/ssl/localhost.crt \
