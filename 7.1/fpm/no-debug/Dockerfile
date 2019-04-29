@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y lsb-release \
         libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
         ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
         libx11-dev libjpeg-dev python3-pip opencv-data webp graphviz cmake unzip cron \
+        liblcms2-dev liblqr-1-0-dev libpng-dev libopenjp2-7-dev libtiff-dev libfreetype6-dev \
+        libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
+        libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev \
     \
     && wget http://www.imagemagick.org/download/ImageMagick.tar.gz \
         && tar -xvf ImageMagick.tar.gz \
