@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y lsb-release \
         libx11-dev libjpeg-dev python3-pip opencv-data webp graphviz cmake unzip cron \
         liblcms2-dev liblqr-1-0-dev libpng-dev libopenjp2-7-dev libtiff-dev libfreetype6-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
-        libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev \
+        libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
     \
     && wget http://www.imagemagick.org/download/ImageMagick.tar.gz \
         && tar -xvf ImageMagick.tar.gz \
@@ -32,7 +32,6 @@ RUN apt-get update && apt-get install -y lsb-release \
         && rm -rf ImageMagick* \
     \
     && docker-php-ext-install intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip opcache \
-    && docker-php-ext-enable intl mbstring mysqli bcmath bz2 gd soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip opcache \
     && pecl install redis \
     && docker-php-ext-enable redis imagick apcu \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
