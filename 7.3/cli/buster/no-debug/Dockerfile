@@ -7,24 +7,28 @@ FROM php:7.3-cli-buster
 
 LABEL maintainer="dominik@pfaffenbauer.at"
 
-RUN apt-get update && apt-get install -y lsb-release \
+RUN set -ex \
+    && apt-get update && apt-get install -y lsb-release \
     && echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update && apt-get install -y --no-install-recommends \
         autoconf automake libtool nasm make pkg-config libz-dev build-essential openssl g++ \
-        zlib1g-dev libicu-dev libbz2-dev libpng-dev libc-client-dev \
+        zlib1g-dev libicu-dev libbz2-dev libc-client-dev \
         libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
         ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
-        libx11-dev libjpeg-dev python3-pip opencv-data webp graphviz cmake unzip cron \
-        liblcms2-dev liblqr-1-0-dev libpng-dev libopenjp2-7-dev libtiff-dev libfreetype6-dev \
+        libx11-dev python3-pip opencv-data webp graphviz cmake unzip cron \
+        liblcms2-dev liblqr-1-0-dev libopenjp2-7-dev libtiff-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
-        libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev \
+        libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev \
     \
+    ##<version>##
     && docker-php-ext-configure gd \
         --with-freetype-dir=/usr/include/ \
         --with-jpeg-dir=/usr/include/ \
         --with-xpm-dir=/usr/include \
         --with-webp-dir=/usr/include/ \
+        --with-vpx-dir=/usr/include/ \
+    ##</version>##
     && docker-php-ext-install intl mbstring mysqli bcmath gd bz2 soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip opcache \
     \
     && wget http://www.imagemagick.org/download/ImageMagick.tar.gz \
