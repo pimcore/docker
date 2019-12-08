@@ -2,6 +2,12 @@ language: bash
 services: docker
 
 env:
+  - VERSION=7.4 VARIANT=cli/debug
+  - VERSION=7.4 VARIANT=cli/no-debug
+  - VERSION=7.4 VARIANT=apache/debug
+  - VERSION=7.4 VARIANT=apache/no-debug
+  - VERSION=7.4 VARIANT=fpm/debug
+  - VERSION=7.4 VARIANT=fpm/no-debug
   - VERSION=7.3 VARIANT=cli/debug
   - VERSION=7.3 VARIANT=cli/no-debug
   - VERSION=7.3 VARIANT=apache/debug
