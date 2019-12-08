@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM php:7.4-fpm-stretch
+FROM php:7.3-cli-buster
 
 LABEL maintainer="dominik@pfaffenbauer.at"
 

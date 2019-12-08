@@ -2,30 +2,36 @@ language: bash
 services: docker
 
 env:
-  - VERSION=7.4 VARIANT=cli/debug
-  - VERSION=7.4 VARIANT=cli/no-debug
-  - VERSION=7.4 VARIANT=apache/debug
-  - VERSION=7.4 VARIANT=apache/no-debug
-  - VERSION=7.4 VARIANT=fpm/debug
-  - VERSION=7.4 VARIANT=fpm/no-debug
-  - VERSION=7.3 VARIANT=cli/debug
-  - VERSION=7.3 VARIANT=cli/no-debug
-  - VERSION=7.3 VARIANT=apache/debug
-  - VERSION=7.3 VARIANT=apache/no-debug
-  - VERSION=7.3 VARIANT=fpm/debug
-  - VERSION=7.3 VARIANT=fpm/no-debug
-  - VERSION=7.2 VARIANT=cli/debug
-  - VERSION=7.2 VARIANT=cli/no-debug
-  - VERSION=7.2 VARIANT=apache/debug
-  - VERSION=7.2 VARIANT=apache/no-debug
-  - VERSION=7.2 VARIANT=fpm/debug
-  - VERSION=7.2 VARIANT=fpm/no-debug
-  - VERSION=7.1 VARIANT=cli/debug
-  - VERSION=7.1 VARIANT=cli/no-debug
-  - VERSION=7.1 VARIANT=apache/debug
-  - VERSION=7.1 VARIANT=apache/no-debug
-  - VERSION=7.1 VARIANT=fpm/debug
-  - VERSION=7.1 VARIANT=fpm/no-debug
+  - VERSION=7.4 VARIANT=cli/buster/debug DISTRIBUTION=stretch
+  - VERSION=7.4 VARIANT=cli/buster/no-debug DISTRIBUTION=stretch
+  - VERSION=7.4 VARIANT=apache/buster/debug DISTRIBUTION=stretch
+  - VERSION=7.4 VARIANT=apache/buster/no-debug DISTRIBUTION=stretch
+  - VERSION=7.4 VARIANT=fpm/buster/debug DISTRIBUTION=stretch
+  - VERSION=7.4 VARIANT=fpm/buster/no-debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=cli/buster/debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=cli/buster/no-debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=cli/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=cli/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=apache/buster/debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=apache/buster/no-debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=apache/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=apache/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=fpm/buster/debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=fpm/buster/no-debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=fpm/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.3 VARIANT=fpm/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.2 VARIANT=cli/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.2 VARIANT=cli/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.2 VARIANT=apache/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.2 VARIANT=apache/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.2 VARIANT=fpm/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.2 VARIANT=fpm/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.1 VARIANT=cli/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.1 VARIANT=cli/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.1 VARIANT=apache/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.1 VARIANT=apache/stretch/no-debug DISTRIBUTION=stretch
+  - VERSION=7.1 VARIANT=fpm/stretch/debug DISTRIBUTION=stretch
+  - VERSION=7.1 VARIANT=fpm/stretch/no-debug DISTRIBUTION=stretch
 
 before_script:
   - env | sort
