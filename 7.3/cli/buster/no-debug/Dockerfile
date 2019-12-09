@@ -1,4 +1,9 @@
-FROM php:%%PHP_TAG%%-%%IMAGE_VARIANT%%-%%DISTRIBUTION%%
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+FROM php:7.3-cli-buster
 
 LABEL maintainer="dominik@pfaffenbauer.at"
 
@@ -17,6 +22,12 @@ RUN set -ex \
         libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev libonig-dev \
     \
     ##<version>##
+    && docker-php-ext-configure gd \
+        --with-freetype-dir=/usr/include/ \
+        --with-jpeg-dir=/usr/include/ \
+        --with-xpm-dir=/usr/include \
+        --with-webp-dir=/usr/include/ \
+        --with-vpx-dir=/usr/include/ \
     ##</version>##
     && docker-php-ext-install intl mbstring mysqli bcmath gd bz2 soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip opcache \
     \
@@ -88,7 +99,6 @@ RUN set -ex \
         && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
         && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
 
-
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -97,7 +107,6 @@ RUN set -eux; \
     composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --classmap-authoritative; \
     composer clear-cache
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
-
 
 ##<debug>##
 ##</debug>##
