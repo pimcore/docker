@@ -1,3 +1,5 @@
+# DEPRECATED IN FAVAOR OF https://github.com/pimcore/docker
+
 # Pimcore PHP-FPM Image
 
 ## Supported tags and respective Dockerfile links
