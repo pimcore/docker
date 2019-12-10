@@ -7,7 +7,7 @@ FROM php:7.1-apache-stretch
 
 LABEL maintainer="dominik@pfaffenbauer.at"
 
-RUN set -ex \
+RUN set -eux; \
     && apt-get update && apt-get install -y lsb-release \
     && echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update && apt-get install -y --no-install-recommends \
@@ -27,7 +27,6 @@ RUN set -ex \
         --with-jpeg-dir=/usr/include/ \
         --with-xpm-dir=/usr/include \
         --with-webp-dir=/usr/include/ \
-        --with-vpx-dir=/usr/include/ \
     ##</version>##
     && docker-php-ext-install intl mbstring mysqli bcmath gd bz2 soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip opcache \
     \
