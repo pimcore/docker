@@ -38,4 +38,4 @@ else
 fi
 
 
-exec $@
+exec "$@"
