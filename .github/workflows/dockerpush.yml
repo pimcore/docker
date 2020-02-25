@@ -1,0 +1,136 @@
+name: Docker
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  IMAGE_NAME: pimcore/pimcore
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  update_dockerfiles:
+     runs-on: ubuntu-latest
+     
+     steps:
+       - uses: actions/checkout@v2
+       
+       - name: run update script
+         run: |
+           update.sh
+           
+       - name: Commit files
+         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Update Dockerfiles" -a
+          
+       - name: Push changes
+         uses: ad-m/github-push-action@master
+         with:
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [php7.1, php7.2, php7.3, php7.4]
+        variant: [apache, cli, fpm]
+        distro: [stretch, buster]
+        dev: [debug, no-debug]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Image
+        env:
+          php: ${{ php }}
+          variant: ${{ variant }}
+          distro: ${{ distro }}
+          dev: $ {{ dev }}
+        run: |
+          DOCKERFILE="${php}/${variant}/${distro}/${debug}"
+          
+          if [ -f $DOCKERFILE ]; then
+            docker build . --file DOCKERFILE
+          fi
+  
+  # Push image to GitHub Package Registry.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    # Ensure test job passes before pushing image.
+    needs: test
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    strategy:
+      matrix:
+        php: [php7.1, php7.2, php7.3, php7.4]
+        variant: [apache, cli, fpm]
+        distro: [stretch, buster]
+        dev: [debug, no-debug]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build . --file Dockerfile --tag image
+
+      - name: Build image
+        env:
+          php: ${{ php }}
+          variant: ${{ variant }}
+          distro: ${{ distro }}
+          dev: $ {{ dev }}
+        run: |
+          DOCKERFILE="${php}/${variant}/${distro}/${debug}"
+          
+          if [ -f $DOCKERFILE ]; then
+            docker build . --file $DOCKERFILE --tag image
+          fi
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          DOCKERFILE="${php}/${variant}/${distro}/${debug}"
+          DOCKER_TAG="${php^^}-${variant}"
+          DOCKER_HAS_BUSTER="NO"
+          
+          if [ -f $DOCKERFILE ]; then
+            //Buster is the main image then
+            if [ -d "$php/$variant/buster" ]; then
+              DOCKER_HAS_BUSTER="YES"
+            fi
+
+            if [ $DOCKER_HAS_BUSTER == "YES" ]; then
+                if [ $variant == "stretch" ]; then
+                  DOCKER_TAG=="{DOCKER_TAG}-stretch"
+                fi
+            fi
+
+            if [ $debug == "debug" ]; then
+                  DOCKER_TAG="${php^^}-debug"
+            fi
+
+            if [ -f $DOCKERFILE ]; then
+              echo "Tag ${DOCKER_TAG}"
+              
+              docker tag image $IMAGE_ID:$DOCKER_TAG
+              docker push $IMAGE_ID:$DOCKER_TAG
+              
+              if [ $variant == "buster" ]; then
+                  echo "Tag ${php^^}-${variant}-buster"
+              
+                  docker tag image $IMAGE_ID:"${php^^}-${variant}-buster"
+                  docker push $IMAGE_ID:"${php^^}-${variant}-buster"
+              fi
+            fi
+          fi
