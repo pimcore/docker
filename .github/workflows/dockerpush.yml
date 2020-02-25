@@ -74,10 +74,8 @@ jobs:
       - name: Build image
         run: |
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-          
-          if [ -f $DOCKERFILE ]; then
-            docker build . --file $DOCKERFILE --tag image
-          fi
+          cd $DOCKERFILE
+          docker build .
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
@@ -90,33 +88,33 @@ jobs:
           DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
           DOCKER_HAS_BUSTER="NO"
           
-          if [ -f $DOCKERFILE ]; then
-            //Buster is the main image then
-            if [ -d "$matrix.php/$matrix.variant/buster" ]; then
-              DOCKER_HAS_BUSTER="YES"
-            fi
+          cd $DOCKERFILE
 
-            if [ $DOCKER_HAS_BUSTER == "YES" ]; then
-                if [ $matrix.variant == "stretch" ]; then
-                  DOCKER_TAG=="$DOCKER_TAG-stretch"
-                fi
-            fi
+          //Buster is the main image then
+          if [ -d "$matrix.php/$matrix.variant/buster" ]; then
+            DOCKER_HAS_BUSTER="YES"
+          fi
 
-            if [ $matrix.debug == "debug" ]; then
-                  DOCKER_TAG="${{ matrix.php }}-debug"
-            fi
-
-            if [ -f $DOCKERFILE ]; then
-              echo "Tag $DOCKER_TAG"
-              
-              docker tag image $IMAGE_ID:$DOCKER_TAG
-              docker push $IMAGE_ID:$DOCKER_TAG
-              
-              if [ $matrix.variant == "buster" ]; then
-                  echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
-              
-                  docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
-                  docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+          if [ $DOCKER_HAS_BUSTER == "YES" ]; then
+              if [ $matrix.variant == "stretch" ]; then
+                DOCKER_TAG=="$DOCKER_TAG-stretch"
               fi
+          fi
+
+          if [ $matrix.debug == "debug" ]; then
+                DOCKER_TAG="${{ matrix.php }}-debug"
+          fi
+
+          if [ -f $DOCKERFILE ]; then
+            echo "Tag $DOCKER_TAG"
+
+            docker tag image $IMAGE_ID:$DOCKER_TAG
+            docker push $IMAGE_ID:$DOCKER_TAG
+
+            if [ $matrix.variant == "buster" ]; then
+                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
+
+                docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+                docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
             fi
           fi
