@@ -23,7 +23,7 @@ jobs:
        
        - name: run update script
          run: |
-           sh ./update.sh
+           ./update.sh
            
        - name: Commit files
          run: |
