@@ -33,16 +33,20 @@ jobs:
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
         debug: [debug, no-debug]
+        exclude:
+          - php: 7.1
+            distro: buster
+          - php: 7.2
+            distro: buster
+          - php: 7.4
+            distro: stretch
     steps:
       - uses: actions/checkout@v2
 
       - name: Build Image
         run: |
-          DOCKERFILE="./${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-          
-          if [ -f $DOCKERFILE ]; then
-            docker build . --file DOCKERFILE
-          fi
+          DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+          docker build . --file DOCKERFILE
   
   # Push image to GitHub Package Registry.
   # See also https://docs.docker.com/docker-hub/builds/
