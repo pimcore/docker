@@ -67,9 +67,6 @@ jobs:
           ./update.sh
       
       - name: Build image
-        run: docker build . --file Dockerfile --tag image
-
-      - name: Build image
         run: |
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
           
