@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [php7.1, php7.2, php7.3, php7.4]
+        php: [7.1, 7.2, 7.3, 7.4]
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
         debug: [debug, no-debug]
@@ -54,7 +54,7 @@ jobs:
     if: github.event_name == 'push'
     strategy:
       matrix:
-        php: [php7.1, php7.2, php7.3, php7.4]
+        php: [7.1, 7.2, 7.3, 7.4]
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
         debug: [debug, no-debug]
@@ -82,7 +82,7 @@ jobs:
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
 
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-          DOCKER_TAG="${{ matrix.php }}-${{ matrix.variant }}"
+          DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
           DOCKER_HAS_BUSTER="NO"
           
           if [ -f $DOCKERFILE ]; then
