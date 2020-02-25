@@ -103,7 +103,7 @@ jobs:
 
             if [ $DOCKER_HAS_BUSTER == "YES" ]; then
                 if [ $matrix.variant == "stretch" ]; then
-                  DOCKER_TAG=="{{ DOCKER_TAG }}-stretch"
+                  DOCKER_TAG=="$DOCKER_TAG-stretch"
                 fi
             fi
 
@@ -112,7 +112,7 @@ jobs:
             fi
 
             if [ -f $DOCKERFILE ]; then
-              echo "Tag ${{ DOCKER_TAG }}"
+              echo "Tag $DOCKER_TAG"
               
               docker tag image $IMAGE_ID:$DOCKER_TAG
               docker push $IMAGE_ID:$DOCKER_TAG
