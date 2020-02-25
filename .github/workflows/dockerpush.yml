@@ -46,7 +46,8 @@ jobs:
       - name: Build Image
         run: |
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-          docker build . --file DOCKERFILE
+          cd $DOCKERFILE
+          docker build .
   
   # Push image to GitHub Package Registry.
   # See also https://docs.docker.com/docker-hub/builds/
