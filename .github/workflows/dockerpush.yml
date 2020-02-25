@@ -47,13 +47,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build Image
-        env:
-          php: ${{ php }}
-          variant: ${{ variant }}
-          distro: ${{ distro }}
-          dev: $ {{ dev }}
         run: |
-          DOCKERFILE="${php}/${variant}/${distro}/${debug}"
+          DOCKERFILE="${matrix.php}/${matrix.variant}/${matrix.distro}/${matrix.debug}"
           
           if [ -f $DOCKERFILE ]; then
             docker build . --file DOCKERFILE
