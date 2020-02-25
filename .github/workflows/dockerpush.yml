@@ -32,7 +32,7 @@ jobs:
         php: [php7.1, php7.2, php7.3, php7.4]
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
-        dev: [debug, no-debug]
+        debug: [debug, no-debug]
     steps:
       - uses: actions/checkout@v2
 
@@ -57,7 +57,7 @@ jobs:
         php: [php7.1, php7.2, php7.3, php7.4]
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
-        dev: [debug, no-debug]
+        debug: [debug, no-debug]
 
     steps:
       - uses: actions/checkout@v2
