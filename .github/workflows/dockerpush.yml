@@ -81,13 +81,8 @@ jobs:
         run: docker build . --file Dockerfile --tag image
 
       - name: Build image
-        env:
-          php: ${{ php }}
-          variant: ${{ variant }}
-          distro: ${{ distro }}
-          dev: $ {{ dev }}
         run: |
-          DOCKERFILE="${php}/${variant}/${distro}/${debug}"
+          DOCKERFILE="${matrix.php}/${matrix.variant}/${matrix.distro}/${matrix.debug}"
           
           if [ -f $DOCKERFILE ]; then
             docker build . --file $DOCKERFILE --tag image
@@ -100,23 +95,23 @@ jobs:
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
 
-          DOCKERFILE="${php}/${variant}/${distro}/${debug}"
-          DOCKER_TAG="${php^^}-${variant}"
+          DOCKERFILE="${matrix.php}/${matrix.variant}/${matrix.distro}/${matrix.debug}"
+          DOCKER_TAG="${matrix.php^^}-${matrix.variant}"
           DOCKER_HAS_BUSTER="NO"
           
           if [ -f $DOCKERFILE ]; then
             //Buster is the main image then
-            if [ -d "$php/$variant/buster" ]; then
+            if [ -d "$matrix.php/$matrix.variant/buster" ]; then
               DOCKER_HAS_BUSTER="YES"
             fi
 
             if [ $DOCKER_HAS_BUSTER == "YES" ]; then
-                if [ $variant == "stretch" ]; then
+                if [ $matrix.variant == "stretch" ]; then
                   DOCKER_TAG=="{DOCKER_TAG}-stretch"
                 fi
             fi
 
-            if [ $debug == "debug" ]; then
+            if [ $matrix.debug == "debug" ]; then
                   DOCKER_TAG="${php^^}-debug"
             fi
 
@@ -126,11 +121,11 @@ jobs:
               docker tag image $IMAGE_ID:$DOCKER_TAG
               docker push $IMAGE_ID:$DOCKER_TAG
               
-              if [ $variant == "buster" ]; then
-                  echo "Tag ${php^^}-${variant}-buster"
+              if [ $matrix.variant == "buster" ]; then
+                  echo "Tag ${matrix.php^^}-${matrix.variant}-buster"
               
-                  docker tag image $IMAGE_ID:"${php^^}-${variant}-buster"
-                  docker push $IMAGE_ID:"${php^^}-${variant}-buster"
+                  docker tag image $IMAGE_ID:"${matrix.php^^}-${matrix.variant}-buster"
+                  docker push $IMAGE_ID:"${matrix.php^^}-${matrix.variant}-buster"
               fi
             fi
           fi
