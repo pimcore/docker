@@ -92,7 +92,7 @@ jobs:
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
 
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-          DOCKER_TAG="${{ matrix.php^^}}-${{ matrix.variant }}"
+          DOCKER_TAG="${{ matrix.php }}-${{ matrix.variant }}"
           DOCKER_HAS_BUSTER="NO"
           
           if [ -f $DOCKERFILE ]; then
@@ -108,7 +108,7 @@ jobs:
             fi
 
             if [ $matrix.debug == "debug" ]; then
-                  DOCKER_TAG="${{ matrix.php^^ }}-debug"
+                  DOCKER_TAG="${{ matrix.php }}-debug"
             fi
 
             if [ -f $DOCKERFILE ]; then
@@ -118,10 +118,10 @@ jobs:
               docker push $IMAGE_ID:$DOCKER_TAG
               
               if [ $matrix.variant == "buster" ]; then
-                  echo "Tag ${{ matrix.php^^ }}-${{ matrix.variant }}-buster"
+                  echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
               
-                  docker tag image $IMAGE_ID:"${{ matrix.php^^ }}-${{ matrix.variant }}-buster"
-                  docker push $IMAGE_ID:"${{ matrix.php^^ }}-${{ matrix.variant }}-buster"
+                  docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+                  docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
               fi
             fi
           fi
