@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Image
         run: |
-          DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+          DOCKERFILE="./${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
           
           if [ -f $DOCKERFILE ]; then
             docker build . --file DOCKERFILE
