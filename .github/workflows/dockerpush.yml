@@ -63,6 +63,13 @@ jobs:
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
         debug: [debug, no-debug]
+        exclude:
+          -   php: 7.1
+              distro: buster
+          -   php: 7.2
+              distro: buster
+          -   php: 7.4
+              distro: stretch
 
     steps:
       - uses: actions/checkout@v2
