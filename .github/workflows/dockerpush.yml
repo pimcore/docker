@@ -107,16 +107,14 @@ jobs:
                 DOCKER_TAG="${{ matrix.php }}-debug"
           fi
 
-          if [ -f $DOCKERFILE ]; then
-            echo "Tag $DOCKER_TAG"
+          echo "Tag $DOCKER_TAG"
 
-            docker tag image $IMAGE_ID:$DOCKER_TAG
-            docker push $IMAGE_ID:$DOCKER_TAG
+          docker tag image $IMAGE_ID:$DOCKER_TAG
+          docker push $IMAGE_ID:$DOCKER_TAG
 
-            if [ $matrix.variant == "buster" ]; then
-                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
+          if [ $matrix.variant == "buster" ]; then
+              echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
 
-                docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
-                docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
-            fi
+              docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+              docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
           fi
