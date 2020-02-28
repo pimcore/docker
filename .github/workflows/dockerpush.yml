@@ -83,23 +83,18 @@ jobs:
 
             DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
             DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
-            DOCKER_HAS_BUSTER="NO"
-
-            cd $DOCKERFILE
 
             if [ -d "${{ matrix.php }}/${{ matrix.variant }}/buster" ]; then
-              DOCKER_HAS_BUSTER="YES"
-            fi
-
-            if [ $DOCKER_HAS_BUSTER == "YES" ]; then
-                if [ "${{ matrix.variant }}" == "stretch" ]; then
-                  DOCKER_TAG="$DOCKER_TAG-stretch"
-                fi
+              if [ "${{ matrix.variant }}" == "stretch" ]; then
+                DOCKER_TAG="$DOCKER_TAG-stretch"
+              fi
             fi
 
             if [ "${{ matrix.debug }}" == "debug" ]; then
                   DOCKER_TAG="$DOCKER_TAG-debug"
             fi
+
+            cd $DOCKERFILE
 
             echo "Tag $DOCKER_TAG"
 
