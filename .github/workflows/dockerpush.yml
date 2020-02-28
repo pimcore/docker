@@ -77,6 +77,36 @@ jobs:
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
+      - name: Test Tags image
+        run: |
+            IMAGE_ID=$IMAGE_NAME
+
+            DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+            DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
+            DOCKER_HAS_BUSTER="NO"
+
+            cd $DOCKERFILE
+
+            if [ -d "${{ matrix.php }}/${{ matrix.variant }}/buster" ]; then
+              DOCKER_HAS_BUSTER="YES"
+            fi
+
+            if [ $DOCKER_HAS_BUSTER == "YES" ]; then
+                if [ "${{ matrix.variant }}" == "stretch" ]; then
+                  DOCKER_TAG="$DOCKER_TAG-stretch"
+                fi
+            fi
+
+            if [ "${{ matrix.debug }}" == "debug" ]; then
+                  DOCKER_TAG="$DOCKER_TAG-debug"
+            fi
+
+            echo "Tag $DOCKER_TAG"
+
+            if [ "${{ matrix.variant }}" == "buster" ]; then
+                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
+            fi
+
       - name: Build image
         run: |
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
@@ -108,7 +138,7 @@ jobs:
           fi
 
           echo "Tag $DOCKER_TAG"
-          
+
 
           docker tag image $IMAGE_ID:$DOCKER_TAG
           docker push $IMAGE_ID:$DOCKER_TAG
