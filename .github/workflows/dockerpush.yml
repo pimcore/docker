@@ -26,6 +26,7 @@ jobs:
            ./update.sh
   test:
     needs: update_dockerfiles
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -53,7 +54,7 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/
   push:
     needs: update_dockerfiles
-    
+
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     strategy:
