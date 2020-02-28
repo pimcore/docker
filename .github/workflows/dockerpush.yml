@@ -17,10 +17,10 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   update_dockerfiles:
      runs-on: ubuntu-latest
-     
+
      steps:
        - uses: actions/checkout@v2
-       
+
        - name: run update script
          run: |
            ./update.sh
@@ -48,15 +48,18 @@ jobs:
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
           cd $DOCKERFILE
           docker build .
-  
+
   # Push image to GitHub Package Registry.
   # See also https://docs.docker.com/docker-hub/builds/
   push:
-    # Ensure test job passes before pushing image.
-    needs: test
-
+    needs: update_dockerfiles
+    
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    on:
+      push:
+        branches:
+          - master
+
     strategy:
       matrix:
         php: [7.1, 7.2, 7.3, 7.4]
@@ -66,11 +69,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: run update script
         run: |
           ./update.sh
-      
+
       - name: Build image
         run: |
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
@@ -87,7 +90,7 @@ jobs:
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
           DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
           DOCKER_HAS_BUSTER="NO"
-          
+
           cd $DOCKERFILE
 
           //Buster is the main image then
