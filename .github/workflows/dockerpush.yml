@@ -111,8 +111,8 @@ jobs:
             if [ "${{ matrix.debug }}" == "debug" ]; then
               echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
 
-              docker tag image $IMAGE_ID:"PHP$${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
-              docker push $IMAGE_ID:"PHP$${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+              docker tag image $IMAGE_ID:"PHP${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+              docker push $IMAGE_ID:"PHP${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
             else
               echo "Tag PHP${{ matrix.php }}-${{ matrix.variant }}-buster"
 
