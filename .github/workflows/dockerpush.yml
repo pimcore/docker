@@ -74,10 +74,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: run update script
-        run: |
-          ./update.sh
-
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
