@@ -108,6 +108,7 @@ jobs:
           fi
 
           echo "Tag $DOCKER_TAG"
+          
 
           docker tag image $IMAGE_ID:$DOCKER_TAG
           docker push $IMAGE_ID:$DOCKER_TAG
