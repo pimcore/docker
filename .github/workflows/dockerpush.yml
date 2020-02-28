@@ -93,17 +93,17 @@ jobs:
 
           cd $DOCKERFILE
 
-          if [ -d "$matrix.php/$matrix.variant/buster" ]; then
+          if [ -d "${{ matrix.php }}/{{ matrix.variant }}/buster" ]; then
             DOCKER_HAS_BUSTER="YES"
           fi
 
           if [ $DOCKER_HAS_BUSTER == "YES" ]; then
-              if [ $matrix.variant == "stretch" ]; then
+              if [ ${{ matrix.variant }} == "stretch" ]; then
                 DOCKER_TAG=="$DOCKER_TAG-stretch"
               fi
           fi
 
-          if [ $matrix.debug == "debug" ]; then
+          if [ ${{ matrix.debug }} == "debug" ]; then
                 DOCKER_TAG="${{ matrix.php }}-debug"
           fi
 
@@ -112,7 +112,7 @@ jobs:
           docker tag image $IMAGE_ID:$DOCKER_TAG
           docker push $IMAGE_ID:$DOCKER_TAG
 
-          if [ $matrix.variant == "buster" ]; then
+          if [ ${{ matrix.variant }} == "buster" ]; then
               echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
 
               docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
