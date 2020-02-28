@@ -85,7 +85,7 @@ jobs:
             DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
 
             if [ -d "${{ matrix.php }}/${{ matrix.variant }}/buster" ]; then
-              if [ "${{ matrix.variant }}" == "stretch" ]; then
+              if [ "${{ matrix.distro }}" == "stretch" ]; then
                 DOCKER_TAG="$DOCKER_TAG-stretch"
               fi
             fi
@@ -98,7 +98,7 @@ jobs:
 
             echo "Tag $DOCKER_TAG"
 
-            if [ "${{ matrix.variant }}" == "buster" ]; then
+            if [ "${{ matrix.distro }}" == "buster" ]; then
                 echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
             fi
 
