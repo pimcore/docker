@@ -93,7 +93,6 @@ jobs:
 
           cd $DOCKERFILE
 
-          //Buster is the main image then
           if [ -d "$matrix.php/$matrix.variant/buster" ]; then
             DOCKER_HAS_BUSTER="YES"
           fi
