@@ -1,0 +1,120 @@
+name: Docker
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  IMAGE_NAME: pimcore/pimcore
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  update_dockerfiles:
+     runs-on: ubuntu-latest
+     
+     steps:
+       - uses: actions/checkout@v2
+       
+       - name: run update script
+         run: |
+           ./update.sh
+  test:
+    needs: update_dockerfiles
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [7.1, 7.2, 7.3, 7.4]
+        variant: [apache, cli, fpm]
+        distro: [stretch, buster]
+        debug: [debug, no-debug]
+        exclude:
+          - php: 7.1
+            distro: buster
+          - php: 7.2
+            distro: buster
+          - php: 7.4
+            distro: stretch
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Image
+        run: |
+          DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+          cd $DOCKERFILE
+          docker build .
+  
+  # Push image to GitHub Package Registry.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    # Ensure test job passes before pushing image.
+    needs: test
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    strategy:
+      matrix:
+        php: [7.1, 7.2, 7.3, 7.4]
+        variant: [apache, cli, fpm]
+        distro: [stretch, buster]
+        debug: [debug, no-debug]
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: run update script
+        run: |
+          ./update.sh
+      
+      - name: Build image
+        run: |
+          DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+          cd $DOCKERFILE
+          docker build .
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+          DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
+          DOCKER_HAS_BUSTER="NO"
+          
+          cd $DOCKERFILE
+
+          //Buster is the main image then
+          if [ -d "$matrix.php/$matrix.variant/buster" ]; then
+            DOCKER_HAS_BUSTER="YES"
+          fi
+
+          if [ $DOCKER_HAS_BUSTER == "YES" ]; then
+              if [ $matrix.variant == "stretch" ]; then
+                DOCKER_TAG=="$DOCKER_TAG-stretch"
+              fi
+          fi
+
+          if [ $matrix.debug == "debug" ]; then
+                DOCKER_TAG="${{ matrix.php }}-debug"
+          fi
+
+          if [ -f $DOCKERFILE ]; then
+            echo "Tag $DOCKER_TAG"
+
+            docker tag image $IMAGE_ID:$DOCKER_TAG
+            docker push $IMAGE_ID:$DOCKER_TAG
+
+            if [ $matrix.variant == "buster" ]; then
+                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
+
+                docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+                docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+            fi
+          fi
