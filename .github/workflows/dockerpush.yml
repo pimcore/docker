@@ -98,13 +98,13 @@ jobs:
 
             echo "Tag $DOCKER_TAG"
 
-          if [ "${{ matrix.distro }}" == "buster" ]; then
-            if [ "${{ matrix.debug }}" == "debug" ]; then
-              echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
-            else
-              echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
+            if [ "${{ matrix.distro }}" == "buster" ]; then
+              if [ "${{ matrix.debug }}" == "debug" ]; then
+                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+              else
+                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
+              fi
             fi
-        fi
 
       - name: Build image
         run: |
@@ -141,15 +141,15 @@ jobs:
           docker push $IMAGE_ID:$DOCKER_TAG
 
           if [ "${{ matrix.distro }}" == "buster" ]; then
-              if [ "${{ matrix.debug }}" == "debug" ]; then
-                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+            if [ "${{ matrix.debug }}" == "debug" ]; then
+              echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
 
-                docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
-                docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
-              else
-                echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
+              docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+              docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+            else
+              echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster"
 
-                docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
-                docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
-              fi
+              docker tag image $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+              docker push $IMAGE_ID:"${{ matrix.php }}-${{ matrix.variant }}-buster"
+            fi
           fi
