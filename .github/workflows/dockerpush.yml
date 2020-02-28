@@ -81,7 +81,7 @@ jobs:
         run: |
           DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
           cd $DOCKERFILE
-          docker build .
+          docker build . -t image
 
       - name: Push image
         run: |
