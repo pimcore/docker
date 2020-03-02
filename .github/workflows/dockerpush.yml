@@ -33,7 +33,7 @@ jobs:
         php: [7.1, 7.2, 7.3, 7.4]
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
-        debug: [debug, no-debug]
+        debug: [debug, no-debug, test]
         exclude:
           - php: 7.1
             distro: buster
@@ -62,7 +62,7 @@ jobs:
         php: [7.1, 7.2, 7.3, 7.4]
         variant: [apache, cli, fpm]
         distro: [stretch, buster]
-        debug: [debug, no-debug]
+        debug: [debug, no-debug, test]
         exclude:
           -   php: 7.1
               distro: buster
