@@ -3,7 +3,7 @@
 #
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
-FROM php:7.3-fpm-buster
+FROM php:7.4-fpm-buster
 
 LABEL maintainer="dominik@pfaffenbauer.at"
 
@@ -22,11 +22,7 @@ RUN set -eux \
         libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev libonig-dev \
     \
     ##<version>##
-    && docker-php-ext-configure gd \
-        --with-freetype-dir=/usr/include/ \
-        --with-jpeg-dir=/usr/include/ \
-        --with-xpm-dir=/usr/include \
-        --with-webp-dir=/usr/include/ \
+    && docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp \
     ##</version>##
     && docker-php-ext-install intl mbstring mysqli bcmath gd bz2 soap xmlrpc xsl pdo pdo_mysql fileinfo exif zip opcache \
     \
