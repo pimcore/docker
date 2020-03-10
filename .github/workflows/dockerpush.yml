@@ -102,6 +102,10 @@ jobs:
                 DOCKER_TAG="$DOCKER_TAG-debug"
           fi
 
+          if [ "${{ matrix.debug }}" == "test" ]; then
+                DOCKER_TAG="$DOCKER_TAG-test"
+          fi
+
           echo "Tag $DOCKER_TAG"
 
           docker tag image $IMAGE_ID:$DOCKER_TAG
