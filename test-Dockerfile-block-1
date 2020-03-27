@@ -1,5 +1,5 @@
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      chromium \
-    && apt-get autoremove -y \
-    && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
-    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
+RUN VERSION=$(curl --location --fail --retry 10 http://chromedriver.storage.googleapis.com/LATEST_RELEASE) \
+    wget -c -nc --retry-connrefused --tries=0 https://chromedriver.storage.googleapis.com/${VERSION}/chromedriver_linux64.zip \
+    unzip -o -q chromedriver_linux64.zip \
+    mv chromedriver /usr/local/bin/chromedriver \
+    rm chromedriver_linux64.zip
