@@ -10,9 +10,9 @@
     - apache (pimcore/pimcore:PHP7.2-apache or pimcore/pimcore:PHP7.2-apache-stretch)
     - fpm (pimcore/pimcore:PHP7.2-fpm or pimcore/pimcore:PHP7.2-fpm-stretch)
  - PHP7.3 - buster and stretch
-    - cli (pimcore/pimcore:PHP7.2-cli-buster or pimcore/pimcore:PHP7.2-cli-stretch, pimcore/pimcore:PHP7.2-cli will give you stretch)
-    - apache (pimcore/pimcore:PHP7.2-apache-buster or pimcore/pimcore:PHP7.2-apache-stretch, pimcore/pimcore:PHP7.2-apache will give you stretch)
-    - fpm (pimcore/pimcore:PHP7.2-fpm-buster or pimcore/pimcore:PHP7.2-fpm-stretch, pimcore/pimcore:PHP7.2-fpm will give you stretch)
+    - cli (pimcore/pimcore:PHP7.3-cli-buster or pimcore/pimcore:PHP7.3-cli-stretch, pimcore/pimcore:PHP7.3-cli will give you stretch)
+    - apache (pimcore/pimcore:PHP7.3-apache-buster or pimcore/pimcore:PHP7.3-apache-stretch, pimcore/pimcore:PHP7.3-apache will give you stretch)
+    - fpm (pimcore/pimcore:PHP7.3-fpm-buster or pimcore/pimcore:PHP7.3-fpm-stretch, pimcore/pimcore:PHP7.3-fpm will give you stretch)
  - PHP7.4 - buster
     - cli (pimcore/pimcore:PHP7.4-cli or pimcore/pimcore:PHP7.4-cli-buster)
     - apache (pimcore/pimcore:PHP7.4-apache or pimcore/pimcore:PHP7.4-apache-buster)
