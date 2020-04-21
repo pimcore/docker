@@ -19,4 +19,4 @@
     - fpm (pimcore/pimcore:PHP7.4-fpm or pimcore/pimcore:PHP7.4-fpm-buster)
 
 ## Debug Images
-All of the above mentioned Images also come with a debug version where xdebug is enabled automatically. You can use the debug image by prefixing the tab with `-debug` (eg. `PHP7.3-apache-debug`)
+All of the above mentioned Images also come with a debug version where xdebug is enabled automatically. You can use the debug image by appending `-debug` to the tag (eg. `PHP7.3-apache-debug`)
