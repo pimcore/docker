@@ -94,9 +94,6 @@ RUN set -eux \
         && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
         && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
 
-RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini && \
-    echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini
-
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
