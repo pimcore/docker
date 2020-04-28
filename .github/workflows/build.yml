@@ -9,17 +9,7 @@ env:
     IMAGE_NAME: pimcore/pimcore
 
 jobs:
-    # Run tests.
-    # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-    update_dockerfiles:
-        runs-on: ubuntu-latest
-
-        steps:
-            -   uses: actions/checkout@v2
-
     build:
-        needs: update_dockerfiles
-
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -38,12 +28,12 @@ jobs:
         steps:
             -   uses: actions/checkout@v2
 
-            -   name: Login to DockerHub Registry
-                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
             -   name: run update script
                 run: |
                     ./update.sh
+
+            -   name: Login to DockerHub Registry
+                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
             -   name: Build image
                 run: |

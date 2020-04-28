@@ -8,15 +8,7 @@ env:
     IMAGE_NAME: pimcore/pimcore
 
 jobs:
-    update_dockerfiles:
-        runs-on: ubuntu-latest
-
-        steps:
-            -   uses: actions/checkout@v2
-
-
     test:
-        needs: update_dockerfiles
         runs-on: ubuntu-latest
         strategy:
             matrix:
