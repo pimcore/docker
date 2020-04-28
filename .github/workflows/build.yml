@@ -1,0 +1,94 @@
+name: Docker BUILD
+
+on:
+    push:
+        branches:
+            - master
+
+env:
+    IMAGE_NAME: pimcore/pimcore
+
+jobs:
+    # Run tests.
+    # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+    update_dockerfiles:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   uses: actions/checkout@v2
+
+    build:
+        needs: update_dockerfiles
+
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php: [7.1, 7.2, 7.3, 7.4]
+                variant: [apache, cli, fpm]
+                distro: [stretch, buster]
+                debug: [debug, no-debug, test]
+                exclude:
+                    -   php: 7.1
+                        distro: buster
+                    -   php: 7.2
+                        distro: buster
+                    -   php: 7.4
+                        distro: stretch
+
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Login to DockerHub Registry
+                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            -   name: run update script
+                run: |
+                    ./update.sh
+
+            -   name: Build image
+                run: |
+                    DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    cd $DOCKERFILE
+                    docker build . -t image
+
+            -   name: Push image
+                run: |
+                    IMAGE_ID=$IMAGE_NAME
+
+                    DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
+
+                    cd $DOCKERFILE
+
+                    if [ -d "${{ matrix.php }}/${{ matrix.variant }}/buster" ]; then
+                      if [ "${{ matrix.distro }}" == "stretch" ]; then
+                        DOCKER_TAG="$DOCKER_TAG-stretch"
+                      fi
+                    fi
+
+                    if [ "${{ matrix.debug }}" == "debug" ]; then
+                          DOCKER_TAG="$DOCKER_TAG-debug"
+                    fi
+
+                    if [ "${{ matrix.debug }}" == "test" ]; then
+                          DOCKER_TAG="$DOCKER_TAG-test"
+                    fi
+
+                    echo "Tag $DOCKER_TAG"
+
+                    docker tag image $IMAGE_ID:$DOCKER_TAG
+                    docker push $IMAGE_ID:$DOCKER_TAG
+
+                    if [ "${{ matrix.distro }}" == "buster" ]; then
+                      if [ "${{ matrix.debug }}" == "debug" ]; then
+                        echo "Tag ${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+
+                        docker tag image $IMAGE_ID:"PHP${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+                        docker push $IMAGE_ID:"PHP${{ matrix.php }}-${{ matrix.variant }}-buster-debug"
+                      else
+                        echo "Tag PHP${{ matrix.php }}-${{ matrix.variant }}-buster"
+
+                        docker tag image $IMAGE_ID:"PHP${{ matrix.php }}-${{ matrix.variant }}-buster"
+                        docker push $IMAGE_ID:"PHP${{ matrix.php }}-${{ matrix.variant }}-buster"
+                      fi
+                    fi
