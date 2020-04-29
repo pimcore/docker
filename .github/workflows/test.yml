@@ -1,0 +1,37 @@
+name: Docker TEST
+
+on:
+    # Run tests for any PRs.
+    pull_request:
+
+env:
+    IMAGE_NAME: pimcore/pimcore
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php: [7.1, 7.2, 7.3, 7.4]
+                variant: [apache, cli, fpm]
+                distro: [stretch, buster]
+                debug: [debug, no-debug, test]
+                exclude:
+                    -   php: 7.1
+                        distro: buster
+                    -   php: 7.2
+                        distro: buster
+                    -   php: 7.4
+                        distro: stretch
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: run update script
+                run: |
+                    ./update.sh
+
+            -   name: Build Image
+                run: |
+                    DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    cd $DOCKERFILE
+                    docker build .
