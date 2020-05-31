@@ -84,6 +84,10 @@ RUN set -eux \
         && cd .. \
         && rm -rf advancecomp-1.17 \
     \
+    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+        && apt-get install -y nodejs \
+        && npm install -g sqip \
+    \
     && apt-get autoremove -y \
         && apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ \
         && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
