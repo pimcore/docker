@@ -39,7 +39,7 @@ for version in "${versions[@]}"; do
         for distribution in buster stretch; do
           [ -d "$version/$variant/$distribution" ] || continue
 
-          for debug in debug no-debug test; do
+          for debug in debug no-debug; do
               { generated_warning; cat "$baseDockerfile"; } > "$version/$variant/$distribution/$debug/Dockerfile"
 
               echo "Generating $version/$variant/$distribution/$debug/Dockerfile from $baseDockerfile + $variant-Dockerfile-block-*"

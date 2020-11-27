@@ -6,10 +6,10 @@ then
   echo "xdebug.default_enable = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
   echo "xdebug.remote_enable = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
   echo "xdebug.remote_autostart = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-  echo "xdebug.remote_connect_back = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
+  echo "xdebug.remote_connect_back = 0" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
   echo "xdebug.profiler_enable = 0" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
   echo "xdebug.remote_host = 127.0.0.1" >> /usr/local/etc/php/conf.d/20-xdebug.ini
-  
+
   # if XDEBUG_HOST is manually set
   HOST="$XDEBUG_HOST"
 
@@ -22,7 +22,7 @@ then
   if [ -z "$HOST" ]; then
       HOST=`/sbin/ip route|awk '/default/ { print $3 }'`
   fi
-  
+
   # xdebug config
   if [ -f /usr/local/etc/php/conf.d/20-xdebug.ini ]
   then
