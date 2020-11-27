@@ -16,7 +16,7 @@ jobs:
                 php: [7.1, 7.2, 7.3, 7.4]
                 variant: [apache, cli, fpm]
                 distro: [stretch, buster]
-                debug: [debug, no-debug, test]
+                debug: [debug, no-debug]
                 exclude:
                     -   php: 7.1
                         distro: buster
@@ -58,10 +58,6 @@ jobs:
 
                     if [ "${{ matrix.debug }}" == "debug" ]; then
                           DOCKER_TAG="$DOCKER_TAG-debug"
-                    fi
-
-                    if [ "${{ matrix.debug }}" == "test" ]; then
-                          DOCKER_TAG="$DOCKER_TAG-test"
                     fi
 
                     echo "Tag $DOCKER_TAG"
