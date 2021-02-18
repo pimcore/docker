@@ -12,7 +12,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [7.1, 7.2, 7.3, 7.4, 8.0]
+                php: [7.1, 7.2, 7.3, 7.4, '8.0']
                 variant: [apache, cli, fpm]
                 distro: [stretch, buster]
                 debug: [debug, no-debug]
@@ -23,7 +23,7 @@ jobs:
                         distro: buster
                     -   php: 7.4
                         distro: stretch
-                    -   php: 8.0
+                    -   php: '8.0'
                         distro: stretch
         steps:
             -   uses: actions/checkout@v2
