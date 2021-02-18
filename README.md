@@ -17,6 +17,10 @@
     - cli (pimcore/pimcore:PHP7.4-cli or pimcore/pimcore:PHP7.4-cli-buster)
     - apache (pimcore/pimcore:PHP7.4-apache or pimcore/pimcore:PHP7.4-apache-buster)
     - fpm (pimcore/pimcore:PHP7.4-fpm or pimcore/pimcore:PHP7.4-fpm-buster)
+ - PHP8.0 - buster
+    - cli (pimcore/pimcore:PHP8.0-cli or pimcore/pimcore:PHP8.0-cli-buster)
+    - apache (pimcore/pimcore:PHP8.0-apache or pimcore/pimcore:PHP8.0-apache-buster)
+    - fpm (pimcore/pimcore:PHP8.0-fpm or pimcore/pimcore:PHP8.0-fpm-buster)
 
 ## Debug Images
 All of the above mentioned Images also come with a debug version where xdebug is enabled automatically. You can use the debug image by appending `-debug` to the tag (eg. `PHP7.3-apache-debug`)
