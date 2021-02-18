@@ -13,16 +13,18 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [7.1, 7.2, 7.3, 7.4]
+                php: [7.1, 7.2, 7.3, 7.4, '8.0']
                 variant: [apache, cli, fpm]
                 distro: [stretch, buster]
-                debug: [debug, no-debug, test]
+                debug: [debug, no-debug]
                 exclude:
                     -   php: 7.1
                         distro: buster
                     -   php: 7.2
                         distro: buster
                     -   php: 7.4
+                        distro: stretch
+                    -   php: '8.0'
                         distro: stretch
 
         steps:
@@ -58,10 +60,6 @@ jobs:
 
                     if [ "${{ matrix.debug }}" == "debug" ]; then
                           DOCKER_TAG="$DOCKER_TAG-debug"
-                    fi
-
-                    if [ "${{ matrix.debug }}" == "test" ]; then
-                          DOCKER_TAG="$DOCKER_TAG-test"
                     fi
 
                     echo "Tag $DOCKER_TAG"
