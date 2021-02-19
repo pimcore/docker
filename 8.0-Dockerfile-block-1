@@ -1,2 +1,2 @@
     && docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp \
-    && pecl install xmlrpc \
+    && pecl install -f xmlrpc \
