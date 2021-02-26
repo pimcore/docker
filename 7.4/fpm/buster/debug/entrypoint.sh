@@ -29,9 +29,9 @@ then
       sed -i "s/xdebug\.remote_host \=.*/xdebug\.remote_host\=$HOST/g" /usr/local/etc/php/conf.d/20-xdebug.ini
   fi
 
-  if [ -f /etc/php/7.1/cli/conf.d/20-xdebug.ini ]
+  if [ -f /etc/php/7.4/cli/conf.d/20-xdebug.ini ]
   then
-      sed -i "s/xdebug\.remote_host \=.*/xdebug\.remote_host\=$HOST/g" /etc/php/7.0/cli/conf.d/20-xdebug.ini
+      sed -i "s/xdebug\.remote_host \=.*/xdebug\.remote_host\=$HOST/g" /etc/php/7.4/cli/conf.d/20-xdebug.ini
   fi
 else
   rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
