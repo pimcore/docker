@@ -60,8 +60,16 @@ for version in "${versions[@]}"; do
                   ia && ac == 1 { system("cat " variant "-Dockerfile-block-" ab) }
               ' "$version/$variant/$distribution/$debug/Dockerfile"
 
-              echo "Generating $version/$variant/$distribution/$debug/Dockerfile from $baseDockerfile + $debug-Dockerfile-block-*"
-              gawk -i inplace -v variant="$debug" '
+              versionDebugFile="${debug}-${version}-Dockerfile-block-1"
+
+              if [ -f $versionDebugFile ]; then
+                debugBlock="${debug}-${version}"
+              else
+                debugBlock=debug
+              fi
+
+              echo "Generating $version/$variant/$distribution/$debug/Dockerfile from $baseDockerfile + $debugBlock-Dockerfile-block-*"
+              gawk -i inplace -v variant="$debugBlock" '
                   $1 == "##</debug>##" { ia = 0 }
                   !ia { print }
                   $1 == "##<debug>##" { ia = 1; ab++; ac = 0; if (system("test -f " variant "-Dockerfile-block-" ab) != 0) { ia = 0 } }
