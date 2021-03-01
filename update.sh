@@ -94,6 +94,10 @@ for version in "${versions[@]}"; do
                 cp -rf "files/$distribution/$debug/" $version/$variant/$distribution/$debug
               fi
 
+              if [ -d "files/$version/$debug/" ]; then
+                cp -rf "files/$version/$debug/" $version/$variant/$distribution/$debug
+              fi
+
               # remove any _extra_ blank lines created by the deletions above
               awk '
                   NF > 0 { blank = 0 }
