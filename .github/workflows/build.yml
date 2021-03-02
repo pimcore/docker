@@ -50,6 +50,8 @@ jobs:
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
 
+                    ls -la $DOCKERFILE
+
                     cd $DOCKERFILE
 
                     if [ -d "${{ matrix.php }}/${{ matrix.variant }}/buster" ]; then
