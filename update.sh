@@ -91,19 +91,23 @@ for version in "${versions[@]}"; do
               ' "$version/$variant/$distribution/$debug/Dockerfile"
 
               if [ -d "files/$variant/" ]; then
-                cp -rf "files/$variant/" $version/$variant/$distribution/$debug
+                echo "Copy from files/$variant to $version/$variant/$distribution/$debug"
+                cp -rf "files/$variant" $version/$variant/$distribution/$debug
               fi
 
               if [ -d "files/$debug/" ]; then
-                cp -rf "files/$debug/" $version/$variant/$distribution/$debug
+                echo "Copy from files/$debug to $version/$variant/$distribution/$debug"
+                cp -rf "files/$debug" $version/$variant/$distribution/$debug
               fi
 
               if [ -d "files/$distribution/$debug/" ]; then
-                cp -rf "files/$distribution/$debug/" $version/$variant/$distribution/$debug
+                echo "Copy from files/$distribution/$debug to $version/$variant/$distribution/$debug"
+                cp -rf "files/$distribution/$debug" $version/$variant/$distribution/$debug
               fi
 
               if [ -d "files/$version/$debug/" ]; then
-                cp -rf "files/$version/$debug/" $version/$variant/$distribution/$debug
+                echo "Copy from files/$version/$debug to $version/$variant/$distribution/$debug"
+                cp -rf "files/$version/$debug" $version/$variant/$distribution/$debug
               fi
 
               # remove any _extra_ blank lines created by the deletions above
