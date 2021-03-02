@@ -112,7 +112,7 @@ for version in "${versions[@]}"; do
 
               # automatic `-slim` for stretch
               # TODO always add slim once jessie is removed
-              gsed -ri \
+              sed -ri \
                   -e 's!%%PHP_TAG%%!'"$version"'!' \
                   -e 's!%%IMAGE_VARIANT%%!'"$variant"'!' \
                   -e 's!%%DISTRIBUTION%%!'"$distribution"'!' \
