@@ -40,4 +40,6 @@ jobs:
 
                     cd $DOCKERFILE
 
+                    ls -la .
+
                     docker build .

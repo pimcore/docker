@@ -44,6 +44,9 @@ jobs:
                     ls -la $DOCKERFILE
 
                     cd $DOCKERFILE
+
+                    ls -la .
+
                     docker build . -t image
 
             -   name: Push image
