@@ -90,6 +90,10 @@ for version in "${versions[@]}"; do
                 cp -rf "files/$variant/" $version/$variant/$distribution/$debug
               fi
 
+              if [ -d "files/$debug/" ]; then
+                cp -rf "files/$debug/" $version/$variant/$distribution/$debug
+              fi
+
               if [ -d "files/$distribution/$debug/" ]; then
                 cp -rf "files/$distribution/$debug/" $version/$variant/$distribution/$debug
               fi
@@ -108,7 +112,7 @@ for version in "${versions[@]}"; do
 
               # automatic `-slim` for stretch
               # TODO always add slim once jessie is removed
-              sed -ri \
+              gsed -ri \
                   -e 's!%%PHP_TAG%%!'"$version"'!' \
                   -e 's!%%IMAGE_VARIANT%%!'"$variant"'!' \
                   -e 's!%%DISTRIBUTION%%!'"$distribution"'!' \
