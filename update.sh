@@ -60,14 +60,18 @@ for version in "${versions[@]}"; do
                   ia && ac == 1 { system("cat " variant "-Dockerfile-block-" ab) }
               ' "$version/$variant/$distribution/$debug/Dockerfile"
 
-              versionDebugFile="${debug}-${version}-Dockerfile-block-1"
+              debugBlock="$debug"
 
-              if [ -f $versionDebugFile ]; then
-                debugBlock="${debug}-${version}"
-              else
-                debugBlock=debug
+              if [ debug = 'debug' ]; then
+                versionDebugFile="${debug}-${version}-Dockerfile-block-1"
+
+                if [ -f $versionDebugFile ]; then
+                  debugBlock="${debug}-${version}"
+                else
+                  debugBlock="$debug"
+                fi
               fi
-
+              
               echo "Generating $version/$variant/$distribution/$debug/Dockerfile from $baseDockerfile + $debugBlock-Dockerfile-block-*"
               gawk -i inplace -v variant="$debugBlock" '
                   $1 == "##</debug>##" { ia = 0 }
@@ -112,7 +116,7 @@ for version in "${versions[@]}"; do
 
               # automatic `-slim` for stretch
               # TODO always add slim once jessie is removed
-              sed -ri \
+              gsed -ri \
                   -e 's!%%PHP_TAG%%!'"$version"'!' \
                   -e 's!%%IMAGE_VARIANT%%!'"$variant"'!' \
                   -e 's!%%DISTRIBUTION%%!'"$distribution"'!' \
