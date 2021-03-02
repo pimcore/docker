@@ -40,6 +40,9 @@ jobs:
             -   name: Build image
                 run: |
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+
+                    ls -la $DOCKERFILE
+
                     cd $DOCKERFILE
                     docker build . -t image
 
@@ -49,8 +52,6 @@ jobs:
 
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
-
-                    ls -la $DOCKERFILE
 
                     cd $DOCKERFILE
 
