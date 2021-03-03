@@ -60,8 +60,20 @@ for version in "${versions[@]}"; do
                   ia && ac == 1 { system("cat " variant "-Dockerfile-block-" ab) }
               ' "$version/$variant/$distribution/$debug/Dockerfile"
 
-              echo "Generating $version/$variant/$distribution/$debug/Dockerfile from $baseDockerfile + $debug-Dockerfile-block-*"
-              gawk -i inplace -v variant="$debug" '
+              debugBlock="$debug"
+
+              if [ debug = 'debug' ]; then
+                versionDebugFile="${debug}-${version}-Dockerfile-block-1"
+
+                if [ -f $versionDebugFile ]; then
+                  debugBlock="${debug}-${version}"
+                else
+                  debugBlock="$debug"
+                fi
+              fi
+
+              echo "Generating $version/$variant/$distribution/$debug/Dockerfile from $baseDockerfile + $debugBlock-Dockerfile-block-*"
+              gawk -i inplace -v variant="$debugBlock" '
                   $1 == "##</debug>##" { ia = 0 }
                   !ia { print }
                   $1 == "##<debug>##" { ia = 1; ab++; ac = 0; if (system("test -f " variant "-Dockerfile-block-" ab) != 0) { ia = 0 } }
@@ -79,11 +91,23 @@ for version in "${versions[@]}"; do
               ' "$version/$variant/$distribution/$debug/Dockerfile"
 
               if [ -d "files/$variant/" ]; then
-                cp -rf "files/$variant/" $version/$variant/$distribution/$debug
+                echo "Copy from files/$variant to $version/$variant/$distribution/$debug"
+                cp -rf "files/$variant/." $version/$variant/$distribution/$debug/
+              fi
+
+              if [ -d "files/$debug/" ]; then
+                echo "Copy from files/$debug to $version/$variant/$distribution/$debug"
+                cp -rf "files/$debug/." $version/$variant/$distribution/$debug/
               fi
 
               if [ -d "files/$distribution/$debug/" ]; then
-                cp -rf "files/$distribution/$debug/" $version/$variant/$distribution/$debug
+                echo "Copy from files/$distribution/$debug to $version/$variant/$distribution/$debug"
+                cp -rf "files/$distribution/$debug/." $version/$variant/$distribution/$debug/
+              fi
+
+              if [ -d "files/$version/$debug/" ]; then
+                echo "Copy from files/$version/$debug to $version/$variant/$distribution/$debug"
+                cp -rf "files/$version/$debug/." $version/$variant/$distribution/$debug/
               fi
 
               # remove any _extra_ blank lines created by the deletions above

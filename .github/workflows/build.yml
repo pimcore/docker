@@ -40,7 +40,13 @@ jobs:
             -   name: Build image
                 run: |
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+
+                    ls -la $DOCKERFILE
+
                     cd $DOCKERFILE
+
+                    ls -la .
+
                     docker build . -t image
 
             -   name: Push image
