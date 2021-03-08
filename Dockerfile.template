@@ -58,6 +58,7 @@ RUN set -eux; \
     \
     git clone https://github.com/wavexx/facedetect; \
         pip3 install --upgrade setuptools; \
+        pip3 install scikit-build; \
         pip3 install numpy opencv-python; \
         cd facedetect; \
         cp facedetect /usr/local/bin; \
