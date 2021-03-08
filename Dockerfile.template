@@ -12,7 +12,7 @@ RUN set -eux; \
         zlib1g-dev libicu-dev libbz2-dev libc-client-dev \
         libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
         ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
-        libx11-dev python3-pip opencv-data webp graphviz cmake unzip cron \
+        libx11-dev python3-pip opencv-data webp graphviz cmake ninja-build unzip cron \
         liblcms2-dev liblqr-1-0-dev libopenjp2-7-dev libtiff-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
@@ -56,8 +56,8 @@ RUN set -eux; \
         cd ..; \
         rm -rf mozjpeg; \
     \
-    git clone https://github.com/wavexx/facedetect; \
-        pip3 install --upgrade setuptools; \
+    git clone https://gitlab.com/wavexx/facedetect; \
+        pip3 install --upgrade pip setuptools wheel; \
         pip3 install scikit-build; \
         pip3 install numpy opencv-python; \
         cd facedetect; \
@@ -93,7 +93,7 @@ RUN set -eux; \
         npm install -g sqip; \
     \
     apt-get autoremove -y; \
-        apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++; \
+        apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
         apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
 
 RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
