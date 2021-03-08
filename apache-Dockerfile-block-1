@@ -1,18 +1,20 @@
 ENV APACHE_DOCUMENT_ROOT /var/www/html/web
 
-RUN a2enmod rewrite \
-      && a2enmod ssl \
-      && a2enmod headers \
-      && mkdir /etc/apache2/ssl \
-      && touch /etc/apache2/ssl/localhost.key \
-      && touch /etc/apache2/ssl/localhost.crt \
-      && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/localhost.key \
-        -subj '/C=UK/ST=London/L=London/O=Digital Web Ltd./CN=localhost/' -out /etc/apache2/ssl/localhost.crt \
-        && chmod 600 /etc/apache2/ssl/*
+RUN set -eux; \
+    a2enmod rewrite; \
+    a2enmod ssl; \
+    a2enmod headers; \
+    mkdir /etc/apache2/ssl; \
+    touch /etc/apache2/ssl/localhost.key; \
+    touch /etc/apache2/ssl/localhost.crt; \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/localhost.key \
+        -subj '/C=UK/ST=London/L=London/O=Digital Web Ltd./CN=localhost/' -out /etc/apache2/ssl/localhost.crt; \
+    chmod 600 /etc/apache2/ssl/*;
 
-RUN usermod -u 1000 www-data \
-        && usermod -G staff www-data \
-        && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
-        && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN set -eux; \
+    usermod -u 1000 www-data; \
+    usermod -G staff www-data; \
+    sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf; \
+    sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf;
 
 COPY 001-ssl.conf /etc/apache2/sites-enabled
