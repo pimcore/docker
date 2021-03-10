@@ -3,5 +3,5 @@
         --with-jpeg-dir=/usr/include/ \
         --with-xpm-dir=/usr/include \
         --with-webp-dir=/usr/include/; \
-    docker-php-ext-install xmlrpc; \
+    docker-php-ext-install xmlrpc gd; \
     pecl install imagick; \

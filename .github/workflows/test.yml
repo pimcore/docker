@@ -42,4 +42,5 @@ jobs:
 
                     ls -la .
 
-                    docker build .
+                    docker build . -t pimcore-image
+                    docker run -it --rm pimcore-image composer create-project pimcore/skeleton pimcore
