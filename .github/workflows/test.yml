@@ -43,4 +43,4 @@ jobs:
                     ls -la .
 
                     docker build . -t pimcore-image
-                    docker run --rm pimcore-image composer create-project pimcore/skeleton pimcore
+                    docker run --rm pimcore-image composer create-project pimcore/skeleton pimcore --no-scripts
