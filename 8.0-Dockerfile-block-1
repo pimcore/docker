@@ -1,5 +1,6 @@
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
-    pecl install -f xmlrpc gd; \
+    docker-php-ext-install gd; \
+    pecl install -f xmlrpc; \
     git clone https://github.com/Imagick/imagick; \
     cd imagick; \
     phpize && ./configure; \
