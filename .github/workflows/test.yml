@@ -42,4 +42,10 @@ jobs:
 
                     ls -la .
 
-                    docker build .
+                    docker build . -t pimcore-image
+
+                    if [ "${{ matrix.php }}" == "8.0" ]; then
+                        docker run --rm pimcore-image composer create-project pimcore/skeleton:dev-master pimcore --no-scripts
+                    else
+                        docker run --rm pimcore-image composer create-project pimcore/skeleton pimcore --no-scripts
+                    fi
