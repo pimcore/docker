@@ -32,6 +32,13 @@ jobs:
                 run: |
                     ./update.sh
 
+            -   name: Echo Dockerfile
+                run: |
+                    DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    cd $DOCKERFILE
+
+                    cat Dockerfile
+
             -   name: Build Image
                 run: |
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
