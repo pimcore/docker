@@ -1,5 +1,3 @@
-ENV APACHE_DOCUMENT_ROOT /var/www/html/web
-
 RUN set -eux; \
     a2enmod rewrite; \
     a2enmod ssl; \
