@@ -126,6 +126,11 @@ for version in "${versions[@]}"; do
                 cp -rf "files/$version/$debug/." $version/$variant/$distribution/$debug/
               fi
 
+              if [ -d "files/$version/$variant/" ]; then
+                echo "Copy from files/$version/$variant to $version/$variant/$distribution/$debug"
+                cp -rf "files/$version/$variant/." $version/$variant/$distribution/$debug/
+              fi
+
               # remove any _extra_ blank lines created by the deletions above
               awk '
                   NF > 0 { blank = 0 }
