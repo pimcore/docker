@@ -40,12 +40,11 @@ RUN set -eux; \
     docker-php-ext-install imap; \
     docker-php-ext-enable imap; \
     \
-    cd ~; \
+    cd /tmp; \
     \
     wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz; \
         tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz; \
         mv wkhtmltox/bin/wkhtmlto* /usr/bin/; \
-        rm -rf wkhtmltox; \
     \
     git clone https://github.com/mozilla/mozjpeg.git ; \
         cd mozjpeg; \
@@ -54,30 +53,25 @@ RUN set -eux; \
         make install; \
         ln -s /opt/mozjpeg/bin/cjpeg /usr/bin/cjpeg; \
         cd ..; \
-        rm -rf mozjpeg; \
     \
     git clone https://gitlab.com/wavexx/facedetect; \
-        pip3 install --upgrade pip setuptools wheel; \
-        pip3 install scikit-build; \
-        pip3 install numpy opencv-python; \
+        pip3 install --no-cache-dir --upgrade pip setuptools wheel; \
+        pip3 install --no-cache-dir scikit-build; \
+        pip3 install --no-cache-dir numpy opencv-python; \
         cd facedetect; \
         cp facedetect /usr/local/bin; \
         cd ..; \
-        rm -rf facedetect; \
     \
     git clone https://github.com/google/zopfli.git; \
         cd zopfli; \
         make; \
         cp zopfli /usr/bin/zopflipng; \
         cd ..; \
-        rm -rf zopfli; \
     \
     wget http://static.jonof.id.au/dl/kenutils/pngout-20150319-linux.tar.gz; \
         tar -xf pngout-20150319-linux.tar.gz; \
         rm pngout-20150319-linux.tar.gz; \
         cp pngout-20150319-linux/x86_64/pngout /bin/pngout; \
-        cd ..; \
-        rm -rf pngout-20150319-linux; \
     \
     wget http://prdownloads.sourceforge.net/advancemame/advancecomp-1.17.tar.gz; \
         tar zxvf advancecomp-1.17.tar.gz; \
@@ -86,11 +80,11 @@ RUN set -eux; \
         make; \
         make install; \
         cd ..; \
-        rm -rf advancecomp-1.17; \
     \
     curl -sL https://deb.nodesource.com/setup_14.x | bash -; \
         apt-get install -y nodejs; \
         npm install -g sqip; \
+        npm cache clean --force; \
     \
     apt-get autoremove -y; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
