@@ -33,10 +33,10 @@ for version in "${versions[@]}"; do
 
     baseDockerfile=Dockerfile.template
 
-    for variant in cli apache fpm; do
+    for variant in cli fpm; do
         [ -d "$version/$variant" ] || continue
 
-        for distribution in buster stretch; do
+        for distribution in buster bullseye; do
           [ -d "$version/$variant/$distribution" ] || continue
 
           for debug in debug no-debug; do
@@ -139,8 +139,6 @@ for version in "${versions[@]}"; do
               ' "$version/$variant/$distribution/$debug/Dockerfile" > "$version/$variant/$distribution/$debug/Dockerfile.new"
               mv "$version/$variant/$distribution/$debug/Dockerfile.new" "$version/$variant/$distribution/$debug/Dockerfile"
 
-              # automatic `-slim` for stretch
-              # TODO always add slim once jessie is removed
               sed -ri \
                   -e 's!%%PHP_TAG%%!'"$version"'!' \
                   -e 's!%%IMAGE_VARIANT%%!'"$variant"'!' \
