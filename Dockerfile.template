@@ -16,8 +16,8 @@ RUN set -eux; \
         liblcms2-dev liblqr-1-0-dev libopenjp2-7-dev libtiff-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
-        libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev libonig-dev \
-        ufraw; \
+        libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev \
+        libonig-dev; \
     \
     docker-php-ext-install intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache; \
     \
