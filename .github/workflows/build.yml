@@ -1,4 +1,4 @@
-name: Docker BUILD PHP
+name: Docker BUILD
 
 on:
     workflow_dispatch:
@@ -12,7 +12,8 @@ env:
     IMAGE_NAME: pimcore/pimcore
 
 jobs:
-    build:
+    build-php:
+        name: "Build PHP images"
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -66,3 +67,27 @@ jobs:
 
                     docker tag image $IMAGE_ID:$DOCKER_TAG
                     docker push $IMAGE_ID:$DOCKER_TAG
+
+    build-supervisor:
+        name: "Build supervisord image"
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Login to DockerHub Registry
+              run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            - name: Build image
+              run: |
+                  cd supervisord
+
+                  ls -la .
+
+                  docker build . -t supervisord
+
+            - name: Push image
+              run: |
+                  IMAGE_ID=$IMAGE_NAME
+
+                  docker tag supervisord $IMAGE_ID:supervisord
+                  docker push $IMAGE_ID:supervisord
