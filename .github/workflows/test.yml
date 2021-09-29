@@ -1,4 +1,4 @@
-name: Docker TEST
+name: Docker TEST PHP
 
 on:
     # Run tests for any PRs.

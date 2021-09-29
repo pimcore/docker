@@ -1,12 +1,12 @@
-name: Docker BUILD
+name: Docker BUILD PHP
 
 on:
     workflow_dispatch:
     schedule:
-        - cron: '30 2 * * SUN' # run a build at least once a week to keep the images up to date
+        - cron: '30 2 * * *' # run a build at least once a day to keep the images up to date
     push:
         branches:
-            - master
+            - main
 
 env:
     IMAGE_NAME: pimcore/pimcore
