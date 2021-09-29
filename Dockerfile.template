@@ -9,11 +9,11 @@ RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         autoconf automake libtool nasm make pkg-config libz-dev build-essential openssl g++ \
-        zlib1g-dev libicu-dev libbz2-dev libc-client-dev \
+        zlib1g-dev libicu-dev libbz2-dev zopfli libc-client-dev \
         libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
         ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
-        libx11-dev python3-pip opencv-data webp graphviz cmake ninja-build unzip cron \
-        liblcms2-dev liblqr-1-0-dev libopenjp2-7-dev libtiff-dev \
+        libx11-dev python3-pip opencv-data facedetect webp graphviz cmake ninja-build unzip cron \
+        liblcms2-dev liblqr-1-0-dev libjpeg-turbo-progs libopenjp2-7-dev wkhtmltopdf libtiff-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
         libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev \
@@ -42,32 +42,6 @@ RUN set -eux; \
     \
     cd /tmp; \
     \
-    wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz; \
-        tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz; \
-        mv wkhtmltox/bin/wkhtmlto* /usr/bin/; \
-    \
-    git clone https://github.com/mozilla/mozjpeg.git ; \
-        cd mozjpeg; \
-        cmake -G"Unix Makefiles"; \
-        make; \
-        make install; \
-        ln -s /opt/mozjpeg/bin/cjpeg /usr/bin/cjpeg; \
-        cd ..; \
-    \
-    git clone https://gitlab.com/wavexx/facedetect; \
-        pip3 install --no-cache-dir --upgrade pip setuptools wheel; \
-        pip3 install --no-cache-dir scikit-build; \
-        pip3 install --no-cache-dir numpy opencv-python; \
-        cd facedetect; \
-        cp facedetect /usr/local/bin; \
-        cd ..; \
-    \
-    git clone https://github.com/google/zopfli.git; \
-        cd zopfli; \
-        make; \
-        cp zopfli /usr/bin/zopflipng; \
-        cd ..; \
-    \
     wget http://static.jonof.id.au/dl/kenutils/pngout-20150319-linux.tar.gz; \
         tar -xf pngout-20150319-linux.tar.gz; \
         rm pngout-20150319-linux.tar.gz; \
@@ -80,11 +54,6 @@ RUN set -eux; \
         make; \
         make install; \
         cd ..; \
-    \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash -; \
-        apt-get install -y nodejs; \
-        npm install -g sqip; \
-        npm cache clean --force; \
     \
     apt-get autoremove -y; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
