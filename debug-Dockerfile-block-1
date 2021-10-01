@@ -7,15 +7,6 @@ RUN apt-get update; \
     apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++; \
     apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer;
 
-RUN echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/20-xdebug.ini; \
-    echo "xdebug.default_enable = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini; \
-    echo "xdebug.remote_enable = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini; \
-    echo "xdebug.remote_autostart = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini; \
-    echo "xdebug.remote_connect_back = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini; \
-    echo "xdebug.profiler_enable = 0" >> /usr/local/etc/php/conf.d/20-xdebug.ini; \
-    echo "xdebug.remote_host = 127.0.0.1" >> /usr/local/etc/php/conf.d/20-xdebug.ini;
-
-
 # allow container to run as custom user, this won't work otherwise because config is changed in entrypoint.sh
 RUN chmod -R 0777 /usr/local/etc/php/conf.d
 
