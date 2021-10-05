@@ -47,6 +47,19 @@ jobs:
 
                     docker build . -t pimcore-image
 
+                    if [ "${{ matrix.debug }}" == "debug" ]; then
+                        # Make sure xdebug is installed and configred on debug-build
+                        docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
+                        docker run --rm pimcore-image test -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+                        # Check if entrypoint did it's job and generaged xdebug configration
+                        docker run --rm pimcore-image php -r 'assert("PHPSTORM" === ini_get("xdebug.idekey"));'
+                        docker run --rm -e XDEBUG_HOST=pim.co.re pimcore-image sh -c 'php -i | grep "xdebug.*pim\.co\.re"'
+                    else
+                        # Make sure xdebug is neither activated nor configred on non-debug build
+                        docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
+                        docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+                    fi
+
                     if [ "${{ matrix.php }}" == "8.0" ]; then
                         docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
                     elif [ "${{ matrix.php }}" == "7.1" ]; then
