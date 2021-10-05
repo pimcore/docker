@@ -37,9 +37,16 @@ jobs:
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
+            -   name: Set up QEMU
+                uses: docker/setup-qemu-action@v1
+            -   name: Set up Buildx
+                uses: docker/setup-buildx-action@v1
+
             -   name: Build image
                 run: |
+                    IMAGE_ID=$IMAGE_NAME
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
 
                     ls -la $DOCKERFILE
 
@@ -47,26 +54,32 @@ jobs:
 
                     ls -la .
 
-                    docker build . -t image
+                    if [ "${{ matrix.debug }}" == "debug" ]; then
+                        DOCKER_TAG="$DOCKER_TAG-debug"
+                    fi
 
+                    docker buildx build --output "type=image,push=false" \
+                        --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm/v8 \
+                        --build-arg VERSION=$IMAGE_ID \
+                        --tag $IMAGE_ID:$DOCKER_TAG .
             -   name: Push image
                 run: |
                     IMAGE_ID=$IMAGE_NAME
-
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
 
                     cd $DOCKERFILE
 
-
                     if [ "${{ matrix.debug }}" == "debug" ]; then
-                          DOCKER_TAG="$DOCKER_TAG-debug"
+                        DOCKER_TAG="$DOCKER_TAG-debug"
                     fi
 
                     echo "Tag $DOCKER_TAG"
 
-                    docker tag image $IMAGE_ID:$DOCKER_TAG
-                    docker push $IMAGE_ID:$DOCKER_TAG
+                    docker buildx build --output "type=image,push=true" \
+                        --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm/v8 \
+                        --build-arg VERSION=$IMAGE_ID \
+                        --tag $IMAGE_ID:$DOCKER_TAG .
 
     build-supervisor:
         name: "Build supervisord image"
