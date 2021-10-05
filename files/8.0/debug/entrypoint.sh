@@ -23,7 +23,7 @@ fi
 
 # if we managed to determine HOST add it to the xdebug config. Otherwise use xdebug's
 # default config.
-if [ -z "$HOST" ]; then
+if [ -n "$HOST" ]; then
   echo "xdebug.client_host = $HOST" >> /usr/local/etc/php/conf.d/20-xdebug.ini
 fi
 
