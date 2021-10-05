@@ -37,6 +37,8 @@ jobs:
 
             -   name: Build Image
                 run: |
+                    set -ex
+
                     DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
 
                     ls -la $DOCKERFILE
