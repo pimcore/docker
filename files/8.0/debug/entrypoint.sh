@@ -1,35 +1,30 @@
 #!/bin/bash
 
-if [ "$PHP_DEBUG" == 1 ]
-then
-  echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-  echo "xdebug.mode = debug" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-  echo "xdebug.start_with_request = 1" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-  echo "xdebug.discover_client_host = 0" >> /usr/local/etc/php/conf.d/20-xdebug.ini && \
-  echo "xdebug.client_host = 127.0.0.1" >> /usr/local/etc/php/conf.d/20-xdebug.ini
+# Override default configuration for xdebug v3.x.
+# See: https://xdebug.org/docs/all_settings
+cat << EOF > /usr/local/etc/php/conf.d/20-xdebug.ini
+xdebug.idekey = PHPSTORM
+xdebug.mode = debug
+xdebug.start_with_request = 1
+EOF
 
-  # if XDEBUG_HOST is manually set
-  HOST="$XDEBUG_HOST"
+# if XDEBUG_HOST is manually set
+HOST="$XDEBUG_HOST"
 
-  # else if check if is Docker for Mac
-  if [ -z "$HOST" ]; then
-      HOST=`getent hosts docker.for.mac.localhost | awk '{ print $1 }'`
-  fi
-
-  # else get host ip
-  if [ -z "$HOST" ]; then
-      HOST=`/sbin/ip route|awk '/default/ { print $3 }'`
-  fi
-
-  # xdebug config
-  if [ -f /usr/local/etc/php/conf.d/20-xdebug.ini ]
-  then
-      sed -i "s/xdebug\.client_host \=.*/xdebug\.client_host\=$HOST/g" /usr/local/etc/php/conf.d/20-xdebug.ini
-  fi
-
-else
-  rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# else if check if is Docker for Mac
+if [ -z "$HOST" ]; then
+  HOST=`getent hosts docker.for.mac.localhost | awk '{ print $1 }'`
 fi
 
+# else get host ip
+if [ -z "$HOST" ]; then
+  HOST=`/sbin/ip route|awk '/default/ { print $3 }'`
+fi
+
+# if we managed to determine HOST add it to the xdebug config. Otherwise use xdebug's
+# default config.
+if [ -n "$HOST" ]; then
+  echo "xdebug.client_host = $HOST" >> /usr/local/etc/php/conf.d/20-xdebug.ini
+fi
 
 exec "$@"
