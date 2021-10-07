@@ -10,7 +10,6 @@ RUN apt-get update; \
 # allow container to run as custom user, this won't work otherwise because config is changed in entrypoint.sh
 RUN chmod -R 0777 /usr/local/etc/php/conf.d
 
-ENV PHP_DEBUG 1
 ENV PHP_IDE_CONFIG serverName=localhost
 
 COPY entrypoint.sh /usr/local/bin
