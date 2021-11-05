@@ -44,10 +44,10 @@ RUN set -eux; \
     \
     cd /tmp; \
     \
-    wget http://static.jonof.id.au/dl/kenutils/pngout-20150319-linux.tar.gz; \
-        tar -xf pngout-20150319-linux.tar.gz; \
-        rm pngout-20150319-linux.tar.gz; \
-        cp pngout-20150319-linux/x86_64/pngout /bin/pngout; \
+    wget https://www.jonof.id.au/files/kenutils/pngout-20200115-linux.tar.gz; \
+        tar -xf pngout-20200115-linux.tar.gz; \
+        cp pngout-20200115-linux/amd64/pngout /bin/pngout; \
+        rm -rf pngout*; \
     \
     wget http://prdownloads.sourceforge.net/advancemame/advancecomp-1.17.tar.gz; \
         tar zxvf advancecomp-1.17.tar.gz; \
