@@ -139,7 +139,13 @@ for version in "${versions[@]}"; do
               ' "$version/$variant/$distribution/$debug/Dockerfile" > "$version/$variant/$distribution/$debug/Dockerfile.new"
               mv "$version/$variant/$distribution/$debug/Dockerfile.new" "$version/$variant/$distribution/$debug/Dockerfile"
 
-              sed -ri \
+              # The syntax of -i is one difference between GNU sed and sed from mac os.
+              SEDOPTION="-ri"
+              if [[ "$OSTYPE" == "darwin"* ]]; then
+                SEDOPTION="-r -i ''"
+              fi
+
+              sed $SEDOPTION \
                   -e 's!%%PHP_TAG%%!'"$version"'!' \
                   -e 's!%%IMAGE_VARIANT%%!'"$variant"'!' \
                   -e 's!%%DISTRIBUTION%%!'"$distribution"'!' \
