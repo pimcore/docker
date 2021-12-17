@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Override default configuration for xdebug v2.x
-# See: https://2.xdebug.org/docs/all_settings
+# Override default configuration for xdebug v3.x.
+# See: https://xdebug.org/docs/all_settings
 cat << EOF > /usr/local/etc/php/conf.d/20-xdebug.ini
 xdebug.idekey = PHPSTORM
-xdebug.remote_enable = 1
-xdebug.remote_autostart = 1
+xdebug.mode = debug
+xdebug.start_with_request = 1
 EOF
 
 # if XDEBUG_HOST is manually set
@@ -24,7 +24,7 @@ fi
 # if we managed to determine HOST add it to the xdebug config. Otherwise use xdebug's
 # default config.
 if [ -n "$HOST" ]; then
-  echo "xdebug.remote_host = $HOST" >> /usr/local/etc/php/conf.d/20-xdebug.ini
+  echo "xdebug.client_host = $HOST" >> /usr/local/etc/php/conf.d/20-xdebug.ini
 fi
 
 exec "$@"
