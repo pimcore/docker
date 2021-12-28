@@ -1,3 +1,4 @@
+#%%INFO_HEADER%%
 FROM php:%%PHP_TAG%%-%%IMAGE_VARIANT%%-%%DISTRIBUTION%%
 
 LABEL maintainer="dominik@pfaffenbauer.at"

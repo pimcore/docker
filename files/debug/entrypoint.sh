@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#%%INFO_HEADER%%
+
 # Override default configuration for xdebug v2.x
 # See: https://2.xdebug.org/docs/all_settings
 cat << EOF > /usr/local/etc/php/conf.d/20-xdebug.ini

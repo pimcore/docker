@@ -5,15 +5,7 @@ buildDir=build/php
 versions=( $buildDir/* )
 versions=( "${versions[@]%/}" )
 
-generated_warning() {
-	cat <<-EOH
-		#
-		# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
-		#
-		# PLEASE DO NOT EDIT IT DIRECTLY.
-		#
-	EOH
-}
+infoHeader="#\n# NOTE: THIS DOCKERFILE IS GENERATED VIA update.sh\n#\n# PLEASE DO NOT EDIT IT DIRECTLY.\n#"
 
 for version in "${versions[@]}"; do
 
@@ -40,7 +32,7 @@ for version in "${versions[@]}"; do
           [ -d "$buildDir/$version/$variant/$distribution" ] || continue
 
           for debug in debug no-debug; do
-              { generated_warning; cat "$baseDockerfile"; } > "$buildDir/$version/$variant/$distribution/$debug/Dockerfile"
+              cp $baseDockerfile "$buildDir/$version/$variant/$distribution/$debug/Dockerfile"
 
               envBlock="$variant"
               variantEnvVar="${version}-${variant}-env-Dockerfile-block-1"
@@ -138,6 +130,8 @@ for version in "${versions[@]}"; do
                   blank < 2 { print }
               ' "$buildDir/$version/$variant/$distribution/$debug/Dockerfile" > "$buildDir/$version/$variant/$distribution/$debug/Dockerfile.new"
               mv "$buildDir/$version/$variant/$distribution/$debug/Dockerfile.new" "$buildDir/$version/$variant/$distribution/$debug/Dockerfile"
+
+              sed -i "s/#%%INFO_HEADER%%/${infoHeader}/" "$buildDir/$version/$variant/$distribution/$debug/"*
 
               sed -ri \
                   -e 's!%%PHP_TAG%%!'"$version"'!' \
