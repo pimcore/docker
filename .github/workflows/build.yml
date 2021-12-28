@@ -37,6 +37,7 @@ jobs:
                     ./update.sh
 
             - uses: stefanzweifel/git-auto-commit-action@v4
+              if: ${{ (matrix.php == '8.1') && (matrix.variant == 'fpm') && (matrix.distro == 'bullseye') && (matrix.debug == 'no-debug') }}
               with:
                   commit_message: Update Dockerfile in /build dir
 
@@ -79,6 +80,7 @@ jobs:
         needs: build-php
         runs-on: ubuntu-latest
         strategy:
+            max-parallel: 1
             matrix:
                 php: ['8.0', '8.1' ]
         steps:
