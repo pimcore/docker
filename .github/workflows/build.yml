@@ -88,6 +88,7 @@ jobs:
                   BUILD_DIR="build/supervisor/${{ matrix.php }}"
                   mkdir -p $BUILD_DIR
                   cp supervisord/Dockerfile.template "$BUILD_DIR/Dockerfile"
+                  cp supervisord/supervisord.conf "$BUILD_DIR/"
 
                   cd $BUILD_DIR
 
