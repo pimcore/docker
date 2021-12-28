@@ -95,11 +95,11 @@ jobs:
 
                   cat Dockerfile
 
-                  docker build . -t PHP${{ matrix.php }}-supervisord
+                  docker build . -t image
 
             - name: Push image
               run: |
                   IMAGE_ID=$IMAGE_NAME
 
-                  docker tag supervisord $IMAGE_ID:PHP${{ matrix.php }}-supervisord
+                  docker tag image $IMAGE_ID:PHP${{ matrix.php }}-supervisord
                   docker push $IMAGE_ID:PHP${{ matrix.php }}-supervisord
