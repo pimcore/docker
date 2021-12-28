@@ -74,6 +74,9 @@ jobs:
         name: "Build supervisord image"
         needs: build-php
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php: ['8.0', '8.1' ]
         steps:
             - uses: actions/checkout@v2
 
@@ -82,15 +85,21 @@ jobs:
 
             - name: Build image
               run: |
-                  cd supervisord
+                  BUILD_DIR="build/supervisor/${{ matrix.php }}"
+                  mkdir -p $BUILD_DIR
+                  cp supervisord/Dockerfile.template "$BUILD_DIR/Dockerfile"
 
-                  ls -la .
+                  cd $BUILD_DIR
 
-                  docker build . -t supervisord
+                  sed -ri -e 's!%%PHP_TAG%%!'${{ matrix.php }}'!' Dockerfile
+
+                  cat Dockerfile
+
+                  docker build . -t PHP${{ matrix.php }}-supervisord
 
             - name: Push image
               run: |
                   IMAGE_ID=$IMAGE_NAME
 
-                  docker tag supervisord $IMAGE_ID:supervisord
-                  docker push $IMAGE_ID:supervisord
+                  docker tag supervisord $IMAGE_ID:PHP${{ matrix.php }}-supervisord
+                  docker push $IMAGE_ID:PHP${{ matrix.php }}-supervisord
