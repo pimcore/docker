@@ -32,7 +32,7 @@ jobs:
 
             -   name: Echo Dockerfile
                 run: |
-                    DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     cd $DOCKERFILE
 
                     cat Dockerfile
@@ -41,7 +41,7 @@ jobs:
                 run: |
                     set -ex
 
-                    DOCKERFILE="${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
 
                     ls -la $DOCKERFILE
 
@@ -64,10 +64,8 @@ jobs:
                         docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                     fi
 
-                    if [ "${{ matrix.php }}" == "8.0" ]; then
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
-                    elif [ "${{ matrix.php }}" == "7.1" ]; then
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^1.0 pimcore --no-scripts
-                    else
+                    if [ "${{ matrix.php }}" == "7.4" ]; then
                         docker run --rm pimcore-image composer create-project pimcore/skeleton:^2.0 pimcore --no-scripts
+                    else
+                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
                     fi
