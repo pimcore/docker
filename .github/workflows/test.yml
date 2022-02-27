@@ -40,6 +40,12 @@ jobs:
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v1
 
+            - name: Prepare Buildx
+              run: |
+                  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+                  docker buildx create --name multiarch --driver docker-container --use
+                  docker buildx inspect --bootstrap
+
             - name: Echo Dockerfile
               run: |
                   DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
