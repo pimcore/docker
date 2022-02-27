@@ -68,7 +68,7 @@ jobs:
                     cd $DOCKERFILE
                     ls -la .
 
-                    docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm/v8 --push -t $IMAGE_ID:$DOCKER_TAG .
+                    docker buildx build --platform linux/amd64,linux/arm64 --push -t $IMAGE_ID:$DOCKER_TAG .
 
     build-supervisor:
         name: "Build supervisord image"
@@ -102,12 +102,12 @@ jobs:
                   cp supervisord/supervisord.conf "$BUILD_DIR/"
 
                   cd $BUILD_DIR
-
+                  
                   sed -ri -e 's!%%PHP_TAG%%!'${{ matrix.php }}'!' Dockerfile
 
                   cat Dockerfile
 
-                  docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm/v8 --push -t $IMAGE_ID:PHP${{ matrix.php }}-supervisord .
+                  docker buildx build --platform linux/amd64,linux/arm64 --push -t $IMAGE_ID:PHP${{ matrix.php }}-supervisord .
 
             - uses: stefanzweifel/git-auto-commit-action@v4
               with:
