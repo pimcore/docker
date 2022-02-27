@@ -12,60 +12,64 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [7.4, '8.0', '8.1']
+                php: ['7.4', '8.0', '8.1']
                 variant: [cli, fpm]
                 distro: [bullseye, buster]
                 debug: [debug, no-debug]
                 exclude:
-                    -   php: 7.4
+                    -   php: '7.4'
                         distro: bullseye
                     -   php: '8.0'
                         distro: buster
                     -   php: '8.1'
                         distro: buster
         steps:
-            -   uses: actions/checkout@v2
+            - uses: actions/checkout@v2
 
-            -   name: run update script
-                run: |
-                    ./update.sh
+            - name: run update script
+              run: |
+                  ./update.sh
 
-            -   name: Echo Dockerfile
-                run: |
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-                    cd $DOCKERFILE
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v1
 
-                    cat Dockerfile
+            - name: Set up Buildx
+              uses: docker/setup-buildx-action@v1
 
-            -   name: Build Image
-                run: |
-                    set -ex
+            - name: Echo Dockerfile
+              run: |
+                  DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                  cd $DOCKERFILE
 
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                  cat Dockerfile
 
-                    ls -la $DOCKERFILE
+            - name: Build Image
+              run: |
+                  set -ex
 
-                    cd $DOCKERFILE
+                  DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
 
-                    ls -la .
+                  ls -la $DOCKERFILE
+                  cd $DOCKERFILE
+                  ls -la .
 
-                    docker build . -t pimcore-image
+                  docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm/v8 --push -t pimage-image .
 
-                    if [ "${{ matrix.debug }}" == "debug" ]; then
-                        # Make sure xdebug is installed and configured on debug-build
-                        docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
-                        docker run --rm pimcore-image test -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-                        # Check if entrypoint did it's job and generated xdebug configuration
-                        docker run --rm pimcore-image php -r 'assert("PHPSTORM" === ini_get("xdebug.idekey"));'
-                        docker run --rm -e XDEBUG_HOST=pim.co.re pimcore-image sh -c 'php -i | grep "xdebug.*pim\.co\.re"'
-                    else
-                        # Make sure xdebug is neither activated nor configred on non-debug build
-                        docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
-                        docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-                    fi
+                  if [ "${{ matrix.debug }}" == "debug" ]; then
+                      # Make sure xdebug is installed and configured on debug-build
+                      docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
+                      docker run --rm pimcore-image test -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+                      # Check if entrypoint did it's job and generated xdebug configuration
+                      docker run --rm pimcore-image php -r 'assert("PHPSTORM" === ini_get("xdebug.idekey"));'
+                      docker run --rm -e XDEBUG_HOST=pim.co.re pimcore-image sh -c 'php -i | grep "xdebug.*pim\.co\.re"'
+                  else
+                      # Make sure xdebug is neither activated nor configred on non-debug build
+                      docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
+                      docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+                  fi
 
-                    if [ "${{ matrix.php }}" == "7.4" ]; then
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^2.0 pimcore --no-scripts
-                    else
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
-                    fi
+                  if [ "${{ matrix.php }}" == "7.4" ]; then
+                      docker run --rm pimcore-image composer create-project pimcore/skeleton:^2.0 pimcore --no-scripts
+                  else
+                      docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
+                  fi

@@ -17,12 +17,12 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [7.4, '8.0', '8.1']
+                php: ['7.4', '8.0', '8.1']
                 variant: [cli, fpm]
                 distro: [bullseye, buster]
                 debug: [debug, no-debug]
                 exclude:
-                    -   php: 7.4
+                    -   php: '7.4'
                         distro: bullseye
                     -   php: '8.0'
                         distro: buster
@@ -31,7 +31,6 @@ jobs:
 
         steps:
             -   uses: actions/checkout@v2
-
             -   name: run update script
                 run: |
                     ./update.sh
@@ -44,36 +43,29 @@ jobs:
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            -   name: Build image
-                run: |
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+            -   name: Set up QEMU
+                uses: docker/setup-qemu-action@v1
 
-                    ls -la $DOCKERFILE
+            -   name: Set up Buildx
+                uses: docker/setup-buildx-action@v1
 
-                    cd $DOCKERFILE
-
-                    ls -la .
-
-                    docker build . -t image
-
-            -   name: Push image
+            -   name: Build and push image
                 run: |
                     IMAGE_ID=$IMAGE_NAME
-
                     DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
-
-                    cd $DOCKERFILE
-
 
                     if [ "${{ matrix.debug }}" == "debug" ]; then
                           DOCKER_TAG="$DOCKER_TAG-debug"
                     fi
-
+                    
                     echo "Tag $DOCKER_TAG"
+                    
+                    ls -la $DOCKERFILE
+                    cd $DOCKERFILE
+                    ls -la .
 
-                    docker tag image $IMAGE_ID:$DOCKER_TAG
-                    docker push $IMAGE_ID:$DOCKER_TAG
+                    docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm/v8 --push -t $IMAGE_ID:$DOCKER_TAG .
 
     build-supervisor:
         name: "Build supervisord image"
@@ -82,15 +74,22 @@ jobs:
         strategy:
             max-parallel: 1
             matrix:
-                php: ['8.0', '8.1' ]
+                php: ['8.0', '8.1']
         steps:
             - uses: actions/checkout@v2
 
             - name: Login to DockerHub Registry
               run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v1
+
+            - name: Set up Buildx
+              uses: docker/setup-buildx-action@v1
+
             - name: Build image
               run: |
+                  IMAGE_ID=$IMAGE_NAME
                   BUILD_DIR="build/supervisor/${{ matrix.php }}"
                   mkdir -p $BUILD_DIR
                   cp supervisord/Dockerfile.template "$BUILD_DIR/Dockerfile"
@@ -102,15 +101,8 @@ jobs:
 
                   cat Dockerfile
 
-                  docker build . -t image
+                  docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm/v8 --push -t $IMAGE_ID:PHP${{ matrix.php }}-supervisord .
 
             - uses: stefanzweifel/git-auto-commit-action@v4
               with:
                   commit_message: Update Dockerfile in /build dir
-
-            - name: Push image
-              run: |
-                  IMAGE_ID=$IMAGE_NAME
-
-                  docker tag image $IMAGE_ID:PHP${{ matrix.php }}-supervisord
-                  docker push $IMAGE_ID:PHP${{ matrix.php }}-supervisord
