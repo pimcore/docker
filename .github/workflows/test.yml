@@ -63,7 +63,7 @@ jobs:
                   cd $DOCKERFILE
                   ls -la .
 
-                  docker buildx build --platform linux/amd64,linux/arm64 --push -t pimage-image .
+                  docker buildx build --platform linux/amd64,linux/arm64 -t pimage-image .
 
                   if [ "${{ matrix.debug }}" == "debug" ]; then
                       # Make sure xdebug is installed and configured on debug-build
