@@ -30,45 +30,56 @@ jobs:
                         distro: buster
 
         steps:
-            -   uses: actions/checkout@v2
-            -   name: run update script
-                run: |
-                    ./update.sh
+            - uses: actions/checkout@v2
+            - name: run update script
+              run: |
+                ./update.sh
 
             - uses: stefanzweifel/git-auto-commit-action@v4
               if: ${{ (matrix.php == '8.1') && (matrix.variant == 'fpm') && (matrix.distro == 'bullseye') && (matrix.debug == 'no-debug') }}
               with:
                   commit_message: Update Dockerfile in /build dir
 
-            -   name: Login to DockerHub Registry
-                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+            - name: Login to DockerHub Registry
+              run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            -   name: Set up QEMU
-                uses: docker/setup-qemu-action@v1
-                with:
-                    image: tonistiigi/binfmt:latest
-                    platforms: all
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v1
+              with:
+                image: tonistiigi/binfmt:latest
+                platforms: all
 
-            -   name: Set up Buildx
-                uses: docker/setup-buildx-action@v1
+            - name: Set up Buildx
+              uses: docker/setup-buildx-action@v1
 
-            -   name: Build and push image
-                run: |
-                    IMAGE_ID=$IMAGE_NAME
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
+            - name: Build and push image
+              run: |
+                IMAGE_ID=$IMAGE_NAME
+                DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
 
-                    if [ "${{ matrix.debug }}" == "debug" ]; then
-                          DOCKER_TAG="$DOCKER_TAG-debug"
-                    fi
+                if [ "${{ matrix.debug }}" == "debug" ]; then
+                    DOCKER_TAG="$DOCKER_TAG-debug"
+                fi
                     
-                    echo "Tag $DOCKER_TAG"
+                echo "Tag $DOCKER_TAG"
                     
-                    ls -la $DOCKERFILE
-                    cd $DOCKERFILE
-                    ls -la .
+                ls -la $DOCKERFILE
+                cd $DOCKERFILE
+                ls -la .
 
-                    docker buildx build --platform linux/amd64,linux/arm64 --push -t $IMAGE_ID:$DOCKER_TAG .
+                docker buildx build --platform linux/amd64,linux/arm64 --push -t $IMAGE_ID:$DOCKER_TAG .
+
+            - name: Inspect image
+              run: |
+                  IMAGE_ID=$IMAGE_NAME
+                  DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
+                  
+                  if [ "${{ matrix.debug }}" == "debug" ]; then
+                      DOCKER_TAG="$DOCKER_TAG-debug"
+                  fi
+                       
+                docker buildx imagetools inspect $IMAGE_ID:$DOCKER_TAG
 
     build-supervisor:
         name: "Build supervisord image"
@@ -108,6 +119,12 @@ jobs:
                   cat Dockerfile
 
                   docker buildx build --platform linux/amd64,linux/arm64 --push -t $IMAGE_ID:PHP${{ matrix.php }}-supervisord .
+
+            - name: Inspect image
+              run: |
+                IMAGE_ID=$IMAGE_NAME
+                  
+                docker buildx imagetools inspect $IMAGE_ID:PHP${{ matrix.php }}-supervisord
 
             - uses: stefanzweifel/git-auto-commit-action@v4
               with:
