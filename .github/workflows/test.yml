@@ -37,7 +37,7 @@ jobs:
                     
                     cat Dockerfile
 
-            -   name: Build Multiarch Image
+            -   name: Build Image
                 run: |
                     set -ex
                     
