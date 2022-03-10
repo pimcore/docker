@@ -3,7 +3,7 @@ name: Docker BUILD
 on:
     workflow_dispatch:
     schedule:
-        - cron: '30 2 * * *' # run a build at least once a day to keep the images up to date
+        -   cron: '30 2 * * *' # run a build at least once a day to keep the images up to date
     push:
         branches:
             - main
@@ -17,12 +17,12 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [7.4, '8.0', '8.1']
-                variant: [cli, fpm]
-                distro: [bullseye, buster]
-                debug: [debug, no-debug]
+                php: [ '7.4', '8.0', '8.1' ]
+                variant: [ cli, fpm ]
+                distro: [ bullseye, buster ]
+                debug: [ debug, no-debug ]
                 exclude:
-                    -   php: 7.4
+                    -   php: '7.4'
                         distro: bullseye
                     -   php: '8.0'
                         distro: buster
@@ -31,49 +31,74 @@ jobs:
 
         steps:
             -   uses: actions/checkout@v2
-
             -   name: run update script
                 run: |
                     ./update.sh
 
-            - uses: stefanzweifel/git-auto-commit-action@v4
-              if: ${{ (matrix.php == '8.1') && (matrix.variant == 'fpm') && (matrix.distro == 'bullseye') && (matrix.debug == 'no-debug') }}
-              with:
-                  commit_message: Update Dockerfile in /build dir
+            -   uses: stefanzweifel/git-auto-commit-action@v4
+                if: ${{ (matrix.php == '8.1') && (matrix.variant == 'fpm') && (matrix.distro == 'bullseye') && (matrix.debug == 'no-debug') }}
+                with:
+                    commit_message: Update Dockerfile in /build dir
 
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            -   name: Build image
+            -   name: Cache Docker layers
+                uses: actions/cache@v2
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.variant }}-${{ matrix.debug }}
+                    restore-keys: |
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.variant }}-${{ matrix.debug }}-
+
+            -   name: Set up QEMU
+                uses: docker/setup-qemu-action@v1
+                with:
+                    image: tonistiigi/binfmt:latest
+                    platforms: all
+
+            -   name: Set up Buildx
+                uses: docker/setup-buildx-action@v1
+
+            -   name: Prepare Buildx
                 run: |
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
+                    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+                    docker buildx create --name multiarch --driver docker-container --use
+                    docker buildx inspect --bootstrap
 
-                    ls -la $DOCKERFILE
-
-                    cd $DOCKERFILE
-
-                    ls -la .
-
-                    docker build . -t image
-
-            -   name: Push image
+            -   name: Build and push image
                 run: |
                     IMAGE_ID=$IMAGE_NAME
-
                     DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
-
-                    cd $DOCKERFILE
-
-
+                    
                     if [ "${{ matrix.debug }}" == "debug" ]; then
-                          DOCKER_TAG="$DOCKER_TAG-debug"
+                        DOCKER_TAG="$DOCKER_TAG-debug"
                     fi
-
+                    
                     echo "Tag $DOCKER_TAG"
+                    
+                    ls -la $DOCKERFILE
+                    cd $DOCKERFILE
+                    ls -la .
+                    
+                    docker buildx build \
+                      --output "type=image,push=true" \
+                      --platform linux/amd64,linux/arm64 \
+                      --cache-from "type=local,src=/tmp/.buildx-cache" \
+                      --cache-to "type=local,dest=/tmp/.buildx-cache" \
+                      --tag $IMAGE_ID:$DOCKER_TAG .
 
-                    docker tag image $IMAGE_ID:$DOCKER_TAG
-                    docker push $IMAGE_ID:$DOCKER_TAG
+            -   name: Inspect image
+                run: |
+                    IMAGE_ID=$IMAGE_NAME
+                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
+                    
+                    if [ "${{ matrix.debug }}" == "debug" ]; then
+                      DOCKER_TAG="$DOCKER_TAG-debug"
+                    fi
+                    
+                    docker buildx imagetools inspect $IMAGE_ID:$DOCKER_TAG
 
     build-supervisor:
         name: "Build supervisord image"
@@ -82,35 +107,63 @@ jobs:
         strategy:
             max-parallel: 1
             matrix:
-                php: ['8.0', '8.1' ]
+                php: [ '8.0', '8.1' ]
         steps:
-            - uses: actions/checkout@v2
+            -   uses: actions/checkout@v2
 
-            - name: Login to DockerHub Registry
-              run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+            -   name: Login to DockerHub Registry
+                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            - name: Build image
-              run: |
-                  BUILD_DIR="build/supervisor/${{ matrix.php }}"
-                  mkdir -p $BUILD_DIR
-                  cp supervisord/Dockerfile.template "$BUILD_DIR/Dockerfile"
-                  cp supervisord/supervisord.conf "$BUILD_DIR/"
+            -   name: Cache Docker layers
+                uses: actions/cache@v2
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}
+                    restore-keys: |
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-
 
-                  cd $BUILD_DIR
+            -   name: Set up QEMU
+                uses: docker/setup-qemu-action@v1
+                with:
+                    image: tonistiigi/binfmt:latest
+                    platforms: all
 
-                  sed -ri -e 's!%%PHP_TAG%%!'${{ matrix.php }}'!' Dockerfile
+            -   name: Set up Buildx
+                uses: docker/setup-buildx-action@v1
 
-                  cat Dockerfile
+            -   name: Prepare Buildx
+                run: |
+                    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+                    docker buildx create --name multiarch --driver docker-container --use
+                    docker buildx inspect --bootstrap
 
-                  docker build . -t image
+            -   name: Build image
+                run: |
+                    IMAGE_ID=$IMAGE_NAME
+                    BUILD_DIR="build/supervisor/${{ matrix.php }}"
+                    mkdir -p $BUILD_DIR
+                    cp supervisord/Dockerfile.template "$BUILD_DIR/Dockerfile"
+                    cp supervisord/supervisord.conf "$BUILD_DIR/"
+                    
+                    cd $BUILD_DIR
+                    
+                    sed -ri -e 's!%%PHP_TAG%%!'${{ matrix.php }}'!' Dockerfile
+                    
+                    cat Dockerfile
+                    
+                    docker buildx build \
+                        --output "type=image,push=true" \
+                        --platform linux/amd64,linux/arm64 \
+                        --cache-from "type=local,src=/tmp/.buildx-cache" \
+                        --cache-to "type=local,dest=/tmp/.buildx-cache" \
+                        --tag $IMAGE_ID:PHP${{ matrix.php }}-supervisord .
 
-            - uses: stefanzweifel/git-auto-commit-action@v4
-              with:
-                  commit_message: Update Dockerfile in /build dir
+            -   name: Inspect image
+                run: |
+                    IMAGE_ID=$IMAGE_NAME
+                    
+                    docker buildx imagetools inspect $IMAGE_ID:PHP${{ matrix.php }}-supervisord
 
-            - name: Push image
-              run: |
-                  IMAGE_ID=$IMAGE_NAME
-
-                  docker tag image $IMAGE_ID:PHP${{ matrix.php }}-supervisord
-                  docker push $IMAGE_ID:PHP${{ matrix.php }}-supervisord
+            -   uses: stefanzweifel/git-auto-commit-action@v4
+                with:
+                    commit_message: Update Dockerfile in /build dir

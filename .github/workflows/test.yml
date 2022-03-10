@@ -12,12 +12,12 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [7.4, '8.0', '8.1']
-                variant: [cli, fpm]
-                distro: [bullseye, buster]
-                debug: [debug, no-debug]
+                php: [ '7.4', '8.0', '8.1' ]
+                variant: [ cli, fpm ]
+                distro: [ bullseye, buster ]
+                debug: [ debug, no-debug ]
                 exclude:
-                    -   php: 7.4
+                    -   php: '7.4'
                         distro: bullseye
                     -   php: '8.0'
                         distro: buster
@@ -34,23 +34,21 @@ jobs:
                 run: |
                     DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     cd $DOCKERFILE
-
+                    
                     cat Dockerfile
 
             -   name: Build Image
                 run: |
                     set -ex
-
+                    
                     DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-
+                    
                     ls -la $DOCKERFILE
-
                     cd $DOCKERFILE
-
                     ls -la .
-
-                    docker build . -t pimcore-image
-
+                    
+                    docker build --tag pimcore-image .
+                
                     if [ "${{ matrix.debug }}" == "debug" ]; then
                         # Make sure xdebug is installed and configured on debug-build
                         docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
@@ -63,9 +61,10 @@ jobs:
                         docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
                         docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                     fi
-
+                    
                     if [ "${{ matrix.php }}" == "7.4" ]; then
                         docker run --rm pimcore-image composer create-project pimcore/skeleton:^2.0 pimcore --no-scripts
                     else
                         docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
                     fi
+
