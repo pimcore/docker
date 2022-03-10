@@ -28,7 +28,7 @@ RUN set -eux; \
         tar -xvf ImageMagick.tar.gz; \
         cd ImageMagick-7.*; \
         ./configure; \
-        make; \
+        make --jobs=$(nproc); \
         make install; \
         ldconfig /usr/local/lib; \
         cd ..; \
@@ -44,19 +44,6 @@ RUN set -eux; \
     docker-php-ext-enable imap; \
     \
     cd /tmp; \
-    \
-    wget https://www.jonof.id.au/files/kenutils/pngout-20200115-linux.tar.gz; \
-        tar -xf pngout-20200115-linux.tar.gz; \
-        cp pngout-20200115-linux/amd64/pngout /bin/pngout; \
-        rm -rf pngout*; \
-    \
-    wget http://prdownloads.sourceforge.net/advancemame/advancecomp-1.17.tar.gz; \
-        tar zxvf advancecomp-1.17.tar.gz; \
-        cd advancecomp-1.17; \
-        ./configure; \
-        make; \
-        make install; \
-        cd ..; \
     \
     apt-get autoremove -y; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
