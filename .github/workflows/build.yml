@@ -5,8 +5,6 @@ on:
     schedule:
         -   cron: '30 2 * * *' # run a build at least once a day to keep the images up to date
     push:
-        branches:
-            - main
 
 env:
     IMAGE_NAME: pimcore/pimcore
@@ -66,7 +64,7 @@ jobs:
                     docker buildx create --name multiarch --driver docker-container --use
                     docker buildx inspect --bootstrap
 
-            -   name: Build and push image
+            -   name: Build and (push image if main branch)
                 run: |
                     IMAGE_ID=$IMAGE_NAME
                     DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
@@ -81,9 +79,15 @@ jobs:
                     ls -la $DOCKERFILE
                     cd $DOCKERFILE
                     ls -la .
-                    
+
+                    DOCKER_HUB_PUSH="false";
+                    if [ "${{ github.ref_name }}" == "main" ]; then
+                        DOCKER_HUB_PUSH="true"
+                    fi
+
+
                     docker buildx build \
-                      --output "type=image,push=true" \
+                      --output "type=image,push=$DOCKER_HUB_PUSH" \
                       --platform linux/amd64,linux/arm64 \
                       --cache-from "type=local,src=/tmp/.buildx-cache" \
                       --cache-to "type=local,dest=/tmp/.buildx-cache" \
