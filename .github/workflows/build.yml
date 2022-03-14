@@ -66,6 +66,7 @@ jobs:
 
             -   name: Build and (push image if main branch)
                 run: |
+                    set -x;
                     IMAGE_ID=$IMAGE_NAME
                     DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
