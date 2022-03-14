@@ -3,7 +3,13 @@ FROM php:%%PHP_TAG%%-%%IMAGE_VARIANT%%-%%DISTRIBUTION%%
 
 LABEL maintainer="dominik@pfaffenbauer.at"
 
-RUN set -eux; \
+ARG TARGETPLATFORM
+
+RUN case ${TARGETPLATFORM} in \
+        "linux/amd64") CURRENT_ARCH=amd64 ;; \
+        "linux/arm64") CURRENT_ARCH=aarch64 ;; \
+    esac; \
+    set -eux; \
     apt-get update; \
     apt-get install -y lsb-release; \
     echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list; \
@@ -46,9 +52,9 @@ RUN set -eux; \
     \
     cd /tmp; \
     \
-    wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb; \
-        dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb \
-        rm -f wkhtmltox_0.12.6-1.buster_amd64.deb \
+    wget -O wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_${CURRENT_ARCH}.deb \
+        dpkg -i wkhtmltox.deb; \
+        rm wkhtmltox.deb; \
     \
     apt-get autoremove -y; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
