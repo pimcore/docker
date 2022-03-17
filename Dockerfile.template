@@ -3,8 +3,6 @@ FROM php:%%PHP_TAG%%-%%IMAGE_VARIANT%%-%%DISTRIBUTION%%
 
 LABEL maintainer="dominik@pfaffenbauer.at"
 
-ARG TARGETPLATFORM
-
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     apt-get update; \
