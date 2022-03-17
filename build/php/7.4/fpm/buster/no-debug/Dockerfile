@@ -26,7 +26,7 @@ RUN set -eux; \
     \
     ##<version>##
     ##</version>##
-    docker-php-ext-install intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache; \
+    docker-php-ext-install intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
     \
     wget http://www.imagemagick.org/download/ImageMagick.tar.gz; \
         tar -xvf ImageMagick.tar.gz; \

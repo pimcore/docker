@@ -1,0 +1,4 @@
+/build/**                   linguist-generated
+Dockerfile*.template        linguist-language=Dockerfile
+*-Dockerfile-*              linguist-language=Dockerfile
+supervisord.conf            linguist-language=ini
