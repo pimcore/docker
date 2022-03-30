@@ -4,6 +4,7 @@ FROM php:%%PHP_TAG%%-%%IMAGE_VARIANT%%-%%DISTRIBUTION%%
 LABEL maintainer="dominik@pfaffenbauer.at"
 
 RUN set -eux; \
+    DPKG_ARCH="$(dpkg --print-architecture)"; \
     apt-get update; \
     apt-get install -y lsb-release; \
     echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list; \
@@ -14,10 +15,11 @@ RUN set -eux; \
         libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
         ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
         libx11-dev python3-pip opencv-data facedetect webp graphviz cmake ninja-build unzip cron \
-        liblcms2-dev liblqr-1-0-dev libjpeg-turbo-progs libopenjp2-7-dev wkhtmltopdf libtiff-dev \
+        liblcms2-dev liblqr-1-0-dev libjpeg-turbo-progs libopenjp2-7-dev libtiff-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
         libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev \
+        xfonts-75dpi xfonts-base libjpeg62-turbo \
         libonig-dev; \
     \
     ##<version>##
@@ -44,6 +46,10 @@ RUN set -eux; \
     docker-php-ext-enable imap; \
     \
     cd /tmp; \
+    \
+    wget -O wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_${DPKG_ARCH}.deb; \
+        dpkg -i wkhtmltox.deb; \
+        rm wkhtmltox.deb; \
     \
     apt-get autoremove -y; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
