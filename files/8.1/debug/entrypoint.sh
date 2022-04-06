@@ -29,4 +29,4 @@ if [ -n "$HOST" ]; then
   echo "xdebug.client_host = $HOST" >> /usr/local/etc/php/conf.d/20-xdebug.ini
 fi
 
-exec "$@"
+exec docker-php-entrypoint "$@"
