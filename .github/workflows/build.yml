@@ -13,7 +13,7 @@ jobs:
     build-php:
         name: "Build PHP images"
         runs-on: ubuntu-latest
-        if: github.repository_owner == 'pimcore'
+        if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
                 php: [ '7.4', '8.0', '8.1' ]
@@ -110,7 +110,7 @@ jobs:
         name: "Build supervisord image"
         needs: build-php
         runs-on: ubuntu-latest
-        if: github.repository_owner == 'pimcore'
+        if: github.repository == 'pimcore/docker'
         strategy:
             max-parallel: 1
             matrix:
