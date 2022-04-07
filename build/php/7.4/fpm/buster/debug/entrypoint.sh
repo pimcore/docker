@@ -33,4 +33,4 @@ if [ -n "$HOST" ]; then
   echo "xdebug.remote_host = $HOST" >> /usr/local/etc/php/conf.d/20-xdebug.ini
 fi
 
-exec "$@"
+exec docker-php-entrypoint "$@"
