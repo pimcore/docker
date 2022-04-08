@@ -69,7 +69,7 @@ RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.in
 ##<version>##
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 ##</version>##
 
 ##<debug>##
