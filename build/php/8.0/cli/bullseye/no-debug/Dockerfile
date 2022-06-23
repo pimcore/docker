@@ -29,7 +29,8 @@ RUN set -eux; \
     ##<version>##
     apt-get install -y libavif-dev libheif-dev optipng pngquant chromium chromium-sandbox; \
     ##</version>##
-    docker-php-ext-install intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
+    docker-php-ext-configure pcntl --enable-pcntl; \
+    docker-php-ext-install pcntl intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
     \
     wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
         tar -xvf ImageMagick.tar.gz; \
