@@ -24,7 +24,7 @@ RUN set -eux; \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
         libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev \
         xfonts-75dpi xfonts-base libjpeg62-turbo \
-        libonig-dev optipng pngquant; \
+        libonig-dev optipng pngquant inkscape; \
     \
     ##<version>##
     ##</version>##
