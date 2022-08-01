@@ -68,10 +68,10 @@ jobs:
                       --platform linux/amd64,linux/arm64 \
                       --cache-from "type=local,src=/tmp/.buildx-cache" \
                       --cache-to "type=local,dest=/tmp/.buildx-cache" \
-                      --tag $IMAGE_ID:$DOCKER_TAG .
+                      --tag $IMAGE_NAME:$DOCKER_TAG .
 
             -   name: Inspect image
                 run: |
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
                     
-                    docker buildx imagetools inspect $IMAGE_ID:$DOCKER_TAG
+                    docker buildx imagetools inspect $IMAGE_NAME:$DOCKER_TAG
