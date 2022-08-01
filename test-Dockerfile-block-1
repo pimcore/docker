@@ -1,4 +1,0 @@
-RUN bash -l -c "VERSION=$(curl --location --fail --retry 10 http://chromedriver.storage.googleapis.com/LATEST_RELEASE) && wget -c -nc --retry-connrefused --tries=0 https://chromedriver.storage.googleapis.com/\${VERSION}/chromedriver_linux64.zip" \
-    unzip -o -q chromedriver_linux64.zip \
-    mv chromedriver /usr/local/bin/chromedriver \
-    rm chromedriver_linux64.zip

@@ -12,44 +12,17 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [ '7.4', '8.0', '8.1' ]
-                variant: [ cli, fpm ]
-                distro: [ bullseye, buster ]
-                debug: [ debug, no-debug ]
-                exclude:
-                    -   php: '7.4'
-                        distro: bullseye
-                    -   php: '8.0'
-                        distro: buster
-                    -   php: '8.1'
-                        distro: buster
+                php: [ '8.0', '8.1' ]
+                distro: [ bullseye ]
+                target: [ pimcore_php, pimcore_php_debug, pimcore_php_supervisord ]
         steps:
             -   uses: actions/checkout@v2
-
-            -   name: run update script
-                run: |
-                    ./update.sh
-
-            -   name: Echo Dockerfile
-                run: |
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-                    cd $DOCKERFILE
-                    
-                    cat Dockerfile
-
             -   name: Build Image
                 run: |
                     set -ex
-                    
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-                    
-                    ls -la $DOCKERFILE
-                    cd $DOCKERFILE
-                    ls -la .
-                    
-                    docker build --tag pimcore-image .
+                    docker build --tag pimcore-image --target=${{ matrix.target }} --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION=${{ matrix.distro }}"
                 
-                    if [ "${{ matrix.debug }}" == "debug" ]; then
+                    if [ "${{ matrix.target }}" == "pimcore_php_debug" ]; then
                         # Make sure xdebug is installed and configured on debug-build
                         docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
                         docker run --rm pimcore-image test -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -62,9 +35,4 @@ jobs:
                         docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                     fi
                     
-                    if [ "${{ matrix.php }}" == "7.4" ]; then
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^2.0 pimcore --no-scripts
-                    else
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
-                    fi
-
+                    docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts

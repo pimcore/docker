@@ -131,9 +131,9 @@ for version in "${versions[@]}"; do
               ' "$buildDir/$version/$variant/$distribution/$debug/Dockerfile" > "$buildDir/$version/$variant/$distribution/$debug/Dockerfile.new"
               mv "$buildDir/$version/$variant/$distribution/$debug/Dockerfile.new" "$buildDir/$version/$variant/$distribution/$debug/Dockerfile"
 
-              sed -i "s/#%%INFO_HEADER%%/${infoHeader}/" "$buildDir/$version/$variant/$distribution/$debug/"*
+              gsed -i "s/#%%INFO_HEADER%%/${infoHeader}/" "$buildDir/$version/$variant/$distribution/$debug/"*
 
-              sed -ri \
+              gsed -ri \
                   -e 's!%%PHP_TAG%%!'"$version"'!' \
                   -e 's!%%IMAGE_VARIANT%%!'"$variant"'!' \
                   -e 's!%%DISTRIBUTION%%!'"$distribution"'!' \
