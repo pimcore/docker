@@ -14,15 +14,15 @@ jobs:
             matrix:
                 php: [ '8.0', '8.1' ]
                 distro: [ bullseye ]
-                target: [ pimcore_php, pimcore_php_debug, pimcore_php_supervisord ]
+                target: [ fpm, debug, supervisord ]
         steps:
             -   uses: actions/checkout@v2
             -   name: Build Image
                 run: |
                     set -ex
-                    docker build --tag pimcore-image --target=${{ matrix.target }} --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
+                    docker build --tag pimcore-image --target=pimcore_php_${{ matrix.target }} --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
                 
-                    if [ "${{ matrix.target }}" == "pimcore_php_debug" ]; then
+                    if [ "${{ matrix.target }}" == "debug" ]; then
                         # Make sure xdebug is installed and configured on debug-build
                         docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
                         docker run --rm pimcore-image test -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini

@@ -1,7 +1,7 @@
 ARG PHP_VERSION="8.0"
 ARG DEBIAN_VERSION="bullseye"
 
-FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php
+FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_fpm
 
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \

@@ -18,14 +18,9 @@ jobs:
             matrix:
                 php: [ '8.0', '8.1' ]
                 distro: [ bullseye ]
-                target: [ pimcore_php, pimcore_php_debug, pimcore_php_supervisord ]
+                target: [ fpm, debug, supervisord ]
 
         steps:
-            -   uses: actions/checkout@v2
-            -   name: run update script
-                run: |
-                    ./update.sh
-
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
@@ -33,9 +28,9 @@ jobs:
                 uses: actions/cache@v2
                 with:
                     path: /tmp/.buildx-cache
-                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.variant }}-${{ matrix.debug }}
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}
                     restore-keys: |
-                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.variant }}-${{ matrix.debug }}-
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-
 
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v1
@@ -55,14 +50,10 @@ jobs:
             -   name: Build and (push image if main branch)
                 run: |
                     set -x;
-                    IMAGE_ID=$IMAGE_NAME
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
                     
-                    if [ "${{ matrix.debug }}" == "debug" ]; then
-                        DOCKER_TAG="$DOCKER_TAG-debug"
-                    fi
-                    
+                    TARGET=pimcore_${{ matrix.target }}    
+                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
+
                     echo "Tag $DOCKER_TAG"
 
                     DOCKER_HUB_PUSH="false";
@@ -71,7 +62,7 @@ jobs:
                     fi
 
                     docker buildx build \
-                      --target=${{ matrix.target }} \
+                      --target=pimcore_php_${{ matrix.target }} \
                       --build-arg PHP_VERSION="${{ matrix.php }}"  \
                       --build-arg DEBIAN_VERSION="${{ matrix.distro }}"  \
                       --output "type=image,push=$DOCKER_HUB_PUSH" \
@@ -82,11 +73,6 @@ jobs:
 
             -   name: Inspect image
                 run: |
-                    IMAGE_ID=$IMAGE_NAME
-                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.variant }}"
-                    
-                    if [ "${{ matrix.debug }}" == "debug" ]; then
-                      DOCKER_TAG="$DOCKER_TAG-debug"
-                    fi
+                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
                     
                     docker buildx imagetools inspect $IMAGE_ID:$DOCKER_TAG
