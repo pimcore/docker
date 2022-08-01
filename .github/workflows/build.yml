@@ -50,8 +50,7 @@ jobs:
             -   name: Build and (push image if main branch)
                 run: |
                     set -x;
-                    
-                    TARGET=pimcore_${{ matrix.target }}    
+                       
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
 
                     echo "Tag $DOCKER_TAG"
