@@ -64,16 +64,11 @@ jobs:
                     fi
                     
                     echo "Tag $DOCKER_TAG"
-                    
-                    ls -la $DOCKERFILE
-                    cd $DOCKERFILE
-                    ls -la .
 
                     DOCKER_HUB_PUSH="false";
                     if [ "${{ github.ref_name }}" == "main" ]; then
                         DOCKER_HUB_PUSH="true"
                     fi
-
 
                     docker buildx build \
                       --target=${{ matrix.target }}
