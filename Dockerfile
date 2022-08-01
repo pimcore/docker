@@ -70,7 +70,6 @@ RUN mkdir -p /usr/local/var/run/
 
 WORKDIR /var/www/html
 
-ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
 
 FROM pimcore_php as pimcore_php_debug
