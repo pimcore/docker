@@ -60,12 +60,15 @@ jobs:
                         DOCKER_HUB_PUSH="true"
                     fi
 
+                    mkdir -p /tmp/.buildx-cache
+
                     docker buildx build \
                       --target=pimcore_php_${{ matrix.target }} \
                       --build-arg PHP_VERSION="${{ matrix.php }}"  \
                       --build-arg DEBIAN_VERSION="${{ matrix.distro }}"  \
                       --output "type=image,push=$DOCKER_HUB_PUSH" \
                       --platform linux/amd64,linux/arm64 \
+                      --cache-from "type=local,src=/tmp/.buildx-cache" \
                       --cache-to "type=local,dest=/tmp/.buildx-cache" \
                       --tag $IMAGE_NAME:$DOCKER_TAG .
 
