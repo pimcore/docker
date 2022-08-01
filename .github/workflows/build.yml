@@ -71,9 +71,9 @@ jobs:
                     fi
 
                     docker buildx build \
-                      --target=${{ matrix.target }}
-                      --build-arg PHP_VERSION="${{ matrix.php }}"
-                      --build-arg DEBIAN_VERSION="${{ matrix.distro }}"
+                      --target=${{ matrix.target }} \
+                      --build-arg PHP_VERSION="${{ matrix.php }}"  \
+                      --build-arg DEBIAN_VERSION="${{ matrix.distro }}"  \
                       --output "type=image,push=$DOCKER_HUB_PUSH" \
                       --platform linux/amd64,linux/arm64 \
                       --cache-from "type=local,src=/tmp/.buildx-cache" \
