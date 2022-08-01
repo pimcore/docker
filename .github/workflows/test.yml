@@ -20,7 +20,7 @@ jobs:
             -   name: Build Image
                 run: |
                     set -ex
-                    docker build --tag pimcore-image --target=${{ matrix.target }} --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION=${{ matrix.distro }}"
+                    docker build --tag pimcore-image --target=${{ matrix.target }} --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
                 
                     if [ "${{ matrix.target }}" == "pimcore_php_debug" ]; then
                         # Make sure xdebug is installed and configured on debug-build

@@ -3,8 +3,6 @@ ARG DEBIAN_VERSION="bullseye"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php
 
-SHELL ["/bin/sh", "-eo", "pipefail", "-c"]
-
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     apt-get update; \
