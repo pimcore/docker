@@ -24,14 +24,6 @@ jobs:
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            -   name: Cache Docker layers
-                uses: actions/cache@v2
-                with:
-                    path: /tmp/.buildx-cache
-                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}
-                    restore-keys: |
-                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-
-
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v2
                 with:
@@ -61,14 +53,7 @@ jobs:
                       --build-arg DEBIAN_VERSION="${{ matrix.distro }}"  \
                       --output "type=image,push=$DOCKER_HUB_PUSH" \
                       --platform linux/amd64,linux/arm64 \
-                      --cache-from "type=local,src=/tmp/.buildx-cache" \
-                      --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
                       --tag $IMAGE_NAME:$DOCKER_TAG .
-
-            -   name: Move cache
-                run: |
-                    rm -rf /tmp/.buildx-cache
-                    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
             -   name: Inspect image
                 run: |
