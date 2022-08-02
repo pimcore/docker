@@ -65,9 +65,6 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN mkdir -p /usr/local/var/log/php7/
-RUN mkdir -p /usr/local/var/run/
-
 WORKDIR /var/www/html
 
 CMD ["php-fpm"]
