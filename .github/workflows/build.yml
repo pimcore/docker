@@ -4,7 +4,8 @@ on:
     workflow_dispatch:
     schedule:
         -   cron: '30 2 * * *' # run a build at least once a day to keep the images up to date
-
+    push:
+        
 env:
     IMAGE_NAME: pimcore/pimcore
 
