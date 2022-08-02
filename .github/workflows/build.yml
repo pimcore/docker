@@ -55,9 +55,11 @@ jobs:
                     set -x;
                     
                     RELEASE_VERSION="${{ github.ref_name }}"
+                    DOCKER_HUB_PUSH="false"
                     
                     if [ ${{ github.ref_name }} == "main" ]; then
                         RELEASE_VERSION="latest"
+                        DOCKER_HUB_PUSH="true"
                     fi
                        
                     DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-$RELEASE_VERSION"
@@ -68,7 +70,7 @@ jobs:
                       --target=pimcore_php_${{ matrix.target }} \
                       --build-arg PHP_VERSION="${{ matrix.php }}"  \
                       --build-arg DEBIAN_VERSION="${{ matrix.distro }}"  \
-                      --output "type=image,push=false" \
+                      --output "type=image,push=$DOCKER_HUB_PUSH" \
                       --platform linux/amd64,linux/arm64 \
                       --cache-from "type=local,src=/tmp/.buildx-cache" \
                       --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
