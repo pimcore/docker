@@ -72,7 +72,7 @@ WORKDIR /var/www/html
 
 CMD ["php-fpm"]
 
-FROM pimcore_php as pimcore_php_debug
+FROM pimcore_php_fpm as pimcore_php_debug
 
 RUN apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -93,7 +93,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-FROM pimcore_php as pimcore_php_supervisord
+FROM pimcore_php_fpm as pimcore_php_supervisord
 
 RUN apt-get update && apt-get install -y supervisor cron
 COPY files/supervisord.conf /etc/supervisor/supervisord.conf
