@@ -1,6 +1,8 @@
 name: Docker RELEASE
 
 on:
+    schedule:
+        -   cron: '30 2 * * *'
     push:
         tags:
             - 'v*.*'
@@ -39,28 +41,53 @@ jobs:
 
             -   name: Set up Buildx
                 uses: docker/setup-buildx-action@v2
-                with:
-                    install: true
 
-            -   name: Build and (push image if main branch)
+            -   name: Set Release Name
+                id: vars
+                run: |
+                    DOCKER_PLATFORMS=linux/amd64,linux/arm64
+                    PHP_VERSION=${{ matrix.php }}
+                    DEBIAN_VERSION="${{ matrix.distro }}
+                    TARGET=pimcore_php_${{ matrix.target }}
+                    VERSION="edge"
+                    BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
+                    
+                    if [ "${{ github.event_name }}" = "schedule" ]; then
+                        VERSION="latest"
+                    fi
+                    
+                    if [[ $GITHUB_REF == refs/tags/* ]]; then
+                        VERSION=${GITHUB_REF#refs/tags/v}
+                    fi
+
+                    TAG="${BASE_TAG}-${VERSION}"
+                    TAGS="--tag ${IMAGE_NAME}:${TAG}"
+                    
+                    # Tag latest with Version build too
+                    if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
+                    fi
+
+                    echo ::set-output name=docker_image::${DOCKER_IMAGE}
+                    echo ::set-output name=tag::${TAG}
+                    echo ::set-output name=php_version::${PHP_VERSION}
+                    echo ::set-output name=debian_version::${DEBIAN_VERSION}
+                    echo ::set-output name=target::${TARGET}
+                    
+                    echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+                    --target=pimcore_php_${TARGET} \
+                    --build-arg PHP_VERSION="${PHP_VERSION}" \
+                    --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                    --cache-from "type=local,src=/tmp/.buildx-cache" \
+                    --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
+                    ${TAGS} .
+
+            -   name: Build and push images
                 run: |
                     set -x;
 
-                    DOCKER_TAG="PHP${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ github.ref_name }}"
-
-                    echo "Tag $DOCKER_TAG"
-
-                    docker buildx build \
-                      --target=pimcore_php_${{ matrix.target }} \
-                      --build-arg PHP_VERSION="${{ matrix.php }}"  \
-                      --build-arg DEBIAN_VERSION="${{ matrix.distro }}"  \
-                      --output "type=image,push=false" \
-                      --platform linux/amd64,linux/arm64 \
-                      --cache-from "type=local,src=/tmp/.buildx-cache" \
-                      --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
-                      --tag $IMAGE_NAME:$DOCKER_TAG .
-                    
-                    docker buildx imagetools inspect $IMAGE_NAME:$DOCKER_TAG
+                    docker buildx build --output "type=image,push=true" ${{ steps.vars.outputs.buildx_args }}
+                    docker buildx imagetools inspect ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.tag }}
 
             -   name: Move cache
                 run: |
