@@ -17,6 +17,46 @@ jobs:
                 target: [ fpm, debug, supervisord ]
         steps:
             -   uses: actions/checkout@v2
+            -   name: Test Tags
+                run: |
+                    set -ex
+                    
+                    DOCKER_PLATFORMS=linux/amd64,linux/arm64
+                    PHP_VERSION=${{ matrix.php }}
+                    DEBIAN_VERSION="${{ matrix.distro }}
+                    TARGET=pimcore_php_${{ matrix.target }}
+                    VERSION="edge"
+                    PHP_SUB_VERSION=$(docker run -it --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
+
+                    if [ "${{ matrix.target }}" = "fpm" ]; then
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}"
+                    else
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}-${{ matrix.target }}"
+                    fi
+
+                    if [ "${{ github.event_name }}" = "schedule" ]; then
+                        VERSION="dev"
+                    fi
+
+                    if [[ $GITHUB_REF == refs/tags/* ]]; then
+                        VERSION=${GITHUB_REF#refs/tags/v}
+                    fi
+
+                    TAG="${BASE_TAG}-${VERSION}"
+                    TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
+                    TAGS="--tag ${IMAGE_NAME}:${TAG}"
+
+                    TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
+
+                    # Tag latest with Version build too
+                    if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
+                    fi
+
+                    echo $TAGS
             -   name: Build Image
                 run: |
                     set -ex
