@@ -50,7 +50,7 @@ jobs:
                     DEBIAN_VERSION="${{ matrix.distro }}"
                     TARGET=pimcore_php_${{ matrix.target }}
                     VERSION="edge"
-                    PHP_SUB_VERSION=$(docker run -it --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
+                    PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
                     if [ "${{ matrix.target }}" = "fpm" ]; then
                         BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}"
