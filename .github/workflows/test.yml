@@ -23,7 +23,7 @@ jobs:
                     
                     DOCKER_PLATFORMS=linux/amd64,linux/arm64
                     PHP_VERSION=${{ matrix.php }}
-                    DEBIAN_VERSION="${{ matrix.distro }}
+                    DEBIAN_VERSION="${{ matrix.distro }}"
                     TARGET=pimcore_php_${{ matrix.target }}
                     VERSION="edge"
                     PHP_SUB_VERSION=$(docker run -it --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
