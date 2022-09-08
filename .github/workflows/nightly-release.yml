@@ -1,13 +1,27 @@
-name: Docker RELEASE
+name: Docker NIGHTLY RELEASE
 
 on:
-    push:
-        tags:
-            - 'v*.*'
+    schedule:
+        -   cron: '30 2 * * *'
+
 env:
     IMAGE_NAME: pimcore/pimcore
 
 jobs:
+    list:
+        runs-on: ubuntu-latest
+        name: "Create a list of tags to rebuild for new PHP Minor Versions"
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: "List Tags starting with v* for a Release"
+              id: create-list
+              run: echo "::set-output name=tags::$(git tag -l v*)"
+
+        outputs:
+            tags: "${{ steps.create-list.outputs.tags }}"
+
     build-php:
         name: "Build PHP images"
         runs-on: ubuntu-latest
@@ -17,9 +31,12 @@ jobs:
                 php: [ '8.0', '8.1' ]
                 distro: [ bullseye ]
                 target: [ fpm, debug, supervisord ]
+                tag: "${{ fromJson(needs.list.outputs.tag) }}"
 
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
+                with:
+                    ref: ${{ matrix.tag }}
 
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
@@ -28,9 +45,9 @@ jobs:
                 uses: actions/cache@v2
                 with:
                     path: /tmp/.buildx-cache
-                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ matrix.tag }}
                     restore-keys: |
-                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ matrix.tag }}-
 
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v2
@@ -47,7 +64,7 @@ jobs:
                     PHP_VERSION=${{ matrix.php }}
                     DEBIAN_VERSION="${{ matrix.distro }}"
                     TARGET=pimcore_php_${{ matrix.target }}
-                    VERSION="${GITHUB_REF#refs/tags/v}"
+                    VERSION="${{ matrix.tag }}"
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
                     if [ "${{ matrix.target }}" = "fpm" ]; then
