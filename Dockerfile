@@ -55,7 +55,8 @@ RUN set -eux; \
     \
     apt-get autoremove -y; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
-        apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
+        apt-get clean; \
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true
 
 RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
     echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
@@ -78,7 +79,8 @@ RUN apt-get update; \
     docker-php-ext-enable xdebug; \
     apt-get autoremove -y; \
     apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++; \
-    apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer;
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true
 
 # allow container to run as custom user, this won't work otherwise because config is changed in entrypoint.sh
 RUN chmod -R 0777 /usr/local/etc/php/conf.d
