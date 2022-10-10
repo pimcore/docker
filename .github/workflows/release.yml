@@ -2,8 +2,9 @@ name: Docker RELEASE
 
 on:
     workflow_dispatch:
-    tags:
-        - 'v*.*'
+    push:
+        tags:
+            - 'v*.*'
     schedule:
         -   cron: '30 2 * * *'
 
