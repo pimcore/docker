@@ -1,7 +1,7 @@
 name: Docker TEST
 
 on:
-    # Run tests for any PRs.
+    workflow_dispatch:
     pull_request:
 
 env:
