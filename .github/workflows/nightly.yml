@@ -47,7 +47,6 @@ jobs:
                     DOCKER_PLATFORMS=linux/amd64,linux/arm64
                     PHP_VERSION=${{ matrix.php }}
                     DEBIAN_VERSION="${{ matrix.distro }}"
-                    TARGET=pimcore_php_${{ matrix.target }}
                     VERSION="dev"
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
@@ -76,12 +75,9 @@ jobs:
                     
                     echo ::set-output name=docker_image::${DOCKER_IMAGE}
                     echo ::set-output name=tag::${TAG}
-                    echo ::set-output name=php_version::${PHP_VERSION}
-                    echo ::set-output name=debian_version::${DEBIAN_VERSION}
-                    echo ::set-output name=target::${TARGET}
                     
                     echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-                    --target=pimcore_php_${TARGET} \
+                    --target=pimcore_php_${{ matrix.target }} \
                     --build-arg PHP_VERSION="${PHP_VERSION}" \
                     --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
                     --cache-from "type=local,src=/tmp/.buildx-cache" \
