@@ -1,4 +1,4 @@
-name: Docker NIGHTLY RELEASE
+name: Docker RELEASE
 
 on:
     workflow_dispatch:
