@@ -1,4 +1,4 @@
-name: Docker TEST PHP
+name: Docker TEST
 
 on:
     # Run tests for any PRs.
@@ -12,44 +12,56 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [ '7.4', '8.0', '8.1' ]
-                variant: [ cli, fpm ]
-                distro: [ bullseye, buster ]
-                debug: [ debug, no-debug ]
-                exclude:
-                    -   php: '7.4'
-                        distro: bullseye
-                    -   php: '8.0'
-                        distro: buster
-                    -   php: '8.1'
-                        distro: buster
+                php: [ '8.0', '8.1' ]
+                distro: [ bullseye ]
+                target: [ fpm, debug, supervisord ]
         steps:
             -   uses: actions/checkout@v2
-
-            -   name: run update script
-                run: |
-                    ./update.sh
-
-            -   name: Echo Dockerfile
-                run: |
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-                    cd $DOCKERFILE
-                    
-                    cat Dockerfile
-
-            -   name: Build Image
+            -   name: Test Tags
                 run: |
                     set -ex
                     
-                    DOCKERFILE="build/php/${{ matrix.php }}/${{ matrix.variant }}/${{ matrix.distro }}/${{ matrix.debug }}"
-                    
-                    ls -la $DOCKERFILE
-                    cd $DOCKERFILE
-                    ls -la .
-                    
-                    docker build --tag pimcore-image .
+                    DOCKER_PLATFORMS=linux/amd64,linux/arm64
+                    PHP_VERSION=${{ matrix.php }}
+                    DEBIAN_VERSION="${{ matrix.distro }}"
+                    TARGET=pimcore_php_${{ matrix.target }}
+                    VERSION="edge"
+                    PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
+
+                    if [ "${{ matrix.target }}" = "fpm" ]; then
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}"
+                    else
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}-${{ matrix.target }}"
+                    fi
+
+                    if [ "${{ github.event_name }}" = "schedule" ]; then
+                        VERSION="dev"
+                    fi
+
+                    if [[ $GITHUB_REF == refs/tags/* ]]; then
+                        VERSION=${GITHUB_REF#refs/tags/v}
+                    fi
+
+                    TAG="${BASE_TAG}-${VERSION}"
+                    TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
+                    TAGS="--tag ${IMAGE_NAME}:${TAG}"
+
+                    TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
+
+                    # Tag latest with Version build too
+                    if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
+                    fi
+
+                    echo $TAGS
+            -   name: Build Image
+                run: |
+                    set -ex
+                    docker build --tag pimcore-image --target=pimcore_php_${{ matrix.target }} --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
                 
-                    if [ "${{ matrix.debug }}" == "debug" ]; then
+                    if [ "${{ matrix.target }}" == "debug" ]; then
                         # Make sure xdebug is installed and configured on debug-build
                         docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
                         docker run --rm pimcore-image test -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -62,9 +74,4 @@ jobs:
                         docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                     fi
                     
-                    if [ "${{ matrix.php }}" == "7.4" ]; then
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^2.0 pimcore --no-scripts
-                    else
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
-                    fi
-
+                    docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts

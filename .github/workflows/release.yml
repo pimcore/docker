@@ -1,0 +1,98 @@
+name: Docker RELEASE
+
+on:
+    push:
+        tags:
+            - 'v*.*'
+env:
+    IMAGE_NAME: pimcore/pimcore
+
+jobs:
+    build-php:
+        name: "Build PHP images"
+        runs-on: ubuntu-latest
+        if: github.repository == 'pimcore/docker'
+        strategy:
+            matrix:
+                php: [ '8.0', '8.1' ]
+                distro: [ bullseye ]
+                target: [ fpm, debug, supervisord ]
+
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Login to DockerHub Registry
+                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            -   name: Cache Docker layers
+                uses: actions/cache@v2
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}
+                    restore-keys: |
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-
+
+            -   name: Set up QEMU
+                uses: docker/setup-qemu-action@v2
+                with:
+                    platforms: 'amd64,arm64'
+
+            -   name: Set up Buildx
+                uses: docker/setup-buildx-action@v2
+
+            -   name: Set Release Name
+                id: vars
+                run: |
+                    DOCKER_PLATFORMS=linux/amd64,linux/arm64
+                    PHP_VERSION=${{ matrix.php }}
+                    DEBIAN_VERSION="${{ matrix.distro }}"
+                    TARGET=pimcore_php_${{ matrix.target }}
+                    VERSION="${GITHUB_REF#refs/tags/v}"
+                    PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
+                    
+                    if [ "${{ matrix.target }}" = "fpm" ]; then
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}"
+                    else
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}-${{ matrix.target }}"
+                    fi
+
+                    TAG="${BASE_TAG}-${VERSION}"
+                    TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
+                    TAGS="--tag ${IMAGE_NAME}:${TAG}"
+                    
+                    TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
+                    
+                    # Tag latest with Version build too
+                    if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
+                    fi
+
+                    echo ::set-output name=docker_image::${DOCKER_IMAGE}
+                    echo ::set-output name=tag::${TAG}
+                    echo ::set-output name=php_version::${PHP_VERSION}
+                    echo ::set-output name=debian_version::${DEBIAN_VERSION}
+                    echo ::set-output name=target::${TARGET}
+                    
+                    echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+                    --target=pimcore_php_${TARGET} \
+                    --build-arg PHP_VERSION="${PHP_VERSION}" \
+                    --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                    --cache-from "type=local,src=/tmp/.buildx-cache" \
+                    --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
+                    ${TAGS} .
+
+            -   name: Build and push images
+                run: |
+                    set -x;
+
+                    docker buildx build --output "type=image,push=true" ${{ steps.vars.outputs.buildx_args }}
+                    docker buildx imagetools inspect ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.tag }}
+
+            -   name: Move cache
+                run: |
+                    rm -rf /tmp/.buildx-cache
+                    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+                    
