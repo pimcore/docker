@@ -52,19 +52,28 @@ jobs:
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
                     if [ "${{ matrix.target }}" = "fpm" ]; then
-                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}"
-                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}"
+                        BASE_TAG="php${{ matrix.php }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}"
                     else
-                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
-                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}-${{ matrix.target }}"
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.target }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.target }}"
                     fi
                     
                     TAG="${BASE_TAG}-${VERSION}"
                     TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
+            
                     TAGS="--tag ${IMAGE_NAME}:${TAG}"
-                    
                     TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
-
+                    
+                    if [ "${{ matrix.target }}" = "debug" ]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm-debug"
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli-debug"
+                    elif  [ "${{ matrix.target }}" = "fpm" ]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli"
+                    elif  [ "${{ matrix.target }}" = "supervisor" ]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisor"
+                    fi
+                    
                     echo ::set-output name=docker_image::${DOCKER_IMAGE}
                     echo ::set-output name=tag::${TAG}
                     echo ::set-output name=php_version::${PHP_VERSION}

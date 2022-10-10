@@ -69,11 +69,11 @@ jobs:
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
                     if [ "${{ matrix.target }}" = "fpm" ]; then
-                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}"
-                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}"
+                        BASE_TAG="php${{ matrix.php }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}"
                     else
-                        BASE_TAG="php${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}"
-                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.distro }}-${{ matrix.target }}"
+                        BASE_TAG="php${{ matrix.php }}-${{ matrix.target }}"
+                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.target }}"
                     fi
 
                     TAG="${BASE_TAG}-${VERSION}"
