@@ -11,7 +11,6 @@
 cat << EOF > /usr/local/etc/php/conf.d/20-xdebug.ini
 xdebug.idekey = PHPSTORM
 xdebug.mode = debug
-xdebug.start_with_request = 1
 EOF
 
 # if XDEBUG_HOST is manually set
