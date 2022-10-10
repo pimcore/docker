@@ -9,6 +9,7 @@ on:
 
 env:
     IMAGE_NAME: pimcore/pimcore
+    LATEST_TAG: main
 
 jobs:
     build-php:
@@ -71,8 +72,10 @@ jobs:
                     TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
                     
                     # Tag latest with Version build too
-                    TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
-
+                    if [ $LATEST_TAG = "${{ matrix.tag }}" ]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
+                    fi 
+                    
                     echo ::set-output name=docker_image::${DOCKER_IMAGE}
                     echo ::set-output name=tag::${TAG}
                     echo ::set-output name=php_version::${PHP_VERSION}
