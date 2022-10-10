@@ -1,9 +1,12 @@
-name: Docker RELEASE
+name: Docker NIGHTLY RELEASE
 
 on:
-    push:
-        tags:
-            - 'v*.*'
+    workflow_dispatch:
+    tags:
+        - 'v*.*'
+    schedule:
+        -   cron: '30 2 * * *'
+
 env:
     IMAGE_NAME: pimcore/pimcore
 
@@ -17,9 +20,12 @@ jobs:
                 php: [ '8.0', '8.1' ]
                 distro: [ bullseye ]
                 target: [ fpm, debug, supervisord ]
+                tag: [ 'main' ]
 
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
+                with:
+                    ref: ${{ matrix.tag }}
 
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
@@ -28,9 +34,9 @@ jobs:
                 uses: actions/cache@v2
                 with:
                     path: /tmp/.buildx-cache
-                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ matrix.tag }}
                     restore-keys: |
-                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ matrix.tag }}-
 
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v2
@@ -47,7 +53,7 @@ jobs:
                     PHP_VERSION=${{ matrix.php }}
                     DEBIAN_VERSION="${{ matrix.distro }}"
                     TARGET=pimcore_php_${{ matrix.target }}
-                    VERSION="${GITHUB_REF#refs/tags/v}"
+                    VERSION="${{ matrix.tag }}"
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
                     if [ "${{ matrix.target }}" = "fpm" ]; then
@@ -65,9 +71,7 @@ jobs:
                     TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
                     
                     # Tag latest with Version build too
-                    if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
-                    fi
+                    TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
 
                     echo ::set-output name=docker_image::${DOCKER_IMAGE}
                     echo ::set-output name=tag::${TAG}
