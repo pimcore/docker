@@ -76,7 +76,6 @@ jobs:
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
                     fi 
                     
-                    echo ::set-output name=docker_image::${DOCKER_IMAGE}
                     echo ::set-output name=tag::${TAG}
                     
                     echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
@@ -87,12 +86,14 @@ jobs:
                     --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
                     ${TAGS} .
 
+                    echo ${TAGS}
+
             -   name: Build and push images
                 run: |
                     set -x;
 
                     docker buildx build --output "type=image,push=true" ${{ steps.vars.outputs.buildx_args }}
-                    docker buildx imagetools inspect ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.tag }}
+                    docker buildx imagetools inspect ${IMAGE_NAME}:${{ steps.vars.outputs.tag }}
 
             -   name: Move cache
                 run: |
