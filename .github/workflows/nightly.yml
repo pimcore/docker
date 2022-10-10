@@ -69,8 +69,9 @@ jobs:
                         TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli-debug"
                     elif  [ "${{ matrix.target }}" = "fpm" ]; then
                         TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli"
-                    elif  [ "${{ matrix.target }}" = "supervisor" ]; then
-                        TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisor"
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm"
+                    elif  [ "${{ matrix.target }}" = "supervisord" ]; then
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisord"
                     fi
                     
                     echo ::set-output name=tag::${TAG}
