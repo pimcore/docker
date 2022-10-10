@@ -51,7 +51,7 @@ jobs:
                     TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
 
                     # Tag latest with Version build too
-                    if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+                    if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest --tag ${IMAGE_NAME}:${BASE_TAG_DETAILED}-latest"
                     fi
 
