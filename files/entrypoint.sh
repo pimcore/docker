@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#
-# NOTE: THIS DOCKERFILE IS GENERATED VIA update.sh
-#
-# PLEASE DO NOT EDIT IT DIRECTLY.
-#
-
 # Override default configuration for xdebug v3.x.
 # See: https://xdebug.org/docs/all_settings
 cat << EOF > /usr/local/etc/php/conf.d/20-xdebug.ini
