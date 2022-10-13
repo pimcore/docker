@@ -91,6 +91,7 @@ COPY files/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php-fpm"]
 
 FROM pimcore_php_fpm as pimcore_php_supervisord
 
