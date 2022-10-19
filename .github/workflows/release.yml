@@ -10,8 +10,8 @@ on:
 
 env:
     IMAGE_NAME: pimcore/pimcore
-    LATEST_TAG: main
-    DEV_BRANCH: main
+    LATEST_TAG: 1.0
+    DEV_BRANCH: 1.x
 
 jobs:
     build-php:
@@ -23,7 +23,7 @@ jobs:
                 php: [ '8.0', '8.1' ]
                 distro: [ bullseye ]
                 target: [ fpm, debug, supervisord ]
-                tag: [ 'main' ]
+                tag: [ '1.x', '1.0' ]
 
         steps:
             -   uses: actions/checkout@v3
