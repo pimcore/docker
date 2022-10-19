@@ -1,4 +1,4 @@
-name: Docker RELEASE
+name: Docker Build & Release
 
 on:
     workflow_dispatch:
@@ -11,6 +11,7 @@ on:
 env:
     IMAGE_NAME: pimcore/pimcore
     LATEST_TAG: main
+    DEV_BRANCH: main
 
 jobs:
     build-php:
@@ -55,6 +56,11 @@ jobs:
                     PHP_VERSION=${{ matrix.php }}
                     DEBIAN_VERSION="${{ matrix.distro }}"
                     VERSION="${{ matrix.tag }}"
+                    # for the latest dev branch we use "dev" as the version and not the name of the branch
+                    if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
+                        VERSION="dev"
+                    fi 
+                    
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
                     if [ "${{ matrix.target }}" = "fpm" ]; then
@@ -68,13 +74,28 @@ jobs:
                     TAG="${BASE_TAG}-${VERSION}"
                     TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
                     TAGS="--tag ${IMAGE_NAME}:${TAG}"
-                    
                     TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
                     
                     # Tag latest with Version build too
                     if [ $LATEST_TAG = "${{ matrix.tag }}" ]; then
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
                     fi 
+                    
+                    
+                    # BC Layer for tags before we introduced versioning
+                    # They use uppercase "PHP" in tag name and always used the latest dev branch 
+                    if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
+                        if [ "${{ matrix.target }}" = "debug" ]; then
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm-debug"
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli-debug"
+                        elif  [ "${{ matrix.target }}" = "fpm" ]; then
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli"
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm"
+                        elif  [ "${{ matrix.target }}" = "supervisord" ]; then
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisord"
+                        fi
+                    fi
+                    
                     
                     echo ::set-output name=tag::${TAG}
                     
