@@ -10,7 +10,7 @@ on:
 
 env:
     IMAGE_NAME: pimcore/pimcore
-    LATEST_TAG: 1.0
+    LATEST_TAG: v1.0
     DEV_BRANCH: 1.x
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
                 php: [ '8.0', '8.1' ]
                 distro: [ bullseye ]
                 target: [ fpm, debug, supervisord ]
-                tag: [ '1.x', '1.0' ]
+                tag: [ '1.x', 'v1.0' ]
 
         steps:
             -   uses: actions/checkout@v3
@@ -55,7 +55,7 @@ jobs:
                     DOCKER_PLATFORMS=linux/amd64,linux/arm64
                     PHP_VERSION=${{ matrix.php }}
                     DEBIAN_VERSION="${{ matrix.distro }}"
-                    VERSION="v${{ matrix.tag }}"
+                    VERSION="${{ matrix.tag }}"
                     # for the latest dev branch we use "dev" as the version and not the name of the branch
                     if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
                         VERSION="dev"
