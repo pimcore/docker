@@ -1,4 +1,4 @@
-name: Docker RELEASE
+name: Docker Build & Release
 
 on:
     workflow_dispatch:
@@ -10,7 +10,8 @@ on:
 
 env:
     IMAGE_NAME: pimcore/pimcore
-    LATEST_TAG: main
+    LATEST_TAG: 1.0
+    DEV_BRANCH: 1.x
 
 jobs:
     build-php:
@@ -22,7 +23,7 @@ jobs:
                 php: [ '8.0', '8.1' ]
                 distro: [ bullseye ]
                 target: [ fpm, debug, supervisord ]
-                tag: [ 'main' ]
+                tag: [ '1.x', '1.0' ]
 
         steps:
             -   uses: actions/checkout@v3
@@ -54,7 +55,12 @@ jobs:
                     DOCKER_PLATFORMS=linux/amd64,linux/arm64
                     PHP_VERSION=${{ matrix.php }}
                     DEBIAN_VERSION="${{ matrix.distro }}"
-                    VERSION="${{ matrix.tag }}"
+                    VERSION="v${{ matrix.tag }}"
+                    # for the latest dev branch we use "dev" as the version and not the name of the branch
+                    if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
+                        VERSION="dev"
+                    fi 
+                    
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                     
                     if [ "${{ matrix.target }}" = "fpm" ]; then
@@ -68,13 +74,33 @@ jobs:
                     TAG="${BASE_TAG}-${VERSION}"
                     TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
                     TAGS="--tag ${IMAGE_NAME}:${TAG}"
-                    
                     TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
                     
                     # Tag latest with Version build too
                     if [ $LATEST_TAG = "${{ matrix.tag }}" ]; then
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
                     fi 
+                    
+                    # Create tag for major version
+                    if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
+                        VERSION_MAJOR=${VERSION//.[0-9]/}
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
+                    fi
+                    
+                    # BC Layer for tags before we introduced versioning
+                    # They use uppercase "PHP" in tag name and always used the latest dev branch 
+                    if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
+                        if [ "${{ matrix.target }}" = "debug" ]; then
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm-debug"
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli-debug"
+                        elif  [ "${{ matrix.target }}" = "fpm" ]; then
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli"
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm"
+                        elif  [ "${{ matrix.target }}" = "supervisord" ]; then
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisord"
+                        fi
+                    fi
+                    
                     
                     echo ::set-output name=tag::${TAG}
                     
