@@ -55,7 +55,7 @@ jobs:
                     DOCKER_PLATFORMS=linux/amd64,linux/arm64
                     PHP_VERSION=${{ matrix.php }}
                     DEBIAN_VERSION="${{ matrix.distro }}"
-                    VERSION="${{ matrix.tag }}"
+                    VERSION="v${{ matrix.tag }}"
                     # for the latest dev branch we use "dev" as the version and not the name of the branch
                     if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
                         VERSION="dev"
@@ -81,6 +81,11 @@ jobs:
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
                     fi 
                     
+                    # Create tag for major version
+                    if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
+                        VERSION_MAJOR=${VERSION//.[0-9]/}
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
+                    fi
                     
                     # BC Layer for tags before we introduced versioning
                     # They use uppercase "PHP" in tag name and always used the latest dev branch 
