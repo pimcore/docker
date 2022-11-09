@@ -46,6 +46,8 @@ php8.1-debug-v1
 
 #### Configure Xdebug in your IDE
 
+The following configuration depends on the default [`docker-compose.yaml](https://github.com/pimcore/skeleton/blob/11.x/docker-compose.yaml). 
+
 ![How to configure Xdebug with Pimcore Docker image](./doc/xdebug.png)
 
 #### Use step-debugging
