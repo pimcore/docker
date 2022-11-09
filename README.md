@@ -44,6 +44,15 @@ php8.1-debug-v1
 ...
 ```
 
+#### Configure Xdebug in your IDE
+
+![How to configure Xdebug with Pimcore Docker image](./doc/xdebug.png)
+
+#### Use step-debugging
+
+- **Browser**: Install [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc) browser extension and start debugging session in your tab. 
+- **CLI**: Run your command like this: `docker compose exec -e XDEBUG_TRIGGER=PHPSTORM php bin/console`
+
 ### Supervisord
 Same as PHP images, but using `-supervisor` after the PHP version:
 ```text
