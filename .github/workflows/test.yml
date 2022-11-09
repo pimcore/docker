@@ -64,9 +64,18 @@ jobs:
                         docker run --rm pimcore-image php -r 'assert("PHPSTORM" === ini_get("xdebug.idekey"));'
                         docker run --rm -e XDEBUG_HOST=pim.co.re pimcore-image sh -c 'php -i | grep "xdebug.*pim\.co\.re"'
                     else
-                        # Make sure xdebug is neither activated nor configred on non-debug build
+                        # Make sure xdebug is neither activated nor configured on non-debug build
                         docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
                         docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                     fi
                     
                     docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
+            -   name: Run Trivy vulnerability scanner
+                uses: aquasecurity/trivy-action@master
+                with:
+                    image-ref: 'pimcore-image'
+                    format: 'table'
+                    exit-code: '1'
+                    ignore-unfixed: true
+                    vuln-type: 'os,library'
+                    severity: 'CRITICAL,HIGH'
