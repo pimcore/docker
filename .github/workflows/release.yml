@@ -34,7 +34,7 @@ jobs:
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
             -   name: Cache Docker layers
-                uses: actions/cache@v2
+                uses: actions/cache@v3
                 with:
                     path: /tmp/.buildx-cache
                     key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ matrix.tag }}
