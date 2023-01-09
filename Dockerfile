@@ -27,57 +27,54 @@ RUN set -eux; \
     docker-php-ext-install pcntl intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
     \
     git clone https://aomedia.googlesource.com/aom; \
-    mkdir aom-build; \
-    cmake -S aom/ -B aom-build/; \
-    cd aom-build; \
-    make --jobs=$(nproc); \
-    make install; \
-    ldconfig /usr/local/lib; \
-    cd ..; \
-    rm -Rf aom; \
-    rm -Rf aom-build; \
+        mkdir aom-build; \
+        cmake -S aom/ -B aom-build/; \
+        cd aom-build; \
+        make --jobs=$(nproc); \
+        make install; \
+        cd ..; \
+        rm -Rf aom; \
+        rm -Rf aom-build; \
     \
     git clone https://github.com/AOMediaCodec/libavif.git; \
-    mkdir libavif-build; \
-    cmake -S libavif/ -B libavif-build/; \
-    cd libavif-build; \
-    make --jobs=$(nproc); \
-    make install; \
-    ldconfig /usr/local/lib; \
-    cd ..; \
-    rm -Rf libavif; \
-    rm -Rf libavif-build; \
+        mkdir libavif-build; \
+        cmake -S libavif/ -B libavif-build/; \
+        cd libavif-build; \
+        make --jobs=$(nproc); \
+        make V=0; \
+        make install; \
+        cd ..; \
+        rm -Rf libavif; \
+        rm -Rf libavif-build; \
     \
     git clone https://github.com/strukturag/libheif.git; \
-    cd libheif; \
-    ./autogen.sh; \
-    ./configure; \
-    make --jobs=$(nproc); \
-    make install; \
-    ldconfig /usr/local/lib; \
-    cd ..; \
-    rm -Rf libheif; \
+        cd libheif; \
+        ./autogen.sh; \
+        ./configure; \
+        make V=0; \
+        make --jobs=$(nproc); \
+        make install; \
+        cd ..; \
+        rm -Rf libheif; \
     \
     wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
         tar -xvf ImageMagick.tar.gz; \
         cd ImageMagick-7.*; \
         ./configure; \
         make --jobs=$(nproc); \
+        make V=0; \
         make install; \
-        ldconfig /usr/local/lib; \
         cd ..; \
         rm -rf ImageMagick*; \
     \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
-    pecl install -f xmlrpc; \
-    pecl install imagick; \
-    pecl install apcu; \
-    pecl install redis; \
+    pecl install -f xmlrpc imagick apcu redis; \
     docker-php-ext-enable redis imagick apcu; \
     docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
     docker-php-ext-install imap; \
     docker-php-ext-enable imap; \
+    ldconfig /usr/local/lib; \
     \
     cd /tmp; \
     \
@@ -89,6 +86,8 @@ RUN set -eux; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
         apt-get clean; \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true
+
+RUN ldconfig /usr/local/lib; sync;
 
 RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
     echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
