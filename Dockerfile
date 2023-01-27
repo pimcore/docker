@@ -22,40 +22,9 @@ RUN set -eux; \
         xfonts-75dpi xfonts-base libjpeg62-turbo \
         libonig-dev optipng pngquant inkscape; \
     \
-    apt-get install -y optipng pngquant chromium chromium-sandbox; \
+    apt-get install -y libavif-dev libheif-dev optipng pngquant chromium chromium-sandbox; \
     docker-php-ext-configure pcntl --enable-pcntl; \
     docker-php-ext-install pcntl intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
-    \
-    git clone https://aomedia.googlesource.com/aom; \
-        mkdir aom-build; \
-        cmake -S aom/ -B aom-build/; \
-        cd aom-build; \
-        make --jobs=$(nproc); \
-        make install; \
-        cd ..; \
-        rm -Rf aom; \
-        rm -Rf aom-build; \
-    \
-    git clone https://github.com/AOMediaCodec/libavif.git; \
-        mkdir libavif-build; \
-        cmake -S libavif/ -B libavif-build/; \
-        cd libavif-build; \
-        make --jobs=$(nproc); \
-        make V=0; \
-        make install; \
-        cd ..; \
-        rm -Rf libavif; \
-        rm -Rf libavif-build; \
-    \
-    git clone https://github.com/strukturag/libheif.git; \
-        cd libheif; \
-        ./autogen.sh; \
-        ./configure; \
-        make V=0; \
-        make --jobs=$(nproc); \
-        make install; \
-        cd ..; \
-        rm -Rf libheif; \
     \
     wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
         tar -xvf ImageMagick.tar.gz; \
@@ -85,9 +54,8 @@ RUN set -eux; \
     apt-get autoremove -y; \
         apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config libz-dev build-essential g++; \
         apt-get clean; \
-        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true
-
-RUN ldconfig /usr/local/lib; sync;
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
+    sync;
 
 RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
     echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
