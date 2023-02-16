@@ -1,4 +1,4 @@
-name: Docker Build & Release
+name: Self host test
 
 on:
     workflow_dispatch:
@@ -16,13 +16,13 @@ env:
 jobs:
     build-php:
         name: "Build PHP images"
-        runs-on: ubuntu-latest
+        runs-on: self-hosted
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
-                php: [ '8.0', '8.1', '8.2' ]
+                php: [ '8.0']
                 distro: [ bullseye ]
-                target: [ fpm, debug, supervisord ]
+                target: [ fpm ]
                 tag: [ '1.x', 'v1.3' ]
 
         steps:
