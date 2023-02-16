@@ -23,7 +23,7 @@ jobs:
                 php: [ '8.0']
                 distro: [ bullseye ]
                 target: [ fpm ]
-                tag: [ '1.x', 'v1.3' ]
+                tag: [ '1.x' ]
 
         steps:
             -   uses: actions/checkout@v3
