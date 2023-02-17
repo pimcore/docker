@@ -20,7 +20,7 @@ jobs:
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
-                php: [ '8.0']
+                php: [ '8.0', '8.1']
                 distro: [ bullseye ]
                 target: [ fpm ]
                 tag: [ '1.x' ]
