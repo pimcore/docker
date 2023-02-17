@@ -1,4 +1,4 @@
-name: Self host test
+name: Ubuntu Latest test
 
 on:
     workflow_dispatch:
