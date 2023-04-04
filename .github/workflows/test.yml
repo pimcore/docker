@@ -9,7 +9,7 @@ env:
 
 jobs:
     test:
-        runs-on: self-hosted
+        runs-on: ubuntu-latest
         strategy:
             matrix:
                 php: [ '8.0', '8.1', '8.2' ]
