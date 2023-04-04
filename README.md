@@ -25,6 +25,14 @@ Additionally we're offering 2 special tag suffixes:
 
 We're also offering special tags for specific PHP versions, e.g. `php8.1.11-v1.0`. 
 
+### Pimcore version compatibility & recommendations
+| Image / Pimcore | v10 | v11 | v2023.0 |
+|-----------------|-----|-----|---------|
+| v1              | ✅   | ✅   | ✅       |
+| v2              | ❌   | ✅*  | ✅*      |
+
+> *) recommended version
+
 ## Examples 
 
 ### PHP images
