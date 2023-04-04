@@ -9,23 +9,20 @@ RUN set -eux; \
     apt-get install -y lsb-release; \
     echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
-    apt-get install -y ffmpeg html2text ghostscript libreoffice default-jre; \
-    apt-get clean; \
     apt-get install -y --no-install-recommends \
         autoconf automake libtool nasm make pkg-config libz-dev build-essential openssl g++ \
-        zlib1g-dev libicu-dev libbz2-dev zopfli libc-client-dev \
+        zlib1g-dev libicu-dev libbz2-dev zopfli libc-client-dev default-jre \
         libkrb5-dev libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
-        pngcrush jpegoptim exiftool poppler-utils git wget \
+        ffmpeg html2text ghostscript libreoffice pngcrush jpegoptim exiftool poppler-utils git wget \
         libx11-dev python3-pip opencv-data facedetect webp graphviz cmake ninja-build unzip cron \
         liblcms2-dev liblqr-1-0-dev libjpeg-turbo-progs libopenjp2-7-dev libtiff-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
         libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev \
         xfonts-75dpi xfonts-base libjpeg62-turbo \
-        libonig-dev; \
+        libonig-dev optipng pngquant inkscape; \
     \
-    apt-get clean; \
-    apt-get install -y libavif-dev libheif-dev optipng pngquant chromium chromium-sandbox optipng pngquant inkscape; \
+    apt-get install -y libavif-dev libheif-dev optipng pngquant chromium chromium-sandbox; \
     docker-php-ext-configure pcntl --enable-pcntl; \
     docker-php-ext-install pcntl intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
     \
