@@ -14,7 +14,7 @@ RUN set -eux; \
         zlib1g-dev libicu-dev libbz2-dev libc-client-dev \
         libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
         ffmpeg ghostscript jpegoptim exiftool poppler-utils git wget \
-        webp graphviz cmake ninja-build unzip \
+        webp graphviz cmake ninja-build unzip libkrb5-dev \
         liblcms2-dev liblqr-1-0-dev libjpeg-turbo-progs libopenjp2-7-dev libtiff-dev \
         libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
         libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
@@ -39,7 +39,7 @@ RUN set -eux; \
     docker-php-ext-install gd; \
     pecl install -f xmlrpc imagick apcu redis; \
     docker-php-ext-enable redis imagick apcu; \
-    docker-php-ext-configure imap --with-imap-ssl; \
+    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
     docker-php-ext-install imap; \
     docker-php-ext-enable imap; \
     ldconfig /usr/local/lib; \
