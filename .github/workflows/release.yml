@@ -56,6 +56,7 @@ jobs:
                 env:
                     DEV_BRANCH: "${{ matrix.dev-branch }}"
                 run: |
+                    set -eux;
                     
                     imageVariants=("fpm" "debug" "supervisord")
                     
