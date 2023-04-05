@@ -25,31 +25,40 @@ RUN set -eux; \
     docker-php-ext-configure pcntl --enable-pcntl; \
     docker-php-ext-install pcntl intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
     \
-    wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
-        tar -xvf ImageMagick.tar.gz; \
-        cd ImageMagick-7.*; \
-        ./configure; \
-        make --jobs=$(nproc); \
-        make V=0; \
-        make install; \
-        cd ..; \
-        rm -rf ImageMagick*; \
-    \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
-    pecl install -f xmlrpc imagick apcu redis; \
-    docker-php-ext-enable redis imagick apcu; \
+    pecl install -f xmlrpc apcu redis; \
+    docker-php-ext-enable redis apcu; \
     docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
     docker-php-ext-install imap; \
     docker-php-ext-enable imap; \
     ldconfig /usr/local/lib; \
     \
-    cd /tmp; \
-    \
+    sync;
+
+#RUN set -eux; \
+#    cd /tmp; \
+#    wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
+#        tar -xvf ImageMagick.tar.gz; \
+#        cd ImageMagick-7.*; \
+#        ./configure; \
+#        make --jobs=$(nproc); \
+#        make V=0; \
+#        make install; \
+#        cd ..; \
+#        rm -rf ImageMagick*; \
+#    \
+#    pecl install -f imagick; \
+#    docker-php-ext-enable imagick; \
+#    ldconfig /usr/local/lib; \
+#    \
+#    sync;
+
+RUN set -eux; \
     apt-get autoremove -y; \
-        apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config build-essential g++; \
-        apt-get clean; \
-        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
+            apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config build-essential g++; \
+            apt-get clean; \
+            rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
     sync;
 
 RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
