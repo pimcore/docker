@@ -19,13 +19,13 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { tag: '1.x', php: '8.0', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: true }
-                    - { tag: '1.x', php: '8.1', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: true }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: true }
-                    - { tag: 'v1.3', php: '8.0', distro: bullseye, dev-branch: false, latest-tag: true, legacy-tags: true }
-                    - { tag: 'v1.3', php: '8.1', distro: bullseye, dev-branch: false, latest-tag: true, legacy-tags: true }
-                    - { tag: 'v1.3', php: '8.2', distro: bullseye, dev-branch: false, latest-tag: true, legacy-tags: true }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: false }
+                    - { tag: '1.x', php: '8.0', distro: bullseye, dev-branch: "v1-dev", latest-tag: false, legacy-tags: true }
+                    - { tag: '1.x', php: '8.1', distro: bullseye, dev-branch: "v1-dev", latest-tag: false, legacy-tags: true }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, dev-branch: "v1-dev", latest-tag: false, legacy-tags: true }
+                    - { tag: 'v1.3', php: '8.0', distro: bullseye, dev-branch: "", latest-tag: true, legacy-tags: true }
+                    - { tag: 'v1.3', php: '8.1', distro: bullseye, dev-branch: "", latest-tag: true, legacy-tags: true }
+                    - { tag: 'v1.3', php: '8.2', distro: bullseye, dev-branch: "", latest-tag: true, legacy-tags: true }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, dev-branch: "v2-dev", latest-tag: false, legacy-tags: false }
 
         steps:
             -   uses: actions/checkout@v3
@@ -53,6 +53,8 @@ jobs:
 
             -   name: Configure and build images
                 id: vars
+                env:
+                    DEV_BRANCH: "${{ matrix.dev-branch }}"
                 run: |
                     
                     imageVariants=("fpm" "debug" "supervisord")
@@ -66,8 +68,8 @@ jobs:
                         DEBIAN_VERSION="${{ matrix.distro }}"
                         VERSION="${{ matrix.tag }}"
                         # for the latest dev branch we use "dev" as the version and not the name of the branch
-                        if [ "true" = "${{ matrix.dev-branch }}" ]; then
-                            VERSION="dev"
+                        if [ ! -z "$DEV_BRANCH" ]; then
+                            VERSION="$DEV_BRANCH"
                         fi 
                         
                         PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
@@ -94,22 +96,6 @@ jobs:
                         if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
                             VERSION_MAJOR=${VERSION//.[0-9]/}
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
-                        fi
-                        
-                        # BC Layer for tags before we introduced versioning
-                        # They use uppercase "PHP" in tag name and always used the latest dev branch 
-                        if [ "true" = "${{ matrix.dev-branch }}" ]; then
-                            if [ "true" = "${{ matrix.legacy-tags }}" ]; then
-                                if [ "$imageVariant" = "debug" ]; then
-                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm-debug"
-                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli-debug"
-                                elif  [ "$imageVariant" = "fpm" ]; then
-                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli"
-                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm"
-                                elif  [ "$imageVariant" = "supervisord" ]; then
-                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisord"
-                                fi
-                            fi
                         fi
                             
                         echo ${TAGS}

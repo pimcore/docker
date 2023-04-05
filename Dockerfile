@@ -23,7 +23,7 @@ RUN set -eux; \
         libonig-dev optipng pngquant; \
     \
     docker-php-ext-configure pcntl --enable-pcntl; \
-    docker-php-ext-install pcntl intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
+    docker-php-ext-install pcntl intl mbstring bcmath bz2 xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
     \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
