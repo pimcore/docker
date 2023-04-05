@@ -10,8 +10,6 @@ on:
 
 env:
     IMAGE_NAME: pimcore/pimcore
-    LATEST_TAG: v1.3
-    DEV_BRANCH: 1.x
 
 jobs:
     build-php:
@@ -20,10 +18,14 @@ jobs:
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
-                php: [ '8.0', '8.1', '8.2' ]
-                distro: [ bullseye ]
-                target: [ fpm, debug, supervisord ]
-                tag: [ '1.x', 'v1.3' ]
+                include:
+                    - { tag: '1.x', php: '8.0', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: true }
+                    - { tag: '1.x', php: '8.1', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: true }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: true }
+                    - { tag: 'v1.3', php: '8.0', distro: bullseye, dev-branch: false, latest-tag: true, legacy-tags: true }
+                    - { tag: 'v1.3', php: '8.1', distro: bullseye, dev-branch: false, latest-tag: true, legacy-tags: true }
+                    - { tag: 'v1.3', php: '8.2', distro: bullseye, dev-branch: false, latest-tag: true, legacy-tags: true }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, dev-branch: true, latest-tag: false, legacy-tags: false }
 
         steps:
             -   uses: actions/checkout@v3
@@ -37,9 +39,9 @@ jobs:
                 uses: actions/cache@v3
                 with:
                     path: /tmp/.buildx-cache
-                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ matrix.tag }}
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.tag }}
                     restore-keys: |
-                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.target }}-${{ matrix.tag }}-
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.tag }}-
 
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v2
@@ -49,77 +51,81 @@ jobs:
             -   name: Set up Buildx
                 uses: docker/setup-buildx-action@v2
 
-            -   name: Set Release Name
+            -   name: Configure and build images
                 id: vars
                 run: |
-                    DOCKER_PLATFORMS=linux/amd64,linux/arm64
-                    PHP_VERSION=${{ matrix.php }}
-                    DEBIAN_VERSION="${{ matrix.distro }}"
-                    VERSION="${{ matrix.tag }}"
-                    # for the latest dev branch we use "dev" as the version and not the name of the branch
-                    if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
-                        VERSION="dev"
-                    fi 
                     
-                    PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
+                    imageVariants=("fpm" "debug" "supervisord")
                     
-                    if [ "${{ matrix.target }}" = "fpm" ]; then
-                        BASE_TAG="php${{ matrix.php }}"
-                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}"
-                    else
-                        BASE_TAG="php${{ matrix.php }}-${{ matrix.target }}"
-                        BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${{ matrix.target }}"
-                    fi
-
-                    TAG="${BASE_TAG}-${VERSION}"
-                    TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
-                    TAGS="--tag ${IMAGE_NAME}:${TAG}"
-                    TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
-                    
-                    # Tag latest with Version build too
-                    if [ $LATEST_TAG = "${{ matrix.tag }}" ]; then
-                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
-                    fi 
-                    
-                    # Create tag for major version
-                    if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
-                        VERSION_MAJOR=${VERSION//.[0-9]/}
-                        TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
-                    fi
-                    
-                    # BC Layer for tags before we introduced versioning
-                    # They use uppercase "PHP" in tag name and always used the latest dev branch 
-                    if [ $DEV_BRANCH = "${{ matrix.tag }}" ]; then
-                        if [ "${{ matrix.target }}" = "debug" ]; then
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm-debug"
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli-debug"
-                        elif  [ "${{ matrix.target }}" = "fpm" ]; then
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli"
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm"
-                        elif  [ "${{ matrix.target }}" = "supervisord" ]; then
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisord"
+                    for imageVariant in ${imageVariants[@]}; do           
+                        
+                        echo "Building image variant $imageVariant"
+                        
+                        DOCKER_PLATFORMS=linux/amd64,linux/arm64
+                        PHP_VERSION=${{ matrix.php }}
+                        DEBIAN_VERSION="${{ matrix.distro }}"
+                        VERSION="${{ matrix.tag }}"
+                        # for the latest dev branch we use "dev" as the version and not the name of the branch
+                        if [ "true" = "${{ matrix.dev-branch }}" ]; then
+                            VERSION="dev"
+                        fi 
+                        
+                        PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
+                        
+                        if [ "$imageVariant" = "fpm" ]; then
+                            BASE_TAG="php${{ matrix.php }}"
+                            BASE_TAG_DETAILED="php${PHP_SUB_VERSION}"
+                        else
+                            BASE_TAG="php${{ matrix.php }}-$imageVariant"
+                            BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-$imageVariant"
                         fi
-                    fi
+    
+                        TAG="${BASE_TAG}-${VERSION}"
+                        TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
+                        TAGS="--tag ${IMAGE_NAME}:${TAG}"
+                        TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
+                        
+                        # Tag latest with Version build too
+                        if [ "true" = "${{ matrix.latest-tag }}" ]; then
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
+                        fi 
+                        
+                        # Create tag for major version
+                        if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
+                            VERSION_MAJOR=${VERSION//.[0-9]/}
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
+                        fi
+                        
+                        # BC Layer for tags before we introduced versioning
+                        # They use uppercase "PHP" in tag name and always used the latest dev branch 
+                        if [ "true" = "${{ matrix.dev-branch }}" ]; then
+                            if [ "true" = "${{ matrix.legacy-tags }}" ]; then
+                                if [ "$imageVariant" = "debug" ]; then
+                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm-debug"
+                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli-debug"
+                                elif  [ "$imageVariant" = "fpm" ]; then
+                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-cli"
+                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-fpm"
+                                elif  [ "$imageVariant" = "supervisord" ]; then
+                                    TAGS="$TAGS --tag ${IMAGE_NAME}:PHP${{ matrix.php }}-supervisord"
+                                fi
+                            fi
+                        fi
+                            
+                        echo ${TAGS}
+                        
+                        
+                        docker buildx build --output "type=image,push=false" --platform ${DOCKER_PLATFORMS} \
+                        --target="pimcore_php_$imageVariant" \
+                        --build-arg PHP_VERSION="${PHP_VERSION}" \
+                        --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                        --cache-from "type=local,src=/tmp/.buildx-cache" \
+                        --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
+                        ${TAGS} .
                     
+                        docker buildx imagetools inspect ${IMAGE_NAME}:${TAG}
+                    done
                     
-                    echo ::set-output name=tag::${TAG}
-                    
-                    echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-                    --target=pimcore_php_${{ matrix.target }} \
-                    --build-arg PHP_VERSION="${PHP_VERSION}" \
-                    --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
-                    --cache-from "type=local,src=/tmp/.buildx-cache" \
-                    --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
-                    ${TAGS} .
-
-                    echo ${TAGS}
-
-            -   name: Build and push images
-                run: |
-                    set -x;
-
-                    docker buildx build --output "type=image,push=true" ${{ steps.vars.outputs.buildx_args }}
-                    docker buildx imagetools inspect ${IMAGE_NAME}:${{ steps.vars.outputs.tag }}
 
             -   name: Move cache
                 run: |
