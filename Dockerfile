@@ -6,38 +6,32 @@ FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_fpm
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     apt-get update; \
-    apt-get install -y lsb-release; \
-    echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        autoconf automake libtool nasm make pkg-config build-essential openssl g++ \
-        zlib1g-dev libicu-dev libbz2-dev libc-client-dev \
-        libxml2-dev libxslt1.1 libxslt1-dev locales locales-all \
-        ffmpeg ghostscript jpegoptim exiftool poppler-utils git wget \
-        webp graphviz cmake ninja-build unzip libkrb5-dev \
-        liblcms2-dev liblqr-1-0-dev libjpeg-turbo-progs libopenjp2-7-dev libtiff-dev \
-        libfontconfig1-dev libfftw3-dev libltdl-dev liblzma-dev libopenexr-dev \
-        libwmf-dev libdjvulibre-dev libpango1.0-dev libxext-dev libxt-dev librsvg2-dev libzip-dev \
-        libpng-dev libfreetype6-dev libjpeg-dev libxpm-dev libwebp-dev libjpeg62-turbo-dev \
-        libjpeg62-turbo libavif-dev libheif-dev \
-        libonig-dev optipng pngquant; \
+    echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
+    echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
+    apt-get update -oAcquire::AllowInsecureRepositories=true; \
+    apt-get install -y --allow-unauthenticated imagemagick-7 libmagickwand-7-dev; \
+    \
+    # tools used by Pimcore
+    apt-get install -y --allow-unauthenticated \
+        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz locales locales-all; \
+    \
+    # dependencies fór building PHP extensions
+    apt-get install -y --allow-unauthenticated \
+        libicu-dev zlib1g-dev libpng-dev libwebp-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev; \
     \
     docker-php-ext-configure pcntl --enable-pcntl; \
-    docker-php-ext-install pcntl intl mbstring bcmath bz2 xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
-    \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
-    docker-php-ext-install gd; \
-    pecl install -f xmlrpc apcu redis; \
-    docker-php-ext-enable redis apcu; \
-    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
-    docker-php-ext-install imap; \
-    docker-php-ext-enable imap; \
+    docker-php-ext-install pcntl intl bcmath pdo_mysql exif zip opcache sockets gd; \
+    \
+    pecl install -f apcu redis imagick; \
+    docker-php-ext-enable redis apcu imagick; \
     ldconfig /usr/local/lib; \
     \
     sync;
 
 #RUN set -eux; \
 #    cd /tmp; \
+#    apt-get install -y
 #    wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
 #        tar -xvf ImageMagick.tar.gz; \
 #        cd ImageMagick-7.*; \
