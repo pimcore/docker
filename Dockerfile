@@ -88,6 +88,7 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_fpm as pimcore_php_supervisord
 
+RUN apt-get update -oAcquire::AllowInsecureRepositories=true
 RUN apt-get install -y --allow-unauthenticated supervisor cron
 COPY files/supervisord.conf /etc/supervisor/supervisord.conf
 
