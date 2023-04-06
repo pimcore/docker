@@ -5,7 +5,6 @@ FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_fpm
 
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    apt-get update; \
     echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
     echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
@@ -69,10 +68,7 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_fpm as pimcore_php_debug
 
-RUN apt-get update; \
-    apt-get install -y --no-install-recommends \
-      autoconf automake libtool nasm make pkg-config libz-dev build-essential g++ iproute2; \
-    pecl install xdebug; \
+RUN pecl install xdebug; \
     docker-php-ext-enable xdebug; \
     apt-get autoremove -y; \
     apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++; \
@@ -92,7 +88,7 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_fpm as pimcore_php_supervisord
 
-RUN apt-get update && apt-get install -y supervisor cron
+RUN apt-get install -y --allow-unauthenticated supervisor cron
 COPY files/supervisord.conf /etc/supervisor/supervisord.conf
 
 RUN chmod gu+rw /var/run
