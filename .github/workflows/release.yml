@@ -60,7 +60,7 @@ jobs:
                     
                     imageVariants=("fpm" "debug" "supervisord")
                     
-                    for imageVariant in ${imageVariants[@]}; do           
+                    for imageVariant in ${imageVariants[@]}; do
                         
                         echo "Building image variant $imageVariant"
                         
