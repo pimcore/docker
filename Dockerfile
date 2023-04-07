@@ -9,6 +9,7 @@ RUN set -eux; \
     echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
     apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
+    apt-get update; \
     \
     # tools used by Pimcore
     apt-get install -y \
