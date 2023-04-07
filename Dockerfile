@@ -35,7 +35,7 @@ RUN set -eux; \
 
 RUN set -eux; \
     apt-get autoremove -y; \
-            apt-get remove -y autoconf automake libtool nasm make cmake ninja-build  \
+            apt-get remove -y autoconf automake libtool make cmake ninja-build  \
               pkg-config build-essential g++; \
             apt-get clean; \
             rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
@@ -58,7 +58,7 @@ FROM pimcore_php_fpm as pimcore_php_debug
 RUN pecl install xdebug; \
     docker-php-ext-enable xdebug; \
     apt-get autoremove -y; \
-    apt-get remove -y autoconf automake libtool nasm make pkg-config libz-dev build-essential g++; \
+    apt-get remove -y autoconf automake libtool make pkg-config libz-dev build-essential g++; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true
 
