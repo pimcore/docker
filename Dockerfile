@@ -13,7 +13,8 @@ RUN set -eux; \
     \
     # tools used by Pimcore
     apt-get install -y \
-        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz locales locales-all; \
+        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant  \
+        webp graphviz locales locales-all iproute2; \
     \
     # dependencies fór building PHP extensions
     apt-get install -y \
@@ -34,7 +35,8 @@ RUN set -eux; \
 
 RUN set -eux; \
     apt-get autoremove -y; \
-            apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config build-essential g++; \
+            apt-get remove -y autoconf automake libtool nasm make cmake ninja-build  \
+              pkg-config build-essential g++; \
             apt-get clean; \
             rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
     sync;
