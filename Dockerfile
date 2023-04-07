@@ -56,7 +56,7 @@ CMD ["php-fpm"]
 FROM pimcore_php_fpm as pimcore_php_debug
 
 RUN apt-get update; \
-    apt-get install -y autoconf; \
+    apt-get install -y autoconf automake libtool make pkg-config libz-dev build-essential g++; \
     \
     pecl install xdebug; \
     docker-php-ext-enable xdebug; \
@@ -78,8 +78,9 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_fpm as pimcore_php_supervisord
 
-RUN apt-get update -oAcquire::AllowInsecureRepositories=true
-RUN apt-get install -y supervisor cron
+RUN apt-get update; \
+    apt-get install -y supervisor cron;
+
 COPY files/supervisord.conf /etc/supervisor/supervisord.conf
 
 RUN chmod gu+rw /var/run
