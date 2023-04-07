@@ -8,15 +8,18 @@ RUN set -eux; \
     echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
     echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
-    apt-get install -y --allow-unauthenticated imagemagick-7 libmagickwand-7-dev; \
+    apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     \
     # tools used by Pimcore
-    apt-get install -y --allow-unauthenticated \
+    apt-get install -y \
         ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz locales locales-all; \
     \
     # dependencies fór building PHP extensions
-    apt-get install -y --allow-unauthenticated \
+    apt-get install -y \
         libicu-dev zlib1g-dev libpng-dev libwebp-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev; \
+    \
+    # ImageMagick
+    apt-get install -y imagemagick-7 libmagickwand-7-dev; \
     \
     docker-php-ext-configure pcntl --enable-pcntl; \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
@@ -70,7 +73,7 @@ CMD ["php-fpm"]
 FROM pimcore_php_fpm as pimcore_php_supervisord
 
 RUN apt-get update -oAcquire::AllowInsecureRepositories=true
-RUN apt-get install -y --allow-unauthenticated supervisor cron
+RUN apt-get install -y supervisor cron
 COPY files/supervisord.conf /etc/supervisor/supervisord.conf
 
 RUN chmod gu+rw /var/run
