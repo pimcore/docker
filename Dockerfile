@@ -14,7 +14,7 @@ RUN set -eux; \
     # tools used by Pimcore
     apt-get install -y \
         ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant  \
-        webp graphviz locales locales-all iproute2; \
+        webp graphviz locales locales-all iproute2 unzip; \
     \
     # dependencies fór building PHP extensions
     apt-get install -y \
