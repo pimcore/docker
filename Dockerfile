@@ -28,25 +28,6 @@ RUN set -eux; \
     \
     sync;
 
-#RUN set -eux; \
-#    cd /tmp; \
-#    apt-get install -y
-#    wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
-#        tar -xvf ImageMagick.tar.gz; \
-#        cd ImageMagick-7.*; \
-#        ./configure; \
-#        make --jobs=$(nproc); \
-#        make V=0; \
-#        make install; \
-#        cd ..; \
-#        rm -rf ImageMagick*; \
-#    \
-#    pecl install -f imagick; \
-#    docker-php-ext-enable imagick; \
-#    ldconfig /usr/local/lib; \
-#    \
-#    sync;
-
 RUN set -eux; \
     apt-get autoremove -y; \
             apt-get remove -y autoconf automake libtool nasm make cmake ninja-build pkg-config build-essential g++; \

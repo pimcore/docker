@@ -19,13 +19,13 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { tag: '1.x', php: '8.0', distro: bullseye, dev-branch: "v1-dev", latest-tag: false }
-                    - { tag: '1.x', php: '8.1', distro: bullseye, dev-branch: "v1-dev", latest-tag: false }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, dev-branch: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.3', php: '8.0', distro: bullseye, dev-branch: "", latest-tag: true }
-                    - { tag: 'v1.3', php: '8.1', distro: bullseye, dev-branch: "", latest-tag: true }
-                    - { tag: 'v1.3', php: '8.2', distro: bullseye, dev-branch: "", latest-tag: true }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, dev-branch: "v2-dev", latest-tag: false }
+                    - { tag: '1.x', php: '8.0', distro: bullseye, tag-suffix: "v1-dev", latest-tag: false }
+                    - { tag: '1.x', php: '8.1', distro: bullseye, tag-suffix: "v1-dev", latest-tag: false }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, tag-suffix: "v1-dev", latest-tag: false }
+                    - { tag: 'v1.3', php: '8.0', distro: bullseye, tag-suffix: "", latest-tag: true }
+                    - { tag: 'v1.3', php: '8.1', distro: bullseye, tag-suffix: "", latest-tag: true }
+                    - { tag: 'v1.3', php: '8.2', distro: bullseye, tag-suffix: "", latest-tag: true }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, tag-suffix: "v2-dev", latest-tag: false }
 
         steps:
             -   uses: actions/checkout@v3
@@ -54,7 +54,7 @@ jobs:
             -   name: Configure and build images
                 id: vars
                 env:
-                    DEV_BRANCH: "${{ matrix.dev-branch }}"
+                    TAG_SUFFIX: "${{ matrix.tag-suffix }}"
                 run: |
                     set -eux;
                     
@@ -69,8 +69,8 @@ jobs:
                         DEBIAN_VERSION="${{ matrix.distro }}"
                         VERSION="${{ matrix.tag }}"
                         # for the latest dev branch we use "dev" as the version and not the name of the branch
-                        if [ ! -z "$DEV_BRANCH" ]; then
-                            VERSION="$DEV_BRANCH"
+                        if [ ! -z "$TAG_SUFFIX" ]; then
+                            VERSION="$TAG_SUFFIX"
                         fi 
                         
                         PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
@@ -84,8 +84,8 @@ jobs:
                         fi
                     
                         # DEBUG / TEST
-                        BASE_TAG="testv2-$BASE_TAG"
-                        BASE_TAG_DETAILED="testv2-$BASE_TAG_DETAILED"
+                        #BASE_TAG="testv2-$BASE_TAG"
+                        #BASE_TAG_DETAILED="testv2-$BASE_TAG_DETAILED"
                     
                     
                         TAG="${BASE_TAG}-${VERSION}"
