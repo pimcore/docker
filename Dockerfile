@@ -55,7 +55,9 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_fpm as pimcore_php_debug
 
-RUN pecl install xdebug; \
+RUN apt-get install -y autoconf \
+    \
+    pecl install xdebug; \
     docker-php-ext-enable xdebug; \
     apt-get autoremove -y; \
     apt-get remove -y autoconf automake libtool make pkg-config libz-dev build-essential g++; \
