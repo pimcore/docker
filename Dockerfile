@@ -8,6 +8,9 @@ RUN set -eux; \
     apt-get update; \
     apt-get install -y lsb-release; \
     echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list; \
+    echo "deb https://www.deb-multimedia.org $(lsb_release -sc) main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
+    apt-get update -oAcquire::AllowInsecureRepositories=true; \
+    apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         autoconf automake libtool nasm make pkg-config libz-dev build-essential openssl g++ \
@@ -26,15 +29,7 @@ RUN set -eux; \
     docker-php-ext-configure pcntl --enable-pcntl; \
     docker-php-ext-install pcntl intl mbstring mysqli bcmath bz2 soap xsl pdo pdo_mysql fileinfo exif zip opcache sockets; \
     \
-    wget https://imagemagick.org/archive/ImageMagick.tar.gz; \
-        tar -xvf ImageMagick.tar.gz; \
-        cd ImageMagick-7.*; \
-        ./configure; \
-        make --jobs=$(nproc); \
-        make V=0; \
-        make install; \
-        cd ..; \
-        rm -rf ImageMagick*; \
+    apt-get install -y imagemagick-7 libmagickwand-7-dev; \
     \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
