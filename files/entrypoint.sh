@@ -15,6 +15,10 @@ if [ -z "$HOST" ]; then
   HOST=`getent hosts docker.for.mac.localhost | awk '{ print $1 }'`
 fi
 
+if [ -z "$HOST" ]; then
+ HOST=`getent ahostsv4 host.internal | awk 'NR==1{ print $1 }'`
+fi
+
 # else get host ip
 if [ -z "$HOST" ]; then
   HOST=`/sbin/ip route|awk '/default/ { print $3 }'`
