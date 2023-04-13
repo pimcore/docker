@@ -6,22 +6,24 @@ FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_fpm
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
+    echo "deb http://deb.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list.d/bookworm.list; \
     echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
+    echo "deb https://www.deb-multimedia.org bookworm main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
     apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     apt-get update; \
     \
     # tools used by Pimcore
-    apt-get install -y \
+    apt-get install -t bookworm -y \
         ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant  \
         webp graphviz locales locales-all iproute2 unzip git; \
     \
     # dependencies fór building PHP extensions
-    apt-get install -y \
+    apt-get install -t bookworm -y \
         libicu-dev zlib1g-dev libpng-dev libwebp-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev; \
     \
     # ImageMagick
-    apt-get install -y imagemagick-7 libmagickwand-7-dev; \
+    apt-get install -t bookworm -y imagemagick-7 libmagickwand-7-dev; \
     \
     docker-php-ext-configure pcntl --enable-pcntl; \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
