@@ -9,11 +9,11 @@ RUN set -eux; \
     apt-get update; \
     \
     # tools used by Pimcore
-    apt-get install -y iproute2 unzip git; \
+    apt-get install -y iproute2 unzip; \
     \
     # dependencies fór building PHP extensions
     apt-get install -y \
-        libicu-dev zlib1g-dev libpng-dev libjpeg62-turbo-dev libzip-dev locales locales-all; \
+        libicu-dev zlib1g-dev libpng-dev libjpeg62-turbo-dev libzip-dev; \
     \
     docker-php-ext-configure pcntl --enable-pcntl; \
     docker-php-ext-configure gd -enable-gd --with-jpeg; \
@@ -55,7 +55,7 @@ RUN set -eux; \
     # tools used by Pimcore
     apt-get install -y \
         autoconf automake libtool make cmake ninja-build pkg-config build-essential g++ \
-        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz; \
+        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz locales locales-all git; \
     \
     # dependencies fór building PHP extensions
     apt-get install -y libwebp-dev libfreetype6-dev; \
