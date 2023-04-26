@@ -1,34 +1,24 @@
 ARG PHP_VERSION="8.2"
 ARG DEBIAN_VERSION="bullseye"
 
-FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_fpm
+FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_min
 
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
-    echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
-    apt-get update -oAcquire::AllowInsecureRepositories=true; \
-    apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     apt-get update; \
     \
     # tools used by Pimcore
-    apt-get install -y \
-        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant  \
-        webp graphviz locales locales-all iproute2 unzip git; \
+    apt-get install -y iproute2 unzip git; \
     \
     # dependencies fór building PHP extensions
     apt-get install -y \
-        libicu-dev zlib1g-dev libpng-dev libwebp-dev libjpeg62-turbo-dev libfreetype6-dev libzip-dev; \
-    \
-    # ImageMagick
-    apt-get install -y imagemagick-7 libmagickwand-7-dev; \
+        libicu-dev zlib1g-dev libpng-dev libjpeg62-turbo-dev libzip-dev locales locales-all; \
     \
     docker-php-ext-configure pcntl --enable-pcntl; \
-    docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
-    docker-php-ext-install pcntl intl bcmath pdo_mysql exif zip opcache sockets gd; \
+    docker-php-ext-configure gd -enable-gd --with-jpeg; \
+    docker-php-ext-install pcntl bcmath pdo_mysql exif zip opcache sockets gd intl; \
     \
-    pecl install -f apcu redis imagick; \
-    docker-php-ext-enable redis apcu imagick; \
     ldconfig /usr/local/lib; \
     \
     sync;
@@ -50,6 +40,45 @@ ENV COMPOSER_MEMORY_LIMIT -1
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
 WORKDIR /var/www/html
+
+CMD ["php-fpm"]
+
+FROM pimcore_php_min as pimcore_php_fpm
+
+RUN set -eux; \
+    DPKG_ARCH="$(dpkg --print-architecture)"; \
+    echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
+    apt-get update -oAcquire::AllowInsecureRepositories=true; \
+    apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
+    apt-get update; \
+    \
+    # tools used by Pimcore
+    apt-get install -y \
+        autoconf automake libtool make cmake ninja-build pkg-config build-essential g++ \
+        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz; \
+    \
+    # dependencies fór building PHP extensions
+    apt-get install -y libwebp-dev libfreetype6-dev; \
+    \
+    # ImageMagick
+    apt-get install -y imagemagick-7 libmagickwand-7-dev; \
+    \
+    docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
+    docker-php-ext-install gd; \
+    \
+    pecl install -f apcu redis imagick; \
+    docker-php-ext-enable redis apcu imagick; \
+    ldconfig /usr/local/lib; \
+    \
+    sync;
+
+RUN set -eux; \
+    apt-get autoremove -y; \
+            apt-get remove -y autoconf automake libtool make cmake ninja-build  \
+              pkg-config build-essential g++; \
+            apt-get clean; \
+            rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
+    sync;
 
 CMD ["php-fpm"]
 
