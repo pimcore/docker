@@ -58,7 +58,7 @@ jobs:
                 run: |
                     set -eux;
                                         
-                    if [[ $VERSION =~ ^v?2.[0-9x]+$ ]]; then
+                    if [[ "${{ matrix.tag }}" =~ ^v?2.[0-9x]+$ ]]; then
                         imageVariants=("min" "fpm" "debug" "supervisord")
                     else 
                         imageVariants=("fpm" "debug" "supervisord")
