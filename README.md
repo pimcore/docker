@@ -12,7 +12,8 @@ As a starting point please see [example docker-compose configuration](https://gi
 
 ## Image flavors
 We're providing 3 different image flavors: 
-- PHP image for FPM and CLI (e.g. `php8.1-latest` or `php8.2-latest`)
+- PHP image for FPM and CLI with minimum requirements (e.g. `php8.1-min-latest` or `php8.2-min-latest`)
+- PHP image for FPM and CLI incl. all optional dependencies (e.g. `php8.1-latest` or `php8.2-latest`)
 - PHP debug image based on PHP image above, including preconfigured Xdebug for FPM and CLI (e.g. `php8.1-debug-latest` or `php8.2-debug-latest`)
 - Supervisord image based on PHP image above, for cron & queue processing  (e.g. `php8.1-supervisord-latest` or `php8.2-supervisord-latest`)
 

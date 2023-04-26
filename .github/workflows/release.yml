@@ -58,7 +58,7 @@ jobs:
                 run: |
                     set -eux;
                     
-                    imageVariants=("fpm" "debug" "supervisord")
+                    imageVariants=("min" "fpm" "debug" "supervisord")
                     
                     for imageVariant in ${imageVariants[@]}; do
                         
