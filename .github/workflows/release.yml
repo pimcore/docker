@@ -57,8 +57,13 @@ jobs:
                     TAG_SUFFIX: "${{ matrix.tag-suffix }}"
                 run: |
                     set -eux;
+                                        
+                    if [[ $VERSION =~ ^v?2.[0-9x]+$ ]]; then
+                        imageVariants=("min" "fpm" "debug" "supervisord")
+                    else 
+                        imageVariants=("fpm" "debug" "supervisord")
+                    fi
                     
-                    imageVariants=("min" "fpm" "debug" "supervisord")
                     
                     for imageVariant in ${imageVariants[@]}; do
                         
