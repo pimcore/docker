@@ -15,6 +15,7 @@ if [ -z "$HOST" ]; then
   HOST=`getent hosts docker.for.mac.localhost | awk '{ print $1 }'`
 fi
 
+# OrbStack 
 if [ -z "$HOST" ]; then
  HOST=`getent ahostsv4 host.internal | awk 'NR==1{ print $1 }'`
 fi
