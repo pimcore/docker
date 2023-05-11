@@ -85,6 +85,7 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_fpm as pimcore_php_max
 
+RUN set -eux; build-install.sh;
 RUN set -eux; \
     docker-php-ext-install soap; \
     docker-php-ext-enable soap; \
