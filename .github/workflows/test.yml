@@ -20,7 +20,7 @@ jobs:
                 run: |
                     set -ex
                     
-                    imageVariants=("min" "fpm" "debug" "supervisord")
+                    imageVariants=("min" "fpm" "max" "debug" "supervisord")
                     
                     for imageVariant in ${imageVariants[@]}; do
                         docker build --tag pimcore-image --target="pimcore_php_$imageVariant" --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
