@@ -12,20 +12,20 @@ As a starting point please see [example docker-compose configuration](https://gi
 
 ## Image flavors
 We're providing different image flavors: 
-- PHP image for FPM and CLI with minimum requirements (e.g. `php8.1-min-latest` or `php8.2-min-latest`)
-- PHP image for FPM and CLI incl. all optional dependencies (e.g. `php8.1-latest` or `php8.2-latest`) - **recommended**
-- PHP image for FPM and CLI incl. all optional dependencies and additional extensions and software (e.g. `php8.1-max-latest` or `php8.2-max-latest`)
-- PHP debug image based on PHP image above, including preconfigured Xdebug for FPM and CLI (e.g. `php8.1-debug-latest` or `php8.2-debug-latest`)
-- Supervisord image based on PHP image above, for cron & queue processing  (e.g. `php8.1-supervisord-latest` or `php8.2-supervisord-latest`)
+- [`min`] PHP image for FPM and CLI with minimum requirements (e.g. `php8.2-min-latest`)
+- [`default`] PHP image for FPM and CLI incl. all optional dependencies (e.g. `php8.2-latest` or `php8.2-default-latest`)
+- [`max`] PHP image for FPM and CLI incl. all optional dependencies and additional extensions and software (e.g. `php8.2-max-latest`)
+- [`debug`] PHP debug image based on PHP image above, including preconfigured Xdebug for FPM and CLI (e.g.  `php8.2-debug-latest`)
+- [`supervisord`] Supervisord image based on PHP image above, for cron & queue processing  (e.g. `php8.2-supervisord-latest`)
 
 ## Versioning
-Our images are versioned using a version-suffix staring with `-v` following SemVer.   
+Our images are versioned using a version-suffix staring with `-v` following SemVer (e.g. `-v2.0`).   
 With that we're able to allow smooth upgrades, breaking changes are only delivered with major versions.  
 Additionally we're offering 2 special tag suffixes: 
 - `-latest` always points to the latest available tag (recommended for local development)
 - `-dev` always points to the work in progress
 
-We're also offering special tags for specific PHP versions, e.g. `php8.1.11-v1.0`. 
+We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`. 
 
 ### Pimcore version compatibility & recommendations
 | Image / Pimcore | v10 | v11 | v2023.0 |
@@ -39,18 +39,18 @@ We're also offering special tags for specific PHP versions, e.g. `php8.1.11-v1.0
 
 ### PHP images
 ```text
-php8.1-latest # always use the latest PHP 8.1 image
-php8.1-v1 # always point to the latest minor version of v1
-php8.1-v1.0 # pin to specific image version, always using the latest bugfixes from PHP 8.1
-php8.1.11-v1.0 # pin to a specific PHP version & image version 
-php8.1-dev # development image (build from the default branch) 
+php8.2-latest # always use the latest PHP 8.2 image
+php8.2-v1 # always point to the latest minor version of v1
+php8.2-v1.0 # pin to specific image version, always using the latest bugfixes from PHP 8.2
+php8.2.5-v1.0 # pin to a specific PHP version & image version 
+php8.2-dev # development image (build from the default branch) 
 ```
 
 ### PHP Debug images
 Same as PHP images, but using `-debug` after the PHP version:
 ```text
-php8.1-debug-latest
-php8.1-debug-v1
+php8.2-debug-latest
+php8.2-debug-v2
 ...
 ```
 
@@ -68,7 +68,7 @@ The following configuration depends on the default [`docker-compose.yaml`](https
 ### Supervisord
 Same as PHP images, but using `-supervisor` after the PHP version:
 ```text
-php8.1-supervisor-latest
-php8.1-supervisor-v1
+php8.2-supervisor-latest
+php8.2-supervisor-v2
 ...
 ```

@@ -45,7 +45,7 @@ CMD ["php-fpm"]
 
 
 
-FROM pimcore_php_min as pimcore_php_fpm
+FROM pimcore_php_min as pimcore_php_default
 
 RUN set -eux; build-install.sh;
 
@@ -83,10 +83,11 @@ CMD ["php-fpm"]
 
 
 
-FROM pimcore_php_fpm as pimcore_php_max
+FROM pimcore_php_default as pimcore_php_max
 
 RUN set -eux; build-install.sh;
 RUN set -eux; \
+    apt-get install -y libxml2-dev; \
     docker-php-ext-install soap; \
     docker-php-ext-enable soap; \
     \
@@ -116,7 +117,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
 
-FROM pimcore_php_fpm as pimcore_php_supervisord
+FROM pimcore_php_default as pimcore_php_supervisord
 
 RUN apt-get update; \
     apt-get install -y supervisor cron;
