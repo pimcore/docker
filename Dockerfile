@@ -87,9 +87,10 @@ FROM pimcore_php_default as pimcore_php_max
 
 RUN set -eux; build-install.sh;
 RUN set -eux; \
-    apt-get install -y libxml2-dev; \
-    docker-php-ext-install soap; \
-    docker-php-ext-enable soap; \
+    apt-get install -y libxml2-dev libreoffice chromium-sandbox; \
+    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
+    docker-php-ext-install soap imap; \
+    docker-php-ext-enable soap imap; \
     \
     sync;
 RUN set -eux; build-cleanup.sh;
@@ -99,7 +100,7 @@ CMD ["php-fpm"]
 
 
 
-FROM pimcore_php_max as pimcore_php_debug
+FROM pimcore_php_default as pimcore_php_debug
 
 RUN set -eux; build-install.sh;
 RUN pecl install xdebug; \
