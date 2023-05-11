@@ -3,6 +3,10 @@ ARG DEBIAN_VERSION="bullseye"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_min
 
+COPY files/build-cleanup.sh /usr/local/bin
+COPY files/build-install.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/build-*
+
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
@@ -23,13 +27,7 @@ RUN set -eux; \
     \
     sync;
 
-RUN set -eux; \
-    apt-get remove -y autoconf automake libtool make cmake ninja-build  \
-      pkg-config build-essential g++ gcc libicu-dev; \
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
-    apt-get autoremove -y; \
-    sync;
+RUN set -eux; build-cleanup.sh;
 
 RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
     echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
@@ -43,7 +41,13 @@ WORKDIR /var/www/html
 
 CMD ["php-fpm"]
 
-FROM pimcore_php_min as pimcore_php_fpm
+
+
+
+
+FROM pimcore_php_min as pimcore_php_default
+
+RUN set -eux; build-install.sh;
 
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
@@ -54,7 +58,6 @@ RUN set -eux; \
     \
     # tools used by Pimcore
     apt-get install -y \
-        autoconf automake libtool make cmake ninja-build pkg-config build-essential g++ gcc \
         ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz locales locales-all git; \
     \
     # dependencies fór building PHP extensions
@@ -72,27 +75,37 @@ RUN set -eux; \
     \
     sync;
 
-RUN set -eux; \
-    apt-get autoremove -y; \
-            apt-get remove -y autoconf automake libtool make cmake ninja-build  \
-              pkg-config build-essential g++; \
-            apt-get clean; \
-            rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true; \
-    sync;
+RUN set -eux; build-cleanup.sh;
 
 CMD ["php-fpm"]
 
-FROM pimcore_php_fpm as pimcore_php_debug
 
-RUN apt-get update; \
-    apt-get install -y autoconf automake libtool make pkg-config libz-dev build-essential g++; \
+
+
+
+FROM pimcore_php_default as pimcore_php_max
+
+RUN set -eux; build-install.sh;
+RUN set -eux; \
+    apt-get install -y libxml2-dev libreoffice chromium-sandbox openssl libc-client-dev libkrb5-dev;  \
+    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
+    docker-php-ext-install soap imap; \
+    docker-php-ext-enable soap imap; \
     \
-    pecl install xdebug; \
-    docker-php-ext-enable xdebug; \
-    apt-get autoremove -y; \
-    apt-get remove -y autoconf automake libtool make pkg-config libz-dev build-essential g++; \
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer || true
+    sync;
+RUN set -eux; build-cleanup.sh;
+
+CMD ["php-fpm"]
+
+
+
+
+FROM pimcore_php_default as pimcore_php_debug
+
+RUN set -eux; build-install.sh;
+RUN pecl install xdebug; \
+    docker-php-ext-enable xdebug;
+RUN set -eux; build-cleanup.sh;
 
 # allow container to run as custom user, this won't work otherwise because config is changed in entrypoint.sh
 RUN chmod -R 0777 /usr/local/etc/php/conf.d
@@ -105,7 +118,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
 
-FROM pimcore_php_fpm as pimcore_php_supervisord
+FROM pimcore_php_default as pimcore_php_supervisord
 
 RUN apt-get update; \
     apt-get install -y supervisor cron;
