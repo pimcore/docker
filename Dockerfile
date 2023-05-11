@@ -87,7 +87,7 @@ FROM pimcore_php_default as pimcore_php_max
 
 RUN set -eux; build-install.sh;
 RUN set -eux; \
-    apt-get install -y libxml2-dev libreoffice chromium-sandbox openssl libkrb5-dev; \
+    apt-get install -y libxml2-dev libreoffice chromium-sandbox openssl libkrb5-dev;  \
     docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
     docker-php-ext-install soap imap; \
     docker-php-ext-enable soap imap; \
