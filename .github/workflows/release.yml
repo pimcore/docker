@@ -59,7 +59,7 @@ jobs:
                     set -eux;
                                         
                     if [[ "${{ matrix.tag }}" =~ ^v?2.[0-9x]+$ ]]; then
-                        imageVariants=("min" "fpm" "debug" "supervisord")
+                        imageVariants=("min" "fpm" "max" "debug" "supervisord")
                     else 
                         imageVariants=("fpm" "debug" "supervisord")
                     fi
