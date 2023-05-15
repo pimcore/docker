@@ -11,6 +11,7 @@ RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
+    apt-get upgrade -y; \
     \
     # tools used by Pimcore
     apt-get install -y iproute2 unzip; \
