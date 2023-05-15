@@ -51,20 +51,17 @@ RUN set -eux; build-install.sh;
 
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    echo "deb https://www.deb-multimedia.org bullseye main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
+    echo "deb http://deb.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list.d/bookworm.list; \
+    echo "deb https://www.deb-multimedia.org bookworm main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
     apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     apt-get update; \
     \
     # tools used by Pimcore
     apt-get install -y \
-        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz locales locales-all git; \
+        jpegoptim exiftool poppler-utils optipng pngquant graphviz locales locales-all git libfreetype6-dev ffmpeg ghostscript webp libwebp-dev; \
     \
-    # dependencies fór building PHP extensions
-    apt-get install -y libwebp-dev libfreetype6-dev; \
-    \
-    # ImageMagick
-    apt-get install -y imagemagick-7 libmagickwand-7-dev; \
+    apt-get install -t bookworm -y imagemagick-7 libmagickwand-7-dev; \
     \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
