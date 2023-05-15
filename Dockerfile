@@ -11,6 +11,7 @@ RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
+    apt-get upgrade -y; \
     \
     # tools used by Pimcore
     apt-get install -y iproute2 unzip; \
@@ -65,6 +66,8 @@ RUN set -eux; \
     \
     # ImageMagick
     apt-get install -y imagemagick-7 libmagickwand-7-dev; \
+    # Disable AVIF image format because of performance issues, can be removed in Debian bookworm as it has updated avif libraries
+    sed -i '\@</policymap>@i <policy domain="coder" rights="none" pattern="AVIF" />' /etc/ImageMagick-7/policy.xml; \
     \
     docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
