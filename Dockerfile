@@ -27,12 +27,19 @@ RUN set -eux; \
     ldconfig /usr/local/lib; \
     \
     sync;
+    
+RUN apt-get install -y openssh-client nodejs npm cifs-utils iputils-ping htop nano autoconf automake libtool m4 librabbitmq-dev; \
+    pecl install amqp; \
+    docker-php-ext-enable amqp;
 
 RUN set -eux; build-cleanup.sh;
 
-RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
-    echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
-    echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini
+RUN echo "upload_max_filesize = 1024M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
+    echo "memory_limit = 521M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
+    echo "post_max_size = 1024M" >> /usr/local/etc/php/conf.d/20-pimcore.ini
+
+RUN echo "user = root" >> /usr/local/etc/php-fpm.d/zz-docker.conf; \
+    echo "group = root" >> /usr/local/etc/php-fpm.d/zz-docker.conf;
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
@@ -40,7 +47,7 @@ COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-CMD ["php-fpm"]
+CMD ["php-fpm", "--allow-to-run-as-root"]
 
 
 
@@ -80,7 +87,7 @@ RUN set -eux; \
 
 RUN set -eux; build-cleanup.sh;
 
-CMD ["php-fpm"]
+CMD ["php-fpm", "--allow-to-run-as-root"]
 
 
 
@@ -98,7 +105,7 @@ RUN set -eux; \
     sync;
 RUN set -eux; build-cleanup.sh;
 
-CMD ["php-fpm"]
+CMD ["php-fpm", "--allow-to-run-as-root"]
 
 
 
@@ -119,7 +126,7 @@ COPY files/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["php-fpm"]
+CMD ["php-fpm", "--allow-to-run-as-root"]
 
 FROM pimcore_php_default as pimcore_php_supervisord
 
