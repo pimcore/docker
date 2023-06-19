@@ -91,8 +91,8 @@ jobs:
                         fi
                     
                         # DEBUG / TEST
-                        BASE_TAG="testv3-$BASE_TAG"
-                        BASE_TAG_DETAILED="testv3-$BASE_TAG_DETAILED"
+                        #BASE_TAG="testv3-$BASE_TAG"
+                        #BASE_TAG_DETAILED="testv3-$BASE_TAG_DETAILED"
                     
                     
                         TAG="${BASE_TAG}-${VERSION}"
