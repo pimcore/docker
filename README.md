@@ -29,10 +29,9 @@ We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`
 
 ### Pimcore version compatibility & recommendations
 | Image / Pimcore | v10 | v11 | v2023.0 |
-|-----------------|-----|----|--------|
-| v1              | ✅   | ✅  | ✅      |
-| v2              | ❌   | ✅* | ✅*     |
-| v3              | ❌   | ✅  | ✅      |
+|-----------------|-----|-----|---------|
+| v1              | ✅   | ✅   | ✅       |
+| v2              | ❌   | ✅*  | ✅*      |
 
 > *) recommended version
 
