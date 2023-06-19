@@ -27,6 +27,7 @@ jobs:
                     - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: true }
                     - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
+                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
 
         steps:
             -   uses: actions/checkout@v3
@@ -59,10 +60,10 @@ jobs:
                 run: |
                     set -eux;
                                         
-                    if [[ "${{ matrix.tag }}" =~ ^v?2.[0-9x]+$ ]]; then
-                        imageVariants=("min" "default" "max" "debug" "supervisord")
-                    else 
+                    if [[ "${{ matrix.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
                         imageVariants=("fpm" "debug" "supervisord")
+                    else 
+                        imageVariants=("min" "default" "max" "debug" "supervisord")
                     fi
                     
                     
@@ -90,8 +91,8 @@ jobs:
                         fi
                     
                         # DEBUG / TEST
-                        #BASE_TAG="testv2-$BASE_TAG"
-                        #BASE_TAG_DETAILED="testv2-$BASE_TAG_DETAILED"
+                        BASE_TAG="testv3-$BASE_TAG"
+                        BASE_TAG_DETAILED="testv3-$BASE_TAG_DETAILED"
                     
                     
                         TAG="${BASE_TAG}-${VERSION}"
