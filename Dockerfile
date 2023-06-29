@@ -1,42 +1,62 @@
 ARG PHP_VERSION="8.2"
 ARG DEBIAN_VERSION="bookworm"
 
-FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} as pimcore_php_min
+FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
 
-COPY files/build-cleanup.sh /usr/local/bin
-COPY files/build-install.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/build-*
+COPY files/build-*.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/build-*.sh
 
 RUN set -eux; \
+    \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
     apt-get upgrade -y; \
     \
     # tools used by Pimcore
-    apt-get install -y iproute2 unzip; \
-    \
-    # dependencies fór building PHP extensions
     apt-get install -y \
-        libicu-dev zlib1g-dev libpng-dev libjpeg62-turbo-dev libzip-dev; \
+        iproute2 \
+        unzip \
+    ; \
     \
+    # dependencies for building PHP extensions
+    apt-get install -y \
+        libicu-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libzip-dev \
+        zlib1g-dev \
+    ; \
+    \
+    docker-php-ext-configure gd --enable-gd --with-jpeg; \
     docker-php-ext-configure pcntl --enable-pcntl; \
-    docker-php-ext-configure gd -enable-gd --with-jpeg; \
-    docker-php-ext-install pcntl bcmath pdo_mysql exif zip opcache sockets gd intl; \
+    docker-php-ext-install \
+        bcmath \
+        exif \
+        gd \
+        intl \
+        opcache \
+        pcntl \
+        pdo_mysql \
+        sockets \
+        zip \
+    ; \
+    \
+    build-cleanup.sh; \
     \
     ldconfig /usr/local/lib; \
     \
-    sync;
+    sync
 
-RUN set -eux; build-cleanup.sh;
-
-RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
-    echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/20-pimcore.ini; \
-    echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/20-pimcore.ini
+RUN { \
+        echo "upload_max_filesize = 100M"; \
+        echo "memory_limit = 256M"; \
+        echo "post_max_size = 100M"; \
+    } > /usr/local/etc/php/conf.d/20-pimcore.ini
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
-COPY --from=composer/composer:2-bin /composer /usr/bin/composer
+COPY --from=composer/composer:2-bin /composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
 
@@ -45,12 +65,12 @@ CMD ["php-fpm"]
 
 
 
-
-FROM pimcore_php_min as pimcore_php_default
-
-RUN set -eux; build-install.sh;
+FROM pimcore_php_min AS pimcore_php_default
 
 RUN set -eux; \
+    \
+    build-install.sh; \
+    \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb https://www.deb-multimedia.org bookworm main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
@@ -59,56 +79,104 @@ RUN set -eux; \
     \
     # tools used by Pimcore
     apt-get install -y \
-        ffmpeg ghostscript jpegoptim exiftool poppler-utils optipng pngquant webp graphviz locales locales-all git; \
+        exiftool \
+        ffmpeg \
+        ghostscript \
+        git \
+        graphviz \
+        jpegoptim \
+        locales \
+        locales-all \
+        optipng \
+        pngquant \
+        poppler-utils \
+        webp \
+    ; \
     \
-    # dependencies fór building PHP extensions
-    apt-get install -y libwebp-dev libfreetype6-dev; \
+    # dependencies for building PHP extensions
+    apt-get install -y \
+        libfreetype6-dev \
+        libwebp-dev \
+    ; \
     \
     # ImageMagick
-    apt-get install -y imagemagick-7 libmagickwand-7-dev; \
+    apt-get install -y \
+        imagemagick-7 \
+        libmagickwand-7-dev \
+    ; \
     \
-    docker-php-ext-configure gd -enable-gd --with-freetype --with-jpeg --with-webp; \
+    docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
     \
-    pecl install -f apcu redis imagick; \
-    docker-php-ext-enable redis apcu imagick; \
+    pecl install -f \
+        apcu \
+        imagick \
+        redis \
+    ; \
+    docker-php-ext-enable \
+        apcu \
+        imagick \
+        redis \
+    ; \
+    \
+    build-cleanup.sh; \
+    \
     ldconfig /usr/local/lib; \
     \
-    sync;
-
-RUN set -eux; build-cleanup.sh;
+    sync
 
 CMD ["php-fpm"]
 
 
 
 
+FROM pimcore_php_default AS pimcore_php_max
 
-FROM pimcore_php_default as pimcore_php_max
-
-RUN set -eux; build-install.sh;
 RUN set -eux; \
-    apt-get install -y libxml2-dev libreoffice chromium-sandbox openssl libc-client-dev libkrb5-dev;  \
-    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
-    docker-php-ext-install soap imap; \
-    docker-php-ext-enable soap imap; \
     \
-    sync;
-RUN set -eux; build-cleanup.sh;
+    build-install.sh; \
+    \
+    apt-get install -y \
+        chromium-sandbox \
+        libc-client-dev \
+        libkrb5-dev \
+        libreoffice \
+        libxml2-dev \
+        openssl \
+    ; \
+    \
+    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
+    docker-php-ext-install \
+        imap \
+        soap \
+    ; \
+    docker-php-ext-enable \
+        imap \
+        soap \
+    ; \
+    \
+    build-cleanup.sh; \
+    \
+    sync
 
 CMD ["php-fpm"]
 
 
 
 
-FROM pimcore_php_default as pimcore_php_debug
+FROM pimcore_php_default AS pimcore_php_debug
 
-RUN set -eux; build-install.sh;
-RUN pecl install xdebug; \
-    docker-php-ext-enable xdebug;
-RUN set -eux; build-cleanup.sh;
+RUN set -eux; \
+    \
+    build-install.sh; \
+    \
+    pecl install xdebug; \
+    docker-php-ext-enable xdebug; \
+    \
+    build-cleanup.sh
 
-# allow container to run as custom user, this won't work otherwise because config is changed in entrypoint.sh
+# Allow running as an arbitrary user, as the config will be changed through the
+# entrypoint.sh script
 RUN chmod -R 0777 /usr/local/etc/php/conf.d
 
 ENV PHP_IDE_CONFIG serverName=localhost
@@ -119,14 +187,22 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
 
-FROM pimcore_php_default as pimcore_php_supervisord
 
-RUN apt-get update; \
-    apt-get install -y supervisor cron;
+
+
+FROM pimcore_php_default AS pimcore_php_supervisord
+
+RUN set -eux; \
+    \
+    apt-get update; \
+    apt-get install -y \
+        cron \
+        supervisor \
+    ; \
+    \
+    chmod gu+rw /var/run; \
+    chmod gu+s /usr/sbin/cron
 
 COPY files/supervisord.conf /etc/supervisor/supervisord.conf
-
-RUN chmod gu+rw /var/run
-RUN chmod gu+s /usr/sbin/cron
 
 CMD ["/usr/bin/supervisord"]
