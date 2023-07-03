@@ -1,10 +1,11 @@
+# syntax=docker/dockerfile:1
+
 ARG PHP_VERSION="8.2"
 ARG DEBIAN_VERSION="bookworm"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
 
-COPY files/build-*.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/build-*.sh
+COPY --chmod=0755 files/build-*.sh /usr/local/bin/
 
 RUN set -eux; \
     \
@@ -44,15 +45,15 @@ RUN set -eux; \
     \
     build-cleanup.sh; \
     \
-    ldconfig /usr/local/lib; \
-    \
-    sync
-
-RUN { \
+    { \
         echo "upload_max_filesize = 100M"; \
         echo "memory_limit = 256M"; \
         echo "post_max_size = 100M"; \
-    } > /usr/local/etc/php/conf.d/20-pimcore.ini
+    } > /usr/local/etc/php/conf.d/20-pimcore.ini; \
+    \
+    ldconfig /usr/local/lib; \
+    \
+    sync
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
@@ -173,16 +174,15 @@ RUN set -eux; \
     pecl install xdebug; \
     docker-php-ext-enable xdebug; \
     \
-    build-cleanup.sh
-
-# Allow running as an arbitrary user, as the config will be changed through the
-# entrypoint.sh script
-RUN chmod -R 0777 /usr/local/etc/php/conf.d
+    build-cleanup.sh; \
+    \
+    # Allow running as an arbitrary user, as the config will be changed through
+    # the entrypoint.sh script
+    chmod -R 0777 /usr/local/etc/php/conf.d/
 
 ENV PHP_IDE_CONFIG serverName=localhost
 
-COPY files/entrypoint.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY --chmod=0755 files/entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
