@@ -5,6 +5,7 @@ on:
     pull_request:
 
 env:
+    DOCKER_BUILDKIT: 1
     IMAGE_NAME: pimcore/pimcore
 
 jobs:
@@ -19,12 +20,12 @@ jobs:
             -   name: Build Image
                 run: |
                     set -ex
-                    
+
                     imageVariants=("min" "default" "max" "debug" "supervisord")
-                    
+
                     for imageVariant in ${imageVariants[@]}; do
                         docker build --tag pimcore-image --target="pimcore_php_$imageVariant" --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
-                    
+
                         if [ "$imageVariant" == "debug" ]; then
                             # Make sure xdebug is installed and configured on debug-build
                             docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
@@ -37,9 +38,9 @@ jobs:
                             docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
                             docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                         fi
-                        
+
                         docker run --rm pimcore-image composer create-project pimcore/skeleton:11.x-dev pimcore --no-scripts
-                    
+
                         if [ "$imageVariant" != "min" ]; then
                             docker run -v "$(pwd)/.github/files":/var/www/html --rm pimcore-image php test_heif.php
                         fi

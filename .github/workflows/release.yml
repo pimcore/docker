@@ -59,18 +59,18 @@ jobs:
                     VERSION_OVERRIDE: "${{ matrix.version-override }}"
                 run: |
                     set -eux;
-                                        
+
                     if [[ "${{ matrix.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
                         imageVariants=("fpm" "debug" "supervisord")
-                    else 
+                    else
                         imageVariants=("min" "default" "max" "debug" "supervisord")
                     fi
-                    
-                    
+
+
                     for imageVariant in ${imageVariants[@]}; do
-                        
+
                         echo "Building image variant $imageVariant"
-                        
+
                         DOCKER_PLATFORMS=linux/amd64,linux/arm64
                         PHP_VERSION=${{ matrix.php }}
                         DEBIAN_VERSION="${{ matrix.distro }}"
@@ -78,10 +78,10 @@ jobs:
                         # for the latest dev branch we use "dev" as the version and not the name of the branch
                         if [ ! -z "$VERSION_OVERRIDE" ]; then
                             VERSION="$VERSION_OVERRIDE"
-                        fi 
-                        
+                        fi
+
                         PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
-                        
+
                         if [ "$imageVariant" = "fpm"  ] || [ "$imageVariant" = "default"  ]; then
                             BASE_TAG="php${{ matrix.php }}"
                             BASE_TAG_DETAILED="php${PHP_SUB_VERSION}"
@@ -89,31 +89,31 @@ jobs:
                             BASE_TAG="php${{ matrix.php }}-$imageVariant"
                             BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-$imageVariant"
                         fi
-                    
+
                         # DEBUG / TEST
                         #BASE_TAG="testv3-$BASE_TAG"
                         #BASE_TAG_DETAILED="testv3-$BASE_TAG_DETAILED"
-                    
-                    
+
+
                         TAG="${BASE_TAG}-${VERSION}"
                         TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
                         TAGS="--tag ${IMAGE_NAME}:${TAG}"
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
-                        
+
                         # Tag latest with Version build too
                         if [ "true" = "${{ matrix.latest-tag }}" ]; then
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
-                        fi 
-                        
+                        fi
+
                         # Create tag for major version
                         if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
                             VERSION_MAJOR=${VERSION//.[0-9]/}
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
                         fi
-                            
+
                         echo ${TAGS}
-                        
-                        
+
+
                         docker buildx build --output "type=image,push=true" --platform ${DOCKER_PLATFORMS} \
                         --target="pimcore_php_$imageVariant" \
                         --build-arg PHP_VERSION="${PHP_VERSION}" \
@@ -121,14 +121,12 @@ jobs:
                         --cache-from "type=local,src=/tmp/.buildx-cache" \
                         --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
                         ${TAGS} .
-                    
-                        docker buildx imagetools inspect ${IMAGE_NAME}:${TAG} || true; 
+
+                        docker buildx imagetools inspect ${IMAGE_NAME}:${TAG} || true;
                     done
-                    
+
 
             -   name: Move cache
                 run: |
                     rm -rf /tmp/.buildx-cache
                     mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-                    
