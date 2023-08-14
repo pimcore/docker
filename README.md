@@ -29,9 +29,10 @@ We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`
 
 ### Pimcore version compatibility & recommendations
 | Image / Pimcore | v10 | v11 | v2023.0 |
-|-----------------|-----|-----|---------|
-| v1              | ✅   | ✅   | ✅       |
-| v2              | ❌   | ✅*  | ✅*      |
+|-----------------|-----|----|--------|
+| v1              | ✅   | ✅  | ✅      |
+| v2              | ❌   | ✅  | ✅      |
+| v3              | ❌   | ✅* | ✅*     |
 
 > *) recommended version
 
@@ -50,7 +51,7 @@ php8.2-dev # development image (build from the default branch)
 Same as PHP images, but using `-debug` after the PHP version:
 ```text
 php8.2-debug-latest
-php8.2-debug-v2
+php8.2-debug-v3
 ...
 ```
 
@@ -69,6 +70,6 @@ The following configuration depends on the default [`docker-compose.yaml`](https
 Same as PHP images, but using `-supervisor` after the PHP version:
 ```text
 php8.2-supervisor-latest
-php8.2-supervisor-v2
+php8.2-supervisor-v3
 ...
 ```
