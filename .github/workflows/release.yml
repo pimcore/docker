@@ -25,7 +25,7 @@ jobs:
                     - { tag: 'v1.3', php: '8.0', distro: bullseye, version-override: "", latest-tag: true }
                     - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
                     - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: true }
+                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
                     - { tag: 'v3.0', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
                     - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
