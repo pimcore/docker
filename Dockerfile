@@ -45,15 +45,36 @@ RUN set -eux; \
     \
     build-cleanup.sh; \
     \
-    { \
-        echo "upload_max_filesize = 100M"; \
-        echo "memory_limit = 256M"; \
-        echo "post_max_size = 100M"; \
-    } > /usr/local/etc/php/conf.d/20-pimcore.ini; \
-    \
     ldconfig /usr/local/lib; \
     \
     sync
+
+COPY files/conf/php/php.ini /usr/local/etc/php/conf.d/20-pimcore.ini
+COPY files/conf/php-fpm/php-fpm.conf /usr/local/etc/php-fpm.d/zz-www.conf
+
+# env php.ini
+ENV PHP_MEMORY_LIMIT "256M"
+ENV PHP_POST_MAX_SIZE "100M"
+ENV PHP_UPLOAD_MAX_FILESIZE "100M"
+ENV PHP_DISPLAY_STARTUP_ERRORS 1
+ENV PHP_MAX_EXECUTION_TIME "30"
+ENV PHP_ERROR_REPORTING "E_ALL"
+
+# opcache settings
+ENV OPCACHE_ENABLE 1
+ENV OPCACHE_ENABLE_CLI 0
+ENV OPCACHE_MEMORY_CONSUMPTION 128
+ENV OPCACHE_MAX_ACCELERATED_FILES 10000
+ENV OPCACHE_VALIDATE_TIMESTAMPS 1
+ENV OPCACHE_CONSISTENCY_CHECKS 0
+
+# fpm settings
+ENV PHP_FPM_PM dynamic
+ENV PHP_FPM_PM_MAX_CHILDREN 5
+ENV PHP_FPM_PM_START_SERVERS 2
+ENV PHP_FPM_PM_MAX_SPARE_SERVERS 3
+ENV PHP_FPM_PM_MIN_SPARE_SERVERS 1
+ENV PHP_FPM_PM_MAX_REQUESTS 10000
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_MEMORY_LIMIT -1
@@ -203,6 +224,6 @@ RUN set -eux; \
     chmod gu+rw /var/run; \
     chmod gu+s /usr/sbin/cron
 
-COPY files/supervisord.conf /etc/supervisor/supervisord.conf
+COPY files/conf/supervisord/supervisord.conf /etc/supervisor/supervisord.conf
 
 CMD ["/usr/bin/supervisord"]
