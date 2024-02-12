@@ -38,9 +38,8 @@ jobs:
                             docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
                             docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                         fi
-                  
-                        # we need to use --no-install and pimcore/pimcore:11.x-dev here in order to support PHP 8.3, can be rolled back as soon as pimcore/pimcore:11.2.0 was released
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:11.x-dev pimcore --no-scripts --no-install && composer require -d ./pimcore pimcore/pimcore:11.x-dev                        
+
+                        docker run --rm pimcore-image composer create-project pimcore/skeleton:11.x-dev pimcore --no-scripts --ignore-platform-req=php
 
                         if [ "$imageVariant" != "min" ]; then
                             docker run -v "$(pwd)/.github/files":/var/www/html --rm pimcore-image php test_heif.php
