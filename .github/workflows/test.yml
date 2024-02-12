@@ -13,7 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [ '8.2' ]
+                php: [ '8.2', '8.3' ]
                 distro: [ bookworm ]
         steps:
             -   uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
                             docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                         fi
 
-                        docker run --rm pimcore-image composer create-project pimcore/skeleton:11.x-dev pimcore --no-scripts
+                        docker run --rm pimcore-image composer create-project pimcore/skeleton:11.x-dev pimcore --no-scripts --ignore-platform-req=php
 
                         if [ "$imageVariant" != "min" ]; then
                             docker run -v "$(pwd)/.github/files":/var/www/html --rm pimcore-image php test_heif.php
