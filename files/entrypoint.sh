@@ -10,14 +10,14 @@ EOF
 # if XDEBUG_HOST is manually set
 HOST="$XDEBUG_HOST"
 
-# else if check if is Docker for Mac
-if [ -z "$HOST" ]; then
-  HOST=`getent hosts docker.for.mac.localhost | awk '{ print $1 }'`
-fi
-
 # OrbStack 
 if [ -z "$HOST" ]; then
  HOST=`getent ahostsv4 host.internal | awk 'NR==1{ print $1 }'`
+fi
+
+# else if check if is Docker for Mac
+if [ -z "$HOST" ]; then
+  HOST=`getent hosts docker.for.mac.localhost | awk '{ print $1 }'`
 fi
 
 # else get host ip
