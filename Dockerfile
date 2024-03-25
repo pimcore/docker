@@ -111,6 +111,7 @@ RUN set -eux; \
         locales-all \
         optipng \
         pngquant \
+        librabbitmq-dev \
         poppler-utils \
         webp \
     ; \
@@ -133,11 +134,13 @@ RUN set -eux; \
     pecl install -f \
         apcu \
         imagick \
+        amqp \
         redis \
     ; \
     docker-php-ext-enable \
         apcu \
         imagick \
+        amqp \
         redis \
     ; \
     \
