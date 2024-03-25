@@ -40,7 +40,6 @@ RUN set -eux; \
         pcntl \
         pdo_mysql \
         sockets \
-        amqp \
         zip \
     ; \
     \
@@ -134,11 +133,13 @@ RUN set -eux; \
     pecl install -f \
         apcu \
         imagick \
+        amqp \
         redis \
     ; \
     docker-php-ext-enable \
         apcu \
         imagick \
+        amqp \
         redis \
     ; \
     \
