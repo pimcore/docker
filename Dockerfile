@@ -40,6 +40,7 @@ RUN set -eux; \
         pcntl \
         pdo_mysql \
         sockets \
+        amqp \
         zip \
     ; \
     \
