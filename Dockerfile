@@ -111,6 +111,7 @@ RUN set -eux; \
         locales-all \
         optipng \
         pngquant \
+        librabbitmq4 \
         poppler-utils \
         webp \
     ; \
