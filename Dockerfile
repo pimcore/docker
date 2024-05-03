@@ -48,7 +48,7 @@ RUN set -eux; \
         amqp \
     ; \
     docker-php-ext-enable \
-        apcu \
+        amqp \
     ; \
     build-cleanup.sh; \
     \
