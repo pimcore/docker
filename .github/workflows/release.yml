@@ -31,6 +31,7 @@ jobs:
                     - { tag: 'v3.1', php: '8.2', distro: bookworm, version-override: "", latest-tag: false }
                     - { tag: 'v3.2', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
                     - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false }
 
         steps:
             -   uses: actions/checkout@v3
