@@ -139,14 +139,23 @@ RUN set -eux; \
     \
     pecl install -f \
         apcu \
-        imagick \
+        # imagick \
         redis \
     ; \
     docker-php-ext-enable \
         apcu \
-        imagick \
+        # imagick \
         redis \
     ; \
+    \
+    # Install Imagick from source as long as no official version compatible with PHP 8.3 is released yet
+    # See https://github.com/Imagick/imagick/issues/640
+    # Delete and uncomment imagick in the pecl install above when an official version is released
+    mkdir -p /usr/src/php/ext/imagick; \
+    # Locking on specific commit hash to provide consistent results, at the moment of writing this is the HEAD of master
+    curl -fsSL https://github.com/Imagick/imagick/archive/28f27044e435a2b203e32675e942eb8de620ee58.tar.gz | tar xvz -C "/usr/src/php/ext/imagick" --strip 1; \
+    docker-php-ext-install imagick; \
+    # End install Imagick from source
     \
     build-cleanup.sh; \
     \

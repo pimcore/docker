@@ -26,6 +26,11 @@ jobs:
                     for imageVariant in ${imageVariants[@]}; do
                         docker build --tag pimcore-image --target="pimcore_php_$imageVariant" --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
 
+                        if [ "$imageVariant" != "min" ]; then
+                            # Test that Imagick is installed
+                            docker run --rm pimcore-image sh -c 'php -m | grep imagick'
+                        fi
+                    
                         if [ "$imageVariant" == "debug" ]; then
                             # Make sure xdebug is installed and configured on debug-build
                             docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
