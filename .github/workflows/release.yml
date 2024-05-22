@@ -31,7 +31,7 @@ jobs:
                     - { tag: 'v3.1', php: '8.2', distro: bookworm, version-override: "", latest-tag: false }
                     - { tag: 'v3.2', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
                     - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v3-dev", latest-tag: false }
 
         steps:
             -   uses: actions/checkout@v3
@@ -119,12 +119,13 @@ jobs:
 
 
                         docker buildx build --output "type=image,push=true" --platform ${DOCKER_PLATFORMS} \
-                        --target="pimcore_php_$imageVariant" \
-                        --build-arg PHP_VERSION="${PHP_VERSION}" \
-                        --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
-                        --cache-from "type=local,src=/tmp/.buildx-cache" \
-                        --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
-                        ${TAGS} .
+                            --target="pimcore_php_$imageVariant" \
+                            --build-arg PHP_VERSION="${PHP_VERSION}" \
+                            --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.imagick_version_from_src }}" \
+                            --cache-from "type=local,src=/tmp/.buildx-cache" \
+                            --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
+                            ${TAGS} .
 
                         docker buildx imagetools inspect ${IMAGE_NAME}:${TAG} || true;
                     done

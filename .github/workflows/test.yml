@@ -13,8 +13,9 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php: [ '8.2', '8.3' ]
-                distro: [ bookworm ]
+                include:
+                    - { php: '8.2', distro: bookworm }
+                    - { php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58 }
         steps:
             -   uses: actions/checkout@v2
             -   name: Build Image
@@ -24,7 +25,12 @@ jobs:
                     imageVariants=("min" "default" "max" "debug" "supervisord")
 
                     for imageVariant in ${imageVariants[@]}; do
-                        docker build --tag pimcore-image --target="pimcore_php_$imageVariant" --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
+                        docker build --tag pimcore-image \
+                            --target="pimcore_php_$imageVariant" \
+                            --build-arg PHP_VERSION="${{ matrix.php }}" \
+                            --build-arg DEBIAN_VERSION="${{ matrix.distro }}" \
+                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.imagick_version_from_src }}" \
+                            .
 
                         if [ "$imageVariant" != "min" ]; then
                             # Test that Imagick is installed
