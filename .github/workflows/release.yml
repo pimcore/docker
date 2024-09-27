@@ -22,16 +22,16 @@ jobs:
                     - { tag: '1.x', php: '8.0', distro: bullseye, version-override: "v1-dev", latest-tag: false }
                     - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
                     - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.3', php: '8.0', distro: bullseye, version-override: "", latest-tag: true }
-                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
+                    - { tag: 'v1.3', php: '8.0', distro: bullseye, version-override: "", latest-tag: false }
+                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
                     - { tag: 'v3.0', php: '8.2', distro: bookworm, version-override: "", latest-tag: false }
                     - { tag: 'v3.1', php: '8.2', distro: bookworm, version-override: "", latest-tag: false }
                     - { tag: 'v3.2', php: '8.2', distro: bookworm, version-override: "", latest-tag: false }
-                    - { tag: 'v3.3', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: 'v3.3', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "", latest-tag: true }
+                    - { tag: 'v3.3', php: '8.2', distro: bookworm, version-override: "", latest-tag: false }
+                    - { tag: 'v3.3', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "", latest-tag: false }
                     - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
                     - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v3-dev", latest-tag: false }
 
@@ -120,7 +120,7 @@ jobs:
                         echo ${TAGS}
 
 
-                        docker buildx build --output "type=image,push=true" --platform ${DOCKER_PLATFORMS} \
+                        docker buildx build --output "type=image,push=false" --platform ${DOCKER_PLATFORMS} \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
