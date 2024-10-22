@@ -219,7 +219,7 @@ RUN set -eux; \
     build-cleanup.sh; \
     \
     # For local development, it should be possible to use any local (Git) Composer repository - that's safe in debug image flavor
-    git config --global --add safe.directory "*"  \
+    git config --global --add safe.directory "*"; \
     \
     # Allow running as an arbitrary user, as the config will be changed through
     # the entrypoint.sh script
