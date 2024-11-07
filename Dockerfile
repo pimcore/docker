@@ -184,7 +184,7 @@ RUN set -eux; \
     docker-php-ext-install ffi; \
     docker-php-ext-enable ffi; \
     \
-    apt-get remove -y meson unzip wget \
+    apt-get remove -y meson unzip wget; \
     \
     build-cleanup.sh; \
     \
