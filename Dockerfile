@@ -162,6 +162,30 @@ RUN set -eux; \
         curl -fsSL https://github.com/Imagick/imagick/archive/"$IMAGICK_VERSION_FROM_SRC".tar.gz | tar xvz -C "/usr/src/php/ext/imagick" --strip 1 && \
         docker-php-ext-install imagick; \
     \
+    \
+    # Install libvips build dependencies \
+    apt-get install -y \
+        libffi-dev \
+        libjxl-dev libopenjp2-7-dev libimagequant-dev libtiff-dev libarchive-dev libheif-dev libpoppler-glib-dev librsvg2-dev libcgif-dev libexif-dev \
+        libmagickcore-7-dev unzip wget meson \
+    ; \
+    # get the latest release zipball from GitHub
+    curl -s https://api.github.com/repos/libvips/libvips/releases/latest | grep -wo "https.*zipball" | wget -qi - -O libvips.zip; \
+    unzip libvips.zip; \
+    cd libvips*; \
+    # we need to build libvips from source in order to utilize ImageMagick 7 installed above
+    meson setup build --libdir /usr/lib/x86_64-linux-gnu; \
+    cd build; \
+    meson compile; \
+    meson install; \
+    cd ../..; \
+    rm -r libvips*; \
+    \
+    docker-php-ext-install ffi; \
+    docker-php-ext-enable ffi; \
+    \
+    apt-get remove -y meson unzip wget \
+    \
     build-cleanup.sh; \
     \
     ldconfig /usr/local/lib; \
