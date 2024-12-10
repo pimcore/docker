@@ -15,7 +15,7 @@ We're providing different image flavors:
 - [`min`] PHP image for FPM and CLI with minimum requirements (e.g. `php8.2-min-latest`)
 - [`default`] PHP image for FPM and CLI incl. all optional dependencies (e.g. `php8.2-latest` or `php8.2-default-latest`)
 - [`max`] PHP image for FPM and CLI incl. all optional dependencies and additional extensions and software (e.g. `php8.2-max-latest`)
-- [`debug`] PHP debug image based on PHP image above, including preconfigured Xdebug for FPM and CLI (e.g.  `php8.2-debug-latest`)
+- [`debug`] PHP debug image based on the `default` flavor, including preconfigured Xdebug for FPM and CLI (e.g.  `php8.2-debug-latest`)
 - [`supervisord`] Supervisord image based on PHP image above, for cron & queue processing  (e.g. `php8.2-supervisord-latest`)
 
 ## Versioning
