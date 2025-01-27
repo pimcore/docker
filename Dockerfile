@@ -44,12 +44,9 @@ RUN set -eux; \
         zip \
     ; \
     \
-    pecl install -f \
-        amqp \
-    ; \
-    docker-php-ext-enable \
-        amqp \
-    ; \
+    pecl install -f amqp-2.1.1; \
+    docker-php-ext-enable amqp; \
+    \
     build-cleanup.sh; \
     \
     ldconfig /usr/local/lib; \
