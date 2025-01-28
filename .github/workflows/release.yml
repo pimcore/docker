@@ -19,10 +19,8 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { tag: '1.x', php: '8.0', distro: bullseye, version-override: "v1-dev", latest-tag: false }
                     - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
                     - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.3', php: '8.0', distro: bullseye, version-override: "", latest-tag: true }
                     - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
                     - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
