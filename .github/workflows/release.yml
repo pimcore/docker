@@ -14,7 +14,7 @@ env:
 jobs:
     build-php:
         name: "Build PHP images"
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
