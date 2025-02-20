@@ -30,6 +30,7 @@ RUN set -eux; \
         librabbitmq-dev \
         # studio1 start
         nodejs npm cifs-utils iputils-ping htop nano m4 \
+        libldb-dev libldap2-dev\
         # studio1 end
     ; \
     \
@@ -40,6 +41,7 @@ RUN set -eux; \
         exif \
         gd \
         intl \
+        ldap \
         opcache \
         pcntl \
         pdo_mysql \
