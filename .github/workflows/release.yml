@@ -118,7 +118,7 @@ jobs:
                         echo ${TAGS}
 
 
-                        docker buildx build --output "type=image,push=true" --platform ${DOCKER_PLATFORMS} \
+                        docker buildx build --output "type=image,push=false" --platform ${DOCKER_PLATFORMS} \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
