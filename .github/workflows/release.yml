@@ -37,6 +37,13 @@ jobs:
                 with:
                     ref: ${{ matrix.tag }}
 
+            -   name: Fix libc-bin issues
+                run: |
+                    sudo rm /var/lib/dpkg/info/libc-bin.*
+                    sudo apt-get clean
+                    sudo apt-get update
+                    sudo apt install libc-bin -y
+
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
