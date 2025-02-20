@@ -30,7 +30,8 @@ RUN set -eux; \
         librabbitmq-dev \
         # studio1 start
         nodejs npm cifs-utils iputils-ping htop nano m4 \
-        libldb-dev libldap2-dev\
+        libldb-dev libldap2-dev \
+        libftp-dev \
         # studio1 end
     ; \
     \
@@ -39,6 +40,7 @@ RUN set -eux; \
     docker-php-ext-install \
         bcmath \
         exif \
+        ftp \
         gd \
         intl \
         ldap \
