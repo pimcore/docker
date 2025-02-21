@@ -63,7 +63,7 @@ jobs:
                 with:
                     version: v0.20.0
                     driver-opts: |
-                        image=moby/buildkit:0.19.0
+                        image=moby/buildkit:v0.19.0
 
             -   name: Configure and build images
                 id: vars
