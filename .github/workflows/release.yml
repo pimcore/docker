@@ -14,24 +14,35 @@ env:
 jobs:
     build-php:
         name: "Build PHP images"
-        runs-on: ubuntu-22.04
+        runs-on: ${{ matrix.runner }}
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
                 include:
-                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
-                    - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
-                    - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "", latest-tag: true }
-                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v4-dev", latest-tag: false }
-                    - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v4-dev", latest-tag: false }
-
+                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true, runner: ubuntu-22.04 }
+                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true, runner: ubuntu-22.04-arm }
+                    - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true, runner: ubuntu-22.04 }
+                    - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true, runner: ubuntu-22.04-arm }
+                    - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "", latest-tag: true, runner: ubuntu-22.04 }
+                    - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "", latest-tag: true, runner: ubuntu-22.04-arm }
+                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v3-dev", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v3-dev", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v4-dev", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v4-dev", latest-tag: false, runner: ubuntu-22.04-arm }
+                    - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v4-dev", latest-tag: false, runner: ubuntu-22.04 }
+                    - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58, version-override: "v4-dev", latest-tag: false, runner: ubuntu-22.04-arm }
         steps:
             -   uses: actions/checkout@v4
                 with:
@@ -39,29 +50,15 @@ jobs:
 
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-            -   name: Cache Docker layers
-                uses: actions/cache@v4
-                with:
-                    path: /tmp/.buildx-cache
-                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.tag }}
-                    restore-keys: |
-                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.tag }}-
-
-            -   name: Set up QEMU
-                uses: docker/setup-qemu-action@v3
-                with:
-                    platforms: 'amd64,arm64'
-
-            -   name: Set up Buildx
-                uses: docker/setup-buildx-action@v3
-
+                
             -   name: Configure and build images
                 id: vars
                 env:
                     VERSION_OVERRIDE: "${{ matrix.version-override }}"
                 run: |
                     set -eux;
+
+                    sudo apt-get update
 
                     if [[ "${{ matrix.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
                         imageVariants=("fpm" "debug" "supervisord")
@@ -74,7 +71,6 @@ jobs:
 
                         echo "Building image variant $imageVariant"
 
-                        DOCKER_PLATFORMS=linux/amd64,linux/arm64
                         PHP_VERSION=${{ matrix.php }}
                         DEBIAN_VERSION="${{ matrix.distro }}"
                         VERSION="${{ matrix.tag }}"
@@ -117,20 +113,12 @@ jobs:
                         echo ${TAGS}
 
 
-                        docker buildx build --output "type=image,push=true" --platform ${DOCKER_PLATFORMS} \
+                        docker build --output "type=image,push=false" \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
                             --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.imagick_version_from_src }}" \
-                            --cache-from "type=local,src=/tmp/.buildx-cache" \
-                            --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
                             ${TAGS} .
 
-                        docker buildx imagetools inspect ${IMAGE_NAME}:${TAG} || true;
+                        docker inspect ${IMAGE_NAME}:${TAG} || true;
                     done
-
-
-            -   name: Move cache
-                run: |
-                    rm -rf /tmp/.buildx-cache
-                    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
