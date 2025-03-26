@@ -14,8 +14,8 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php: '8.3', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58 }
-                    - { php: '8.4', distro: bookworm, imagick_version_from_src: 28f27044e435a2b203e32675e942eb8de620ee58 }
+                    - { php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2 }
+                    - { php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2 }
         steps:
             -   uses: actions/checkout@v2
             -   name: Build Image
