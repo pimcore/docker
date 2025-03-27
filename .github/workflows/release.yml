@@ -47,6 +47,7 @@ jobs:
                 id: vars
                 env:
                     VERSION_OVERRIDE: "${{ matrix.build.version-override }}"
+                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
                 run: |
                     set -eux;
 
@@ -86,8 +87,8 @@ jobs:
                         #BASE_TAG_DETAILED="testv3-$BASE_TAG_DETAILED"
 
 
-                        TAG="${BASE_TAG}-${VERSION}"
-                        TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
+                        TAG="${BASE_TAG}-${VERSION}-${ARCH_TAG}"
+                        TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
                         TAGS="--tag ${IMAGE_NAME}:${TAG}"
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
 
@@ -104,13 +105,12 @@ jobs:
 
                         echo ${TAGS}
 
+                        # docker build --output "type=image,push=false" \
+                        #     --target="pimcore_php_$imageVariant" \
+                        #     --build-arg PHP_VERSION="${PHP_VERSION}" \
+                        #     --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                        #     --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
+                        #     ${TAGS} .
 
-                        docker build --output "type=image,push=true" \
-                            --target="pimcore_php_$imageVariant" \
-                            --build-arg PHP_VERSION="${PHP_VERSION}" \
-                            --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
-                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
-                            ${TAGS} .
-
-                        docker inspect ${IMAGE_NAME}:${TAG} || true;
+                        # docker inspect ${IMAGE_NAME}:${TAG} || true;
                     done
