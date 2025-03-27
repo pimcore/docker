@@ -140,5 +140,5 @@ jobs:
                 run: |
                     set -eux;
 
-                    echo '${{ toJSON(needs.build-php.outputs.tags) }}'
+                    echo '${{ toJSON(needs.build-php.outputs) }}'
            
