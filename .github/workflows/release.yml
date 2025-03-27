@@ -118,7 +118,7 @@ jobs:
 
                         CLEAN_TAGS="${TAGS//-arm64/}"
                         CLEAN_TAGS="${CLEAN_TAGS//-amd64/}"
-                        CLEAN_TAGS="${TAGS//--tag /}"
+                        CLEAN_TAGS="${CLEAN_TAGS//--tag /}"
 
                         read -r -a TAGS_ARRAY <<< "$CLEAN_TAGS"
 
