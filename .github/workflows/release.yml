@@ -53,6 +53,7 @@ jobs:
                     docker buildx create --name builder --platform linux/amd64,linux/arm64 --driver docker-container
                     docker buildx use builder
                     docker buildx inspect --bootstrap
+                    
             -   name: Configure and build images
                 id: vars
                 env:
@@ -99,8 +100,10 @@ jobs:
                             VERSION_MAJOR=${VERSION//.[0-9]/}
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
                         fi
+
                         echo ${TAGS}
-                        docker buildx build --builder builder --output "type=image,push=false" --platform ${DOCKER_PLATFORMS} \
+
+                        docker buildx build --builder builder --output "type=image,push=true" --platform ${DOCKER_PLATFORMS} \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
@@ -108,8 +111,11 @@ jobs:
                             --cache-from "type=local,src=/tmp/.buildx-cache" \
                             --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
                             ${TAGS} .
+
                         docker buildx imagetools inspect ${IMAGE_NAME}:${TAG} || true;
+
                     done
+
             -   name: Move cache
                 run: |
                     rm -rf /tmp/.buildx-cache
