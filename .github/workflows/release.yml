@@ -107,7 +107,7 @@ jobs:
 
                         echo ${TAGS}
 
-                        docker build --output "type=image,push=false" \
+                        docker build --output "type=image,push=true" \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
@@ -130,7 +130,7 @@ jobs:
                                     --amend $tag-amd64 \
                                     --amend $tag-arm64
 
-                                # docker manifest push $tag
+                                docker manifest push $tag
                             fi
 
                         done
