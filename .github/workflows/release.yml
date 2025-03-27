@@ -106,7 +106,7 @@ jobs:
                         fi
 
                         echo ${TAGS}
-                        echo "${tags}=${TAGS}" >> "$GITHUB_OUTPUT"
+                        echo "${TAGS}" >> "$GITHUB_OUTPUT"
 
                         # docker build --output "type=image,push=false" \
                         #     --target="pimcore_php_$imageVariant" \
