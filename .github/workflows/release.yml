@@ -107,22 +107,25 @@ jobs:
 
                         echo ${TAGS}
 
-                        # docker build --output "type=image,push=false" \
-                        #     --target="pimcore_php_$imageVariant" \
-                        #     --build-arg PHP_VERSION="${PHP_VERSION}" \
-                        #     --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
-                        #     --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
-                        #     ${TAGS} .
+                        docker build --output "type=image,push=false" \
+                            --target="pimcore_php_$imageVariant" \
+                            --build-arg PHP_VERSION="${PHP_VERSION}" \
+                            --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
+                            ${TAGS} .
 
-                        # docker inspect ${IMAGE_NAME}:${TAG} || true;
+                        docker inspect ${IMAGE_NAME}:${TAG} || true;
 
-                        # if ARCH_TAG="arm64"; then
-                        #     docker manifest create \
-                        #         ${IMAGE_NAME}:${TAGS} \
-                        #         --amend ${IMAGE_NAME}:${TAGS}-amd64 \
-                        #         --amend ${IMAGE_NAME}:${TAGS}-arm64
+                        CLEAN_TAGS="${TAGS//-arm64/}"
+                        CLEAN_TAGS="${CLEAN_TAGS//-amd64/}"
 
-                        #     docker manifest push ${IMAGE_NAME}:${TAGS}
-                        # fi
+                        if ARCH_TAG="arm64"; then
+                            docker manifest create \
+                                ${IMAGE_NAME}:${CLEAN_TAGS} \
+                                --amend ${IMAGE_NAME}:${CLEAN_TAGS}-amd64 \
+                                --amend ${IMAGE_NAME}:${CLEAN_TAGS}-arm64
+
+                            docker manifest push ${IMAGE_NAME}:${CLEAN_TAGS}
+                        fi
 
                     done
