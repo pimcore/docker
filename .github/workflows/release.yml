@@ -23,17 +23,17 @@ jobs:
                     - ubuntu-22.04-arm
                 build:
                     - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
-                    - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
-                    - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "", latest-tag: true }
-                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
-                    - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
+                    # - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
+                    # - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
+                    # - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    # - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    # - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
+                    # - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
+                    # - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "", latest-tag: true }
+                    # - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
+                    # - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v3-dev", latest-tag: false }
+                    # - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
+                    # - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
 
         steps:
             -   uses: actions/checkout@v4
@@ -107,14 +107,14 @@ jobs:
 
                         echo ${TAGS}
 
-                        # docker build --output "type=image,push=false" \
-                        #     --target="pimcore_php_$imageVariant" \
-                        #     --build-arg PHP_VERSION="${PHP_VERSION}" \
-                        #     --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
-                        #     --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
-                        #     ${TAGS} .
+                        docker build --output "type=image,push=true" \
+                            --target="pimcore_php_$imageVariant" \
+                            --build-arg PHP_VERSION="${PHP_VERSION}" \
+                            --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
+                            ${TAGS} .
 
-                        # docker inspect ${IMAGE_NAME}:${TAG} || true;
+                        docker inspect ${IMAGE_NAME}:${TAG} || true;
 
                         CLEAN_TAGS="${TAGS//-arm64/}"
                         CLEAN_TAGS="${CLEAN_TAGS//-amd64/}"
@@ -124,15 +124,16 @@ jobs:
 
                         for tag in "${TAGS_ARRAY[@]}"; do
                             echo "Processing tag: $tag"
+
+                            if ARCH_TAG="arm64"; then
+                                docker manifest create \
+                                    ${IMAGE_NAME}:${CLEAN_TAGS} \
+                                    --amend ${IMAGE_NAME}:${CLEAN_TAGS}-amd64 \
+                                    --amend ${IMAGE_NAME}:${CLEAN_TAGS}-arm64
+
+                                docker manifest push ${IMAGE_NAME}:${CLEAN_TAGS}
+                            fi
+
                         done
-
-                        # if ARCH_TAG="arm64"; then
-                        #     docker manifest create \
-                        #         ${IMAGE_NAME}:${CLEAN_TAGS} \
-                        #         --amend ${IMAGE_NAME}:${CLEAN_TAGS}-amd64 \
-                        #         --amend ${IMAGE_NAME}:${CLEAN_TAGS}-arm64
-
-                        #     docker manifest push ${IMAGE_NAME}:${CLEAN_TAGS}
-                        # fi
 
                     done
