@@ -14,14 +14,11 @@ env:
 jobs:
     build-php:
         name: "Build PHP images"
-        runs-on: ${{ matrix.runner }}
+        runs-on: ubuntu-22.04
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
-                runner:
-                    - ubuntu-22.04
-                    - ubuntu-22.04-arm
-                build:
+                include:
                     - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
                     - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
                     - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
@@ -38,79 +35,82 @@ jobs:
         steps:
             -   uses: actions/checkout@v4
                 with:
-                    ref: ${{ matrix.build.tag }}
+                    ref: ${{ matrix.tag }}
 
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            -   name: Cache Docker layers
+                uses: actions/cache@v4
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.tag }}
+                    restore-keys: |
+                        ${{ runner.os }}-buildx-${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.tag }}-
                 
+            -   name: Set up buildx
+                run: |
+                    docker buildx create --name builder --platform linux/amd64,linux/arm64 --driver docker-container
+                    docker buildx use builder
+                    docker buildx inspect --bootstrap
             -   name: Configure and build images
                 id: vars
                 env:
-                    VERSION_OVERRIDE: "${{ matrix.build.version-override }}"
+                    VERSION_OVERRIDE: "${{ matrix.version-override }}"
                 run: |
                     set -eux;
-
                     sudo apt-get update
-
-                    if [[ "${{ matrix.build.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
+                    if [[ "${{ matrix.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
                         imageVariants=("fpm" "debug" "supervisord")
                     else
                         imageVariants=("min" "default" "max" "debug" "supervisord")
                     fi
-
-
                     for imageVariant in ${imageVariants[@]}; do
-
                         echo "Building image variant $imageVariant"
-
-                        PHP_VERSION=${{ matrix.build.php }}
-                        DEBIAN_VERSION="${{ matrix.build.distro }}"
-                        VERSION="${{ matrix.build.tag }}"
+                        DOCKER_PLATFORMS=linux/amd64,linux/arm64
+                        PHP_VERSION=${{ matrix.php }}
+                        DEBIAN_VERSION="${{ matrix.distro }}"
+                        VERSION="${{ matrix.tag }}"
                         # for the latest dev branch we use "dev" as the version and not the name of the branch
                         if [ ! -z "$VERSION_OVERRIDE" ]; then
                             VERSION="$VERSION_OVERRIDE"
                         fi
-
-                        PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.build.php }}-fpm-${{ matrix.build.distro }} php -r 'echo PHP_VERSION;')
-
+                        PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.php }}-fpm-${{ matrix.distro }} php -r 'echo PHP_VERSION;')
                         if [ "$imageVariant" = "fpm"  ] || [ "$imageVariant" = "default"  ]; then
-                            BASE_TAG="php${{ matrix.build.php }}"
+                            BASE_TAG="php${{ matrix.php }}"
                             BASE_TAG_DETAILED="php${PHP_SUB_VERSION}"
                         else
-                            BASE_TAG="php${{ matrix.build.php }}-$imageVariant"
+                            BASE_TAG="php${{ matrix.php }}-$imageVariant"
                             BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-$imageVariant"
                         fi
-
                         # DEBUG / TEST
                         #BASE_TAG="testv3-$BASE_TAG"
                         #BASE_TAG_DETAILED="testv3-$BASE_TAG_DETAILED"
-
-
                         TAG="${BASE_TAG}-${VERSION}"
                         TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}"
                         TAGS="--tag ${IMAGE_NAME}:${TAG}"
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
-
                         # Tag latest with Version build too
-                        if [ "true" = "${{ matrix.build.latest-tag }}" ]; then
+                        if [ "true" = "${{ matrix.latest-tag }}" ]; then
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
                         fi
-
                         # Create tag for major version
                         if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
                             VERSION_MAJOR=${VERSION//.[0-9]/}
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
                         fi
-
                         echo ${TAGS}
-
-
-                        docker build --output "type=image,push=true" \
+                        docker buildx build --builder builder --output "type=image,push=false" --platform ${DOCKER_PLATFORMS} \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
-                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
+                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.imagick_version_from_src }}" \
+                            --cache-from "type=local,src=/tmp/.buildx-cache" \
+                            --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
                             ${TAGS} .
-
-                        docker inspect ${IMAGE_NAME}:${TAG} || true;
+                        docker buildx imagetools inspect ${IMAGE_NAME}:${TAG} || true;
                     done
+            -   name: Move cache
+                run: |
+                    rm -rf /tmp/.buildx-cache
+                    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
