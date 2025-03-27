@@ -15,6 +15,8 @@ jobs:
     build-php:
         name: "Build PHP images"
         runs-on: ${{ matrix.runner }}
+        outputs:
+            tags: ${{ steps.vars.outputs.TAGS }}
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
@@ -104,6 +106,7 @@ jobs:
                         fi
 
                         echo ${TAGS}
+                        echo "${TAGS}=${TAGS}" >> "$GITHUB_OUTPUT"
 
                         # docker build --output "type=image,push=false" \
                         #     --target="pimcore_php_$imageVariant" \
@@ -114,3 +117,22 @@ jobs:
 
                         # docker inspect ${IMAGE_NAME}:${TAG} || true;
                     done
+
+    amend-manifest:
+        name: "Amend manifest with architecture"
+        runs-on: ubuntu-22.04
+        if: github.repository == 'pimcore/docker'
+        needs: build-php
+
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    ref: ${{ github.ref }}
+
+            -   name: Get tags
+                id: get-tags
+                run: |
+                    set -eux;
+
+                    echo '${{ toJSON(needs.build-php.outputs) }}'
+           
