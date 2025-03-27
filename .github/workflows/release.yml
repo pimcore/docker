@@ -16,7 +16,7 @@ jobs:
         name: "Build PHP images"
         runs-on: ${{ matrix.runner }}
         outputs:
-            tags: ${{ steps.vars.outputs.TAGS }}
+            tags: ${{ steps.vars.outputs.tags }}
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
@@ -106,7 +106,7 @@ jobs:
                         fi
 
                         echo ${TAGS}
-                        echo "${TAGS}=${TAGS}" >> "$GITHUB_OUTPUT"
+                        echo "${tags}=${TAGS}" >> "$GITHUB_OUTPUT"
 
                         # docker build --output "type=image,push=false" \
                         #     --target="pimcore_php_$imageVariant" \
@@ -134,5 +134,5 @@ jobs:
                 run: |
                     set -eux;
 
-                    echo '${{ toJSON(needs.build-php.outputs) }}'
+                    echo '${{ toJSON(needs.build-php.outputs.tags) }}'
            
