@@ -106,7 +106,13 @@ jobs:
                         fi
 
                         echo ${TAGS}
-                        echo "${TAGS}" >> "$GITHUB_OUTPUT"
+                        CLEANED_TAGS=$(echo "$TAGS" | sed 's/^--tag //g')
+
+                        {
+                        echo "tags<<EOF"
+                        echo "$CLEANED_TAGS"
+                        echo "EOF"
+                        } >> "$GITHUB_OUTPUT"
 
                         # docker build --output "type=image,push=false" \
                         #     --target="pimcore_php_$imageVariant" \
