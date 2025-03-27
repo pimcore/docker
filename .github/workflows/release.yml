@@ -127,11 +127,11 @@ jobs:
 
                             if ARCH_TAG="arm64"; then
                                 docker manifest create \
-                                    ${IMAGE_NAME}:${CLEAN_TAGS} \
-                                    --amend ${IMAGE_NAME}:${CLEAN_TAGS}-amd64 \
-                                    --amend ${IMAGE_NAME}:${CLEAN_TAGS}-arm64
+                                    ${IMAGE_NAME}:$tag \
+                                    --amend ${IMAGE_NAME}:$tag-amd64 \
+                                    --amend ${IMAGE_NAME}:$tag-arm64
 
-                                # docker manifest push ${IMAGE_NAME}:${CLEAN_TAGS}
+                                # docker manifest push ${IMAGE_NAME}:$tag
                             fi
 
                         done
