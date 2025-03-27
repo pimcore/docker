@@ -125,7 +125,7 @@ jobs:
                         for tag in "${TAGS_ARRAY[@]}"; do
                             echo "Processing tag: $tag"
 
-                            if ARCH_TAG="arm64"; then
+                            if [[ "$ARCH_TAG" == "arm64" ]]; then
                                 docker manifest create $tag \
                                     --amend $tag-amd64 \
                                     --amend $tag-arm64
