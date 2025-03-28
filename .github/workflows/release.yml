@@ -145,7 +145,13 @@ jobs:
         runs-on: ubuntu-latest
         needs: build-php
         steps:                
-            -   name: Process tags
-                
-                run: |
-                    echo "Processing tags: ${{ needs.build-php.outputs.tagList }}"
+            - name: Process tags
+              run: |
+                  TAG_LIST="${{ needs.build-php.outputs.tagList }}"
+                  echo "tags output: $TAG_LIST"
+                  
+                  read -r -a TAGS_ARRAY <<< "$TAG_LIST"
+                  
+                  for tag in "${TAGS_ARRAY[@]}"; do
+                      echo "Processing tag: $tag"
+                  done
