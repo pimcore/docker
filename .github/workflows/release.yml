@@ -124,8 +124,8 @@ jobs:
 
                         read -r -a TAGS_ARRAY <<< "$CLEAN_TAGS"
 
-                        echo #${{ github.job }}#${TAGS_ARRAY} >> $GITHUB_OUTPUT
-
+                        echo "#${{ github.job }}# ${TAGS_ARRAY[@]}" >> $GITHUB_OUTPUT
+                        
                         for tag in "${TAGS_ARRAY[@]}"; do
                             echo "Processing tag: $tag"
 
