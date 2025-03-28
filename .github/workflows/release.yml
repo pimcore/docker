@@ -123,11 +123,11 @@ jobs:
                         CLEAN_TAGS="${CLEAN_TAGS//--tag /}"
 
                         read -r -a TAGS_ARRAY <<< "$CLEAN_TAGS"
-
-                        echo "tagList=${CLEAN_TAGS}" >> $GITHUB_OUTPUT
-                                                
+                                              
                         for tag in "${TAGS_ARRAY[@]}"; do
                             echo "Processing tag: $tag"
+
+                            echo "$tag" >> aggregated_tags.txt
 
                             # if ARCH_TAG="arm64"; then
                             #     docker manifest create $tag \
@@ -140,18 +140,28 @@ jobs:
                         done
 
                     done
+
+            -   name: Upload aggregated tags
+                uses: actions/upload-artifact@v3
+                with:
+                    name: aggregated_tags
+                    path: aggregated_tags.txt
         
     process-tags:
         runs-on: ubuntu-latest
         needs: build-php
         steps:                
+            - name: Download aggregated tags
+              uses: actions/download-artifact@v3
+              with:
+                name: aggregated_tags
+                path: .
+                
             - name: Process tags
               run: |
-                  TAG_LIST="${{ needs.build-php.outputs.tagList }}"
+                  TAG_LIST=$(cat aggregated_tags.txt)
                   echo "tags output: $TAG_LIST"
-                  
                   read -r -a TAGS_ARRAY <<< "$TAG_LIST"
-                  
                   for tag in "${TAGS_ARRAY[@]}"; do
                       echo "Processing tag: $tag"
                   done
