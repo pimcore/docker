@@ -154,14 +154,17 @@ jobs:
             - name: Download aggregated tags
               uses: actions/download-artifact@v4
               with:
-                name: aggregated_tags
-                path: .
+                path: artifacts
                 
             - name: Process tags
               run: |
-                  TAG_LIST=$(cat aggregated_tags.txt)
-                  echo "tags output: $TAG_LIST"
-                  read -r -a TAGS_ARRAY <<< "$TAG_LIST"
-                  for tag in "${TAGS_ARRAY[@]}"; do
-                      echo "Processing tag: $tag"
-                  done
+                find artifacts -type f -name "aggregated_tags.txt" -exec cat {} + > all_aggregated_tags.txt
+
+                echo "Merged tags:"
+                cat all_aggregated_tags.txt
+                
+                readarray -t TAGS_ARRAY < all_aggregated_tags.txt
+
+                for tag in "${TAGS_ARRAY[@]}"; do
+                    echo "Processing tag: $tag"
+                done
