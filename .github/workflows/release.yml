@@ -144,7 +144,7 @@ jobs:
             -   name: Upload aggregated tags
                 uses: actions/upload-artifact@v4
                 with:
-                    name: aggregated_tags
+                    name: aggregated_tags_${{ matrix.runner }}_${{ matrix.build.tag }}
                     path: aggregated_tags.txt
         
     process-tags:
