@@ -162,9 +162,17 @@ jobs:
 
                 echo "Merged tags:"
                 cat all_aggregated_tags.txt
-                
+
                 readarray -t TAGS_ARRAY < all_aggregated_tags.txt
 
+                declare -A UNIQUE_TAGS
                 for tag in "${TAGS_ARRAY[@]}"; do
+                    UNIQUE_TAGS["$tag"]=1
+                done
+
+                echo "Unique tags:"
+
+
+                for tag in "${!UNIQUE_TAGS[@]}"; do
                     echo "Processing tag: $tag"
                 done
