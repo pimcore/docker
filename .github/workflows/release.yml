@@ -25,17 +25,17 @@ jobs:
                     - ubuntu-22.04-arm
                 build:
                     - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    # - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    # - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
-                    # - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    # - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    # - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
-                    # - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
-                    # - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "", latest-tag: true }
-                    # - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    # - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v3-dev", latest-tag: false }
-                    # - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
-                    # - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
+                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
+                    - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
+                    - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
+                    - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "", latest-tag: true }
+                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v3-dev", latest-tag: false }
+                    - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
+                    - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
 
         steps:
             -   uses: actions/checkout@v4
