@@ -142,7 +142,7 @@ jobs:
                     done
 
             -   name: Upload aggregated tags
-                uses: actions/upload-artifact@v3
+                uses: actions/upload-artifact@v4
                 with:
                     name: aggregated_tags
                     path: aggregated_tags.txt
@@ -152,7 +152,7 @@ jobs:
         needs: build-php
         steps:                
             - name: Download aggregated tags
-              uses: actions/download-artifact@v3
+              uses: actions/download-artifact@v4
               with:
                 name: aggregated_tags
                 path: .
