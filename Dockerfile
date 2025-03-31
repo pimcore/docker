@@ -32,6 +32,7 @@ RUN set -eux; \
         nodejs npm cifs-utils iputils-ping htop nano m4 \
         libldb-dev libldap2-dev \
         libftp-dev \
+        rsync \
         # studio1 end
     ; \
     \
