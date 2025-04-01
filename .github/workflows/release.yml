@@ -15,8 +15,6 @@ jobs:
     build-php:
         name: "Build PHP images"
         runs-on: ${{ matrix.runner }}
-        outputs:
-            tagList: ${{ steps.vars.outputs.tagList }}
         if: github.repository == 'pimcore/docker'
         strategy:
             matrix:
