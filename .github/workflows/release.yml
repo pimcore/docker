@@ -88,12 +88,12 @@ jobs:
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
                         # Tag latest with Version build too
                         if [ "true" = "${{ matrix.build.latest-tag }}" ]; then
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest"
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest-${ARCH_TAG}"
                         fi
                         # Create tag for major version
                         if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
                             VERSION_MAJOR=${VERSION//.[0-9]/}
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
                         fi
 
                         docker build --output "type=image,push=true" \
