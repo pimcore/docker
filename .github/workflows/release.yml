@@ -96,13 +96,11 @@ jobs:
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}"
                         fi
 
-                        docker build --output "type=image,push=false" \
+                        docker build --output "type=image,push=true" \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
                             --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.build.imagick_version_from_src }}" \
-                            --cache-from "type=local,src=/tmp/.buildx-cache" \
-                            --cache-to "type=local,dest=/tmp/.buildx-cache-new" \
                             ${TAGS} .
 
                         docker inspect ${IMAGE_NAME}:${TAG} || true;
@@ -157,7 +155,7 @@ jobs:
                             --amend $tag-amd64 \
                             --amend $tag-arm64
 
-                        # docker manifest push $tag
+                        docker manifest push $tag
 
                     done
 
