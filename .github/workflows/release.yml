@@ -23,17 +23,17 @@ jobs:
                     - ubuntu-22.04-arm
                 build:
                     - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
-                    - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
-                    - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "", latest-tag: true }
-                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
-                    - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
+                    # - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
+                    # - { tag: 'v1.3', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
+                    # - { tag: 'v1.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    # - { tag: 'v2.0', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    # - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
+                    # - { tag: 'v3.5', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
+                    # - { tag: 'v3.5', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "", latest-tag: true }
+                    # - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
+                    # - { tag: '3.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v3-dev", latest-tag: false }
+                    # - { tag: '4.x', php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
+                    # - { tag: '4.x', php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2, version-override: "v4-dev", latest-tag: false }
 
         steps:
             -   uses: actions/checkout@v4
@@ -130,7 +130,10 @@ jobs:
         steps:
             
             -   name: Login to DockerHub Registry
-                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin     
+                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            -   name: Login to GitHub Container Registry
+                run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
 
             -   name: Download aggregated tags
                 uses: actions/download-artifact@v4
@@ -156,6 +159,15 @@ jobs:
                             --amend $tag-arm64
 
                         docker manifest push $tag
+
+                        GITHUB_TAG="ghcr.io/pimcore/docker:$(basename $tag)"
+                        echo "Processing GitHub Container Registry tag: $GITHUB_TAG"
+                        
+                        # Create and push manifest for GHCR using the corresponding images
+                        docker manifest create $GITHUB_TAG \
+                            --amend ${tag}-amd64 \
+                            --amend ${tag}-arm64
+                        docker manifest push $GITHUB_TAG
 
                     done
 
