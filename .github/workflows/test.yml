@@ -14,8 +14,8 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php: '8.3', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2 }
-                    - { php: '8.4', distro: bookworm, imagick_version_from_src: refs/tags/3.8.0RC2 }
+                    - { php: '8.3', distro: bookworm }
+                    - { php: '8.4', distro: bookworm }
         steps:
             -   uses: actions/checkout@v2
             -   name: Build Image
@@ -29,7 +29,6 @@ jobs:
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${{ matrix.php }}" \
                             --build-arg DEBIAN_VERSION="${{ matrix.distro }}" \
-                            --build-arg IMAGICK_VERSION_FROM_SRC="${{ matrix.imagick_version_from_src }}" \
                             .
 
                         if [ "$imageVariant" != "min" ]; then
