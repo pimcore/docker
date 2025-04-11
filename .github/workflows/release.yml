@@ -160,7 +160,8 @@ jobs:
 
                         docker manifest push $tag
 
-                        GITHUB_TAG="ghcr.io/pimcore/docker:$(basename $tag)"
+                        TAG_ONLY="${tag#*:}"
+                        GITHUB_TAG="ghcr.io/pimcore/docker:${TAG_ONLY}"
                         echo "Processing GitHub Container Registry tag: $GITHUB_TAG"
                         
                         # Create and push manifest for GHCR using the corresponding images
