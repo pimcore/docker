@@ -84,16 +84,28 @@ jobs:
 
                         TAG="${BASE_TAG}-${VERSION}-${ARCH_TAG}"
                         TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
+
+                        GHCR_TAG="ghcr.io/pimcore/docker:${TAG}"
+                        GHCR_TAG_DETAILED="ghcr.io/pimcore/docker:${TAG_DETAILED}"
+
                         TAGS="--tag ${IMAGE_NAME}:${TAG}"
                         TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
+
+                        TAGS="$TAGS --tag $GHCR_TAG"
+                        TAGS="$TAGS --tag $GHCR_TAG_DETAILED"
+
                         # Tag latest with Version build too
                         if [ "true" = "${{ matrix.build.latest-tag }}" ]; then
                             TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest-${ARCH_TAG}"
+                            TAGS="$TAGS --tag ghcr.io/pimcore/docker:${BASE_TAG}-latest-${ARCH_TAG}"
                         fi
                         # Create tag for major version
                         if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
-                            VERSION_MAJOR=${VERSION//.[0-9]/}
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
+                            VERSION_MAJOR="${VERSION//.[0-9]/}"
+                            TAG_MAJOR="${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
+                            GHCR_TAG_MAJOR="ghcr.io/pimcore/docker:${TAG_MAJOR}"
+                            TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_MAJOR}"
+                            TAGS="$TAGS --tag $GHCR_TAG_MAJOR"
                         fi
 
                         docker build --output "type=image,push=true" \
