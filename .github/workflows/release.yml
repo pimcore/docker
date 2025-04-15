@@ -169,21 +169,22 @@ jobs:
                     for tag in "${!UNIQUE_TAGS[@]}"; do
                         echo "Processing tag: $tag"
                         
-                        docker manifest create $tag \
-                            --amend $tag-amd64 \
-                            --amend $tag-arm64
+                        # If this tag begins with 'pimcore/pimcore:', it's a Docker Hub tag
+                        if [[ "$tag" =~ ^pimcore/pimcore: ]]; then
+                            docker manifest create "$tag" \
+                                --amend "${tag}-amd64" \
+                                --amend "${tag}-arm64"
+                            docker manifest push "$tag"
 
-                        docker manifest push $tag
-
-                        TAG_ONLY="${tag#*:}"
-                        GITHUB_TAG="ghcr.io/pimcore/docker:${TAG_ONLY}"
-                        echo "Processing GitHub Container Registry tag: $GITHUB_TAG"
-                        
-                        # Create and push manifest for GHCR using the corresponding images
-                        docker manifest create $GITHUB_TAG \
-                            --amend ${tag}-amd64 \
-                            --amend ${tag}-arm64
-                        docker manifest push $GITHUB_TAG
+                        # If this tag begins with 'ghcr.io/pimcore/docker:', it's a GHCR tag
+                        elif [[ "$tag" =~ ^ghcr.io/pimcore/docker: ]]; then
+                            docker manifest create "$tag" \
+                                --amend "${tag}-amd64" \
+                                --amend "${tag}-arm64"
+                            docker manifest push "$tag"
+                        else
+                            echo "Skipping unknown registry for tag: $tag"
+                        fi
 
                     done
 
