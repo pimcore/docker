@@ -97,8 +97,6 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_min AS pimcore_php_default
 
-ARG IMAGICK_VERSION_FROM_SRC="";
-
 RUN set -eux; \
     \
     build-install.sh; \
@@ -142,25 +140,14 @@ RUN set -eux; \
     \
     pecl install -f \
         apcu \
+        imagick \
         redis \
     ; \
     docker-php-ext-enable \
         apcu \
+        imagick \
         redis \
     ; \
-    \
-    # Install Imagick from PECL if no build arg IMAGICK_VERSION_FROM_SRC is given
-    [ -z "$IMAGICK_VERSION_FROM_SRC" ] && \
-        pecl install -f imagick && \
-        docker-php-ext-enable imagick; \
-    \
-    # Install Imagick from source as long as no official version compatible with PHP 8.3 is released yet
-    # See https://github.com/Imagick/imagick/issues/640
-    # Provide the build argument IMAGICK_VERSION_FROM_SRC containing a commit hash or "refs/tags/3.7.0" or "refs/heads/master"
-    [ -n "$IMAGICK_VERSION_FROM_SRC" ] &&  \
-        mkdir -p /usr/src/php/ext/imagick && \
-        curl -fsSL https://github.com/Imagick/imagick/archive/"$IMAGICK_VERSION_FROM_SRC".tar.gz | tar xvz -C "/usr/src/php/ext/imagick" --strip 1 && \
-        docker-php-ext-install imagick; \
     \
     build-cleanup.sh; \
     \
