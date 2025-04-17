@@ -167,24 +167,14 @@ jobs:
                     done
 
                     for tag in "${!UNIQUE_TAGS[@]}"; do
+                    
                         echo "Processing tag: $tag"
                         
-                        # If this tag begins with 'pimcore/pimcore:', it's a Docker Hub tag
-                        if [[ "$tag" =~ ^pimcore/pimcore: ]]; then
-                            docker manifest create "$tag" \
-                                --amend "${tag}-amd64" \
-                                --amend "${tag}-arm64"
-                            docker manifest push "$tag"
+                        docker manifest create "$tag" \
+                        --amend "${tag}-amd64" \
+                        --amend "${tag}-arm64"
 
-                        # If this tag begins with 'ghcr.io/pimcore/docker:', it's a GHCR tag
-                        elif [[ "$tag" =~ ^ghcr.io/pimcore/docker: ]]; then
-                            docker manifest create "$tag" \
-                                --amend "${tag}-amd64" \
-                                --amend "${tag}-arm64"
-                            docker manifest push "$tag"
-                        else
-                            echo "Skipping unknown registry for tag: $tag"
-                        fi
-
+                        docker manifest push "$tag"
+    
                     done
 
