@@ -27,6 +27,13 @@ Additionally we're offering 2 special tag suffixes:
 
 We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`. 
 
+## Container registries
+Our images are available on both Docker Hub and the GitHub Container Registry, so you can choose the one that best fits your workflow.
+Use either of the following commands:
+`docker pull ghcr.io/pimcore/pimcore:php8.3-debug-v3-dev` or 
+`docker pull pimcore/pimcore:php8.3-debug-v3-dev`
+
+
 ### Pimcore version compatibility & recommendations
 | Image / Pimcore | v10 | v11 | v2023.3 | v2024.4 |v2025.x
 |-----------------|-----|--|---------|---------|-----|
