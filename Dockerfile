@@ -7,7 +7,7 @@ RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     apt-get update; \
     apt-get install -y lsb-release; \
-    echo "deb http://archive.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list; \
+    echo "deb https://archive.debian.org/debian $(lsb_release -sc)-backports main" > /etc/apt/sources.list.d/backports.list; \
     echo "deb https://www.deb-multimedia.org $(lsb_release -sc) main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
     apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
