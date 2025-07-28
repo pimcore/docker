@@ -9,7 +9,7 @@ RUN chmod +x /usr/local/bin/build-*
 
 RUN set -eux; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    echo "deb http://archive.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
+    echo "deb https://archive.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
     apt-get upgrade -y; \
     \
