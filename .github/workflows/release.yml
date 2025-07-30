@@ -118,10 +118,7 @@ jobs:
                             TAGS="$TAGS --tag $GHCR_TAG_MAJOR"
                         fi
 
-                        # Determine if we should push based on trigger type and input
-                        PUSH_FLAG="push=$PUSH"
-
-                        docker build --output "type=image,$PUSH_FLAG" \
+                        docker build --output "type=image,push=$PUSH" \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
