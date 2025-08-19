@@ -60,6 +60,7 @@ COPY files/conf/php/php.ini /usr/local/etc/php/conf.d/20-pimcore.ini
 COPY files/conf/php-fpm/php-fpm.conf /usr/local/etc/php-fpm.d/zz-www.conf
 
 # env php.ini
+ENV PHP_TIMEZONE "UTC"
 ENV PHP_MEMORY_LIMIT "256M"
 ENV PHP_POST_MAX_SIZE "100M"
 ENV PHP_UPLOAD_MAX_FILESIZE "100M"
