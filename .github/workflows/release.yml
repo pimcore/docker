@@ -60,7 +60,7 @@ jobs:
                     set -eux;
                     sudo apt-get update
 
-                    echo ${{ matrix.runner}}
+                    echo ${{ matrix.runner }}
 
                     if [[ "${{ matrix.build.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
                         imageVariants=("fpm" "debug" "supervisord")
