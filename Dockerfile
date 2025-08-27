@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG PHP_VERSION="8.3"
+ARG PHP_VERSION="8.4"
 ARG DEBIAN_VERSION="bookworm"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
