@@ -34,12 +34,13 @@ jobs:
                     - { tag: 'v1.4', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: 'v2.1', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
-                    - { tag: 'v3.6', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: 'v3.6', php: '8.3', distro: bookworm, version-override: "", latest-tag: true }
+                    - { tag: 'v3.7', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
+                    - { tag: 'v3.7', php: '8.3', distro: bookworm, version-override: "", latest-tag: true }
                     - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
                     - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '4.x', php: '8.3', distro: bookworm, version-override: "v4-dev", latest-tag: false }
+                    - { tag: 'v4.0', php: '8.4', distro: bookworm, version-override: "", latest-tag: true }
                     - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false }
+
 
         steps:
             -   uses: actions/checkout@v4
