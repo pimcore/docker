@@ -56,6 +56,11 @@ jobs:
                     set -ex
                     docker build --tag pimcore-image --target=pimcore_php_${{ matrix.target }} --build-arg PHP_VERSION="${{ matrix.php }}" --build-arg DEBIAN_VERSION="${{ matrix.distro }}" .
                 
+                    SKELETON_VERSION="^11.0"
+                    if [ "${{ matrix.php }}" = "8.0" ]; then
+                        SKELETON_VERSION="^10.0"
+                    fi
+
                     if [ "${{ matrix.target }}" == "debug" ]; then
                         # Make sure xdebug is installed and configured on debug-build
                         docker run --rm pimcore-image sh -c 'php -m | grep xdebug'
@@ -68,8 +73,8 @@ jobs:
                         docker run --rm pimcore-image sh -c '! php -m | grep xdebug'
                         docker run --rm pimcore-image test ! -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
                     fi
-                    
-                    docker run --rm pimcore-image composer create-project pimcore/skeleton:^10.0 pimcore --no-scripts
+
+                    docker run --rm -e SKELETON_VERSION="$SKELETON_VERSION" pimcore-image sh -c 'composer config -g audit.block-insecure false && composer create-project pimcore/skeleton:${SKELETON_VERSION} pimcore --no-scripts'
                     docker run -v "$(pwd)/.github/files":/var/www/html --rm pimcore-image php test_heif.php
             -   name: Run Trivy vulnerability scanner
                 uses: aquasecurity/trivy-action@master
