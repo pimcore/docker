@@ -30,9 +30,9 @@ jobs:
                 build:
                     - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
                     - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.4', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
-                    - { tag: 'v1.4', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: 'v2.1', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    - { tag: 'v1.5', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
+                    - { tag: 'v1.5', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    - { tag: 'v2.2', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
                     - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
                     - { tag: 'v3.7', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
                     - { tag: 'v3.7', php: '8.3', distro: bookworm, version-override: "", latest-tag: true }
