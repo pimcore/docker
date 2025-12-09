@@ -1,16 +1,18 @@
 # syntax=docker/dockerfile:1
 
-ARG PHP_VERSION="8.4"
-ARG DEBIAN_VERSION="bookworm"
+ARG PHP_VERSION="8.5"
+ARG DEBIAN_VERSION="trixie"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
+
+ARG DEBIAN_VERSION
 
 COPY --chmod=0755 files/build-*.sh /usr/local/bin/
 
 RUN set -eux; \
     \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list; \
+    echo "deb http://deb.debian.org/debian ${DEBIAN_VERSION}-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
     apt-get upgrade -y; \
     \
@@ -99,12 +101,14 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_min AS pimcore_php_default
 
+ARG DEBIAN_VERSION
+
 RUN set -eux; \
     \
     build-install.sh; \
     \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    echo "deb https://www.deb-multimedia.org bookworm main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
+    echo "deb https://www.deb-multimedia.org ${DEBIAN_VERSION} main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
     apt-get update -oAcquire::AllowInsecureRepositories=true; \
     apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     apt-get update; \

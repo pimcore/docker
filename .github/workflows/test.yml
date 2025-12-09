@@ -16,6 +16,8 @@ jobs:
                 include:
                     - { php: '8.3', distro: bookworm }
                     - { php: '8.4', distro: bookworm }
+                    - { php: '8.5', distro: trixie }
+
         steps:
             -   uses: actions/checkout@v2
             -   name: Build Image

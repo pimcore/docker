@@ -40,6 +40,9 @@ jobs:
                     - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false }
                     - { tag: 'v4.0', php: '8.4', distro: bookworm, version-override: "", latest-tag: true }
                     - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false }
+                    - { tag: 'v5.0', php: '8.5', distro: trixie, version-override: "", latest-tag: false } 
+                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false } 
+
 
 
         steps:
