@@ -96,9 +96,6 @@ WORKDIR /var/www/html
 
 CMD ["php-fpm"]
 
-
-
-
 FROM pimcore_php_min AS pimcore_php_default
 
 ARG DEBIAN_VERSION
@@ -108,9 +105,6 @@ RUN set -eux; \
     build-install.sh; \
     \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    echo "deb https://www.deb-multimedia.org ${DEBIAN_VERSION} main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
-    apt-get update -oAcquire::AllowInsecureRepositories=true; \
-    apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     apt-get update; \
     \
     # tools used by Pimcore
@@ -163,9 +157,6 @@ RUN set -eux; \
 
 CMD ["php-fpm"]
 
-
-
-
 FROM pimcore_php_default AS pimcore_php_max
 
 RUN set -eux; \
@@ -193,9 +184,6 @@ RUN set -eux; \
     sync
 
 CMD ["php-fpm"]
-
-
-
 
 FROM pimcore_php_default AS pimcore_php_debug
 
