@@ -46,12 +46,11 @@ RUN set -eux; \
         zip \
     ; \
     \
-    pecl install -f \
-        amqp \
-    ; \
-    docker-php-ext-enable \
-        amqp \
-    ; \
+    # AMQP extension may fail to build on PHP 8.5 due to missing php support
+    pecl install -f amqp || echo "pecl amqp install failed; skipping amqp extension"; \
+    if [ -f "$(php-config --extension-dir)/amqp.so" ]; then \
+        docker-php-ext-enable amqp; \
+    fi; \
     build-cleanup.sh; \
     \
     ldconfig /usr/local/lib; \
