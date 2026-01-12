@@ -39,7 +39,6 @@ RUN set -eux; \
         exif \
         gd \
         intl \
-        opcache \
         pcntl \
         pdo_mysql \
         sockets \
