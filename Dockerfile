@@ -164,7 +164,6 @@ RUN set -eux; \
     \
     apt-get install -y \
         chromium-sandbox \
-        libc-client-dev \
         libkrb5-dev \
         libreoffice \
         libxml2-dev \
