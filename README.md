@@ -42,6 +42,7 @@ Use either of the following commands:
 | v3              | ❌  | ✅* | ✅*     | ✅*     | ✅   |
 | v4              | ❌  | ❌  | ❌      | ❌      | ✅*  |
 
+
 > *) recommended version
 
 ## Examples 

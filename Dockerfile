@@ -1,16 +1,18 @@
 # syntax=docker/dockerfile:1
 
-ARG PHP_VERSION="8.4"
-ARG DEBIAN_VERSION="bookworm"
+ARG PHP_VERSION="8.5"
+ARG DEBIAN_VERSION="trixie"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
+
+ARG DEBIAN_VERSION
 
 COPY --chmod=0755 files/build-*.sh /usr/local/bin/
 
 RUN set -eux; \
     \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list; \
+    echo "deb http://deb.debian.org/debian ${DEBIAN_VERSION}-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
     apt-get upgrade -y; \
     \
@@ -37,7 +39,6 @@ RUN set -eux; \
         exif \
         gd \
         intl \
-        opcache \
         pcntl \
         pdo_mysql \
         sockets \
@@ -94,19 +95,15 @@ WORKDIR /var/www/html
 
 CMD ["php-fpm"]
 
-
-
-
 FROM pimcore_php_min AS pimcore_php_default
+
+ARG DEBIAN_VERSION
 
 RUN set -eux; \
     \
     build-install.sh; \
     \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
-    echo "deb https://www.deb-multimedia.org bookworm main non-free" > /etc/apt/sources.list.d/deb-multimedia.list; \
-    apt-get update -oAcquire::AllowInsecureRepositories=true; \
-    apt-get install -y --allow-unauthenticated deb-multimedia-keyring; \
     apt-get update; \
     \
     # tools used by Pimcore
@@ -133,8 +130,8 @@ RUN set -eux; \
     \
     # ImageMagick
     apt-get install -y \
-        imagemagick-7 \
-        libmagickwand-7-dev \
+        imagemagick \
+        libmagickwand-dev \
     ; \
     \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp; \
@@ -159,9 +156,6 @@ RUN set -eux; \
 
 CMD ["php-fpm"]
 
-
-
-
 FROM pimcore_php_default AS pimcore_php_max
 
 RUN set -eux; \
@@ -170,7 +164,6 @@ RUN set -eux; \
     \
     apt-get install -y \
         chromium-sandbox \
-        libc-client-dev \
         libkrb5-dev \
         libreoffice \
         libxml2-dev \
@@ -189,9 +182,6 @@ RUN set -eux; \
     sync
 
 CMD ["php-fpm"]
-
-
-
 
 FROM pimcore_php_default AS pimcore_php_debug
 
