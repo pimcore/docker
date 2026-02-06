@@ -50,8 +50,8 @@ jobs:
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            -   name: Login to GitHub Container Registry
-                run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
+            #-   name: Login to GitHub Container Registry
+            #    run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
 
             -   name: Configure and build images
                 id: vars
@@ -159,8 +159,8 @@ jobs:
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-            -   name: Login to GitHub Container Registry
-                run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
+            #-   name: Login to GitHub Container Registry
+            #    run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
 
             -   name: Download aggregated tags
                 uses: actions/download-artifact@v4
