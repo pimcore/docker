@@ -15,7 +15,7 @@ We're providing different image flavors:
 - [`min`] PHP image for FPM and CLI with minimum requirements (e.g. `php8.2-min-latest`)
 - [`default`] PHP image for FPM and CLI incl. all optional dependencies (e.g. `php8.2-latest` or `php8.2-default-latest`)
 - [`max`] PHP image for FPM and CLI incl. all optional dependencies and additional extensions and software (e.g. `php8.2-max-latest`)
-- [`debug`] PHP debug image based on PHP image above, including preconfigured Xdebug for FPM and CLI (e.g.  `php8.2-debug-latest`)
+- [`debug`] PHP debug image based on the `default` flavor, including preconfigured Xdebug for FPM and CLI (e.g.  `php8.2-debug-latest`)
 - [`supervisord`] Supervisord image based on PHP image above, for cron & queue processing  (e.g. `php8.2-supervisord-latest`)
 
 ## Versioning
@@ -27,12 +27,20 @@ Additionally we're offering 2 special tag suffixes:
 
 We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`. 
 
+## Container registries
+Our images are available on both Docker Hub and the GitHub Container Registry, so you can choose the one that best fits your workflow.
+Use either of the following commands:
+`docker pull ghcr.io/pimcore/pimcore:php8.3-debug-v3-dev` or 
+`docker pull pimcore/pimcore:php8.3-debug-v3-dev`
+
+
 ### Pimcore version compatibility & recommendations
-| Image / Pimcore | v10 | v11 | v2023.0 |
-|-----------------|-----|----|--------|
-| v1              | ✅   | ✅  | ✅      |
-| v2              | ❌   | ✅  | ✅      |
-| v3              | ❌   | ✅* | ✅*     |
+| Image / Pimcore | v10 | v11 | v2023.3 | v2024.4 |v2025.x
+|-----------------|-----|-----|---------|---------|------|
+| v1              | ✅  | ✅  | ✅      | ✅      | ❌   |
+| v2              | ❌  | ✅  | ✅      | ✅      | ❌   | 
+| v3              | ❌  | ✅* | ✅*     | ✅*     | ✅   |
+| v4              | ❌  | ❌  | ❌      | ❌      | ✅*  |
 
 > *) recommended version
 
