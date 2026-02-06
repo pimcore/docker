@@ -188,13 +188,10 @@ RUN set -eux; \
         openssl \
     ; \
     \
-    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
     docker-php-ext-install \
-        imap \
         soap \
     ; \
     docker-php-ext-enable \
-        imap \
         soap \
     ; \
     \
