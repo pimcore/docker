@@ -122,6 +122,8 @@ jobs:
                         fi
 
                         docker build --output "type=image,push=$PUSH" \
+                            --provenance=false \
+                            --platform "linux/${ARCH_TAG}" \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
