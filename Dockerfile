@@ -25,7 +25,9 @@ RUN set -eux; \
         libicu-dev \
         libjpeg62-turbo-dev \
         libpng-dev \
+        libssl-dev \
         libzip-dev \
+        openssl \
         zlib1g-dev \
         librabbitmq-dev \
     ; \
@@ -143,7 +145,7 @@ RUN set -eux; \
     pecl install -f \
         apcu \
         imagick \
-        redis \
+        "redis<6.1" \
     ; \
     docker-php-ext-enable \
         apcu \
