@@ -102,6 +102,8 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_min AS pimcore_php_default
 
+ARG REDIS_EXT_VERSION
+
 RUN set -eux; \
     \
     build-install.sh; \
