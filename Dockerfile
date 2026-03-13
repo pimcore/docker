@@ -2,6 +2,7 @@
 
 ARG PHP_VERSION="8.5"
 ARG DEBIAN_VERSION="trixie"
+ARG REDIS_PECL_VERSION="6.0.2"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
 
@@ -100,6 +101,7 @@ CMD ["php-fpm"]
 FROM pimcore_php_min AS pimcore_php_default
 
 ARG DEBIAN_VERSION
+ARG REDIS_PECL_VERSION
 
 RUN set -eux; \
     \
@@ -142,7 +144,7 @@ RUN set -eux; \
     pecl install -f \
         apcu \
         imagick \
-        "redis<6.1" \
+        "redis-${REDIS_PECL_VERSION}" \
     ; \
     docker-php-ext-enable \
         apcu \
