@@ -2,6 +2,7 @@
 
 ARG PHP_VERSION="8.4"
 ARG DEBIAN_VERSION="bookworm"
+ARG REDIS_EXT_VERSION="6.0.0"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
 
@@ -145,7 +146,7 @@ RUN set -eux; \
     pecl install -f \
         apcu \
         imagick \
-        "redis<6.1" \
+        redis-${REDIS_EXT_VERSION} \
     ; \
     docker-php-ext-enable \
         apcu \
