@@ -33,6 +33,7 @@ RUN set -eux; \
         libldb-dev libldap2-dev \
         libftp-dev \
         rsync \
+        zip \
         # studio1 end
     ; \
     \
