@@ -45,7 +45,7 @@ jobs:
                     # - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false } 
 
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v5
                 with:
                     ref: ${{ matrix.build.tag }}
 
