@@ -35,7 +35,7 @@ Use either of the following commands:
 
 
 ### Pimcore version compatibility & recommendations
-| Image / Pimcore | v10 | v11 | v2023.3 | v2024.4 |v2025.x|v2026.x|
+| Image / Pimcore | v10 | v11 | v2023.3 | v2024.4 | v2025.x | v2026.x |
 |-----------------|-----|-----|---------|---------|------|-------|
 | v1              | ✅  | ✅  | ✅      | ✅      | ❌   | ❌    |
 | v2              | ❌  | ✅  | ✅      | ✅      | ❌   | ❌    | 
