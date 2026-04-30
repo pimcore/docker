@@ -8,6 +8,7 @@ COPY files/build-install.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/build-*
 
 RUN set -eux; \
+    echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb https://archive.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
