@@ -4,6 +4,7 @@ ARG DEBIAN_VERSION="bullseye"
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_fpm
 
 RUN set -eux; \
+    echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     apt-get update; \
     apt-get install -y lsb-release; \
