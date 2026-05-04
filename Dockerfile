@@ -2,6 +2,7 @@
 
 ARG PHP_VERSION="8.4"
 ARG DEBIAN_VERSION="bookworm"
+ARG REDIS_EXT_VERSION="6.0.0"
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
 
@@ -26,7 +27,9 @@ RUN set -eux; \
         libicu-dev \
         libjpeg62-turbo-dev \
         libpng-dev \
+        libssl-dev \
         libzip-dev \
+        openssl \
         zlib1g-dev \
         librabbitmq-dev \
     ; \
@@ -100,6 +103,8 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_min AS pimcore_php_default
 
+ARG REDIS_EXT_VERSION
+
 RUN set -eux; \
     \
     build-install.sh; \
@@ -144,7 +149,7 @@ RUN set -eux; \
     pecl install -f \
         apcu \
         imagick \
-        redis \
+        redis-${REDIS_EXT_VERSION} \
     ; \
     docker-php-ext-enable \
         apcu \
