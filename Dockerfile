@@ -9,6 +9,7 @@ COPY --chmod=0755 files/build-*.sh /usr/local/bin/
 
 RUN set -eux; \
     \
+    echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
     DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
