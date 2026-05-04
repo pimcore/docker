@@ -14,7 +14,6 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php: '8.3', distro: bookworm }
                     - { php: '8.4', distro: bookworm }
                     - { php: '8.5', distro: trixie, composerOptions: '--ignore-platform-reqs' }
 
