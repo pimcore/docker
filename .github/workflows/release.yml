@@ -149,7 +149,7 @@ jobs:
 
             -   name: Upload aggregated tags
                 if: github.event_name != 'workflow_dispatch' || inputs.publish
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@v7
                 with:
                     name: aggregated_tags_${{ matrix.runner }}_${{ matrix.build.tag }}_${{ matrix.build.php }}_${{ matrix.build.distro }}_${{ matrix.build.version-override }}_${{ matrix.build.latest-tag }}
                     path: aggregated_tags.txt
@@ -167,7 +167,7 @@ jobs:
                 run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
 
             -   name: Download aggregated tags
-                uses: actions/download-artifact@v4
+                uses: actions/download-artifact@v8
                 with:
                     path: artifacts
                 
