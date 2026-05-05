@@ -2,6 +2,9 @@
 
 ARG PHP_VERSION="8.5"
 ARG DEBIAN_VERSION="trixie"
+ARG PHP_EXTENSION_INSTALLER_VERSION="2.11.1"
+
+FROM mlocati/php-extension-installer:${PHP_EXTENSION_INSTALLER_VERSION} AS php_extension_installer
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
 
@@ -22,7 +25,7 @@ RUN set -eux; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions \
         amqp \
         bcmath \
@@ -103,7 +106,7 @@ RUN set -eux; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions \
         apcu \
         imagick \
@@ -124,7 +127,7 @@ RUN set -eux; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions \
         soap
 
@@ -132,7 +135,7 @@ CMD ["php-fpm"]
 
 FROM pimcore_php_default AS pimcore_php_debug
 
-RUN --mount=type=bind,from=mlocati/php-extension-installer:latest,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions \
         xdebug
 
