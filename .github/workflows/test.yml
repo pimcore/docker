@@ -32,7 +32,7 @@ jobs:
                             --build-arg DEBIAN_VERSION="${{ matrix.distro }}" \
                             .
 
-                        # Verify core extensions are loaded in all variants
+                        # Verify core extensions are loaded in all flavors
                         docker run --rm pimcore-image php -m | grep -Fx 'amqp'
                         docker run --rm pimcore-image php -m | grep -Fx 'bcmath'
                         docker run --rm pimcore-image php -m | grep -Fx 'exif'
