@@ -32,9 +32,24 @@ jobs:
                             --build-arg DEBIAN_VERSION="${{ matrix.distro }}" \
                             .
 
+                        # Verify core extensions are loaded in all flavors
+                        docker run --rm pimcore-image php -m | grep -Fx 'amqp'
+                        docker run --rm pimcore-image php -m | grep -Fx 'bcmath'
+                        docker run --rm pimcore-image php -m | grep -Fx 'exif'
+                        docker run --rm pimcore-image php -m | grep -Fx 'gd'
+                        docker run --rm pimcore-image php -m | grep -Fx 'intl'
+                        docker run --rm pimcore-image php -m | grep -Fx 'pcntl'
+                        docker run --rm pimcore-image php -m | grep -Fx 'pdo_mysql'
+                        docker run --rm pimcore-image php -m | grep -Fx 'sockets'
+                        docker run --rm pimcore-image php -m | grep -Fx 'zip'
+
                         if [ "$imageVariant" != "min" ]; then
                             # Test that Imagick is installed
                             docker run --rm pimcore-image sh -c 'php -m | grep imagick'
+                        fi
+
+                        if [ "$imageVariant" == "max" ]; then
+                            docker run --rm pimcore-image php -m | grep -Fx 'soap'
                         fi
                     
                         if [ "$imageVariant" == "debug" ]; then

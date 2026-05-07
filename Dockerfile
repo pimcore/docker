@@ -2,17 +2,17 @@
 
 ARG PHP_VERSION="8.5"
 ARG DEBIAN_VERSION="trixie"
+ARG PHP_EXTENSION_INSTALLER_VERSION="2.11.1"
+
+FROM mlocati/php-extension-installer:${PHP_EXTENSION_INSTALLER_VERSION} AS php_extension_installer
 
 FROM php:${PHP_VERSION}-fpm-${DEBIAN_VERSION} AS pimcore_php_min
 
 ARG DEBIAN_VERSION
 
-COPY --chmod=0755 files/build-*.sh /usr/local/bin/
-
 RUN set -eux; \
     \
     echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries; \
-    DPKG_ARCH="$(dpkg --print-architecture)"; \
     echo "deb http://deb.debian.org/debian ${DEBIAN_VERSION}-backports main" > /etc/apt/sources.list.d/backports.list; \
     apt-get update; \
     apt-get upgrade -y; \
@@ -22,20 +22,12 @@ RUN set -eux; \
         iproute2 \
         unzip \
     ; \
-    \
-    # dependencies for building PHP extensions
-    apt-get install -y \
-        libicu-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
-        libzip-dev \
-        zlib1g-dev \
-        librabbitmq-dev \
-    ; \
-    \
-    docker-php-ext-configure gd --enable-gd --with-jpeg; \
-    docker-php-ext-configure pcntl --enable-pcntl; \
-    docker-php-ext-install \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
+
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+    install-php-extensions \
+        amqp \
         bcmath \
         exif \
         gd \
@@ -43,20 +35,7 @@ RUN set -eux; \
         pcntl \
         pdo_mysql \
         sockets \
-        zip \
-    ; \
-    \
-    pecl install -f \
-        amqp \
-    ; \
-    docker-php-ext-enable \
-        amqp \
-    ; \
-    build-cleanup.sh; \
-    \
-    ldconfig /usr/local/lib; \
-    \
-    sync
+        zip
 
 COPY files/conf/php/php.ini /usr/local/etc/php/conf.d/20-pimcore.ini
 COPY files/conf/php-fpm/php-fpm.conf /usr/local/etc/php-fpm.d/zz-www.conf
@@ -102,9 +81,6 @@ ARG DEBIAN_VERSION
 
 RUN set -eux; \
     \
-    build-install.sh; \
-    \
-    DPKG_ARCH="$(dpkg --print-architecture)"; \
     apt-get update; \
     \
     # tools used by Pimcore
@@ -123,37 +99,18 @@ RUN set -eux; \
         webp \
     ; \
     \
-    # dependencies for building PHP extensions
-    apt-get install -y \
-        libfreetype6-dev \
-        libwebp-dev \
-    ; \
-    \
     # ImageMagick
     apt-get install -y \
         imagemagick \
-        libmagickwand-dev \
     ; \
-    \
-    docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp; \
-    docker-php-ext-install gd; \
-    \
-    pecl install -f \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
+
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+    install-php-extensions \
         apcu \
         imagick \
-        redis \
-    ; \
-    docker-php-ext-enable \
-        apcu \
-        imagick \
-        redis \
-    ; \
-    \
-    build-cleanup.sh; \
-    \
-    ldconfig /usr/local/lib; \
-    \
-    sync
+        redis
 
 CMD ["php-fpm"]
 
@@ -161,39 +118,28 @@ FROM pimcore_php_default AS pimcore_php_max
 
 RUN set -eux; \
     \
-    build-install.sh; \
-    \
+    apt-get update; \
     apt-get install -y \
         chromium-sandbox \
-        libkrb5-dev \
         libreoffice \
-        libxml2-dev \
         openssl \
     ; \
-    \
-    docker-php-ext-install \
-        soap \
-    ; \
-    docker-php-ext-enable \
-        soap \
-    ; \
-    \
-    build-cleanup.sh; \
-    \
-    sync
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
+
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+    install-php-extensions \
+        soap
 
 CMD ["php-fpm"]
 
 FROM pimcore_php_default AS pimcore_php_debug
 
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+    install-php-extensions \
+        xdebug
+
 RUN set -eux; \
-    \
-    build-install.sh; \
-    \
-    pecl install xdebug; \
-    docker-php-ext-enable xdebug; \
-    \
-    build-cleanup.sh; \
     \
     # For local development, it should be possible to use any local (Git) Composer repository - that's safe in debug image flavor
     git config --global --add safe.directory "*"; \
