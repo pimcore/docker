@@ -209,24 +209,3 @@ jobs:
                         docker manifest push "$tag"
     
                     done
-
-    attach-sboms:
-        name: "Attach SBOMs to release"
-        runs-on: ubuntu-22.04
-        needs: process-tags
-        if: (github.event_name != 'workflow_dispatch' || inputs.publish) && startsWith(github.ref, 'refs/tags/')
-        permissions:
-            contents: write
-        steps:
-            -   name: Download all SBOMs
-                uses: actions/download-artifact@v8
-                with:
-                    pattern: sboms_*
-                    path: all-sboms
-                    merge-multiple: true
-
-            -   name: Attach SBOMs to GitHub release
-                uses: softprops/action-gh-release@v2
-                with:
-                    files: all-sboms/*.cdx.json
-
