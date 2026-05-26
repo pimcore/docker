@@ -11,7 +11,7 @@ on:
             fail_on_severity:
                 description: 'Fail build if post-patch CVEs remain at this severity (CRITICAL, HIGH, MEDIUM, LOW, or NONE to disable)'
                 required: false
-                default: 'CRITICAL'
+                default: 'CRITICAL,HIGH'
                 type: string
     push:
         tags:
@@ -206,6 +206,12 @@ jobs:
                         if [ "$FAIL_SEVERITY" != "NONE" ]; then
                             echo "Running post-patch scan (fail on ${FAIL_SEVERITY}+)"
                             trivy image --vuln-type os --ignore-unfixed \
+                                --exit-code 1 \
+                                --severity "$FAIL_SEVERITY" \
+                                "${IMAGE_NAME}:${TAG}"
+
+                            echo "Running filesystem/library scan (fail on ${FAIL_SEVERITY}+)"
+                            trivy image --vuln-type library --ignore-unfixed \
                                 --exit-code 1 \
                                 --severity "$FAIL_SEVERITY" \
                                 "${IMAGE_NAME}:${TAG}"
