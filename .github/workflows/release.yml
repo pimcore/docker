@@ -79,7 +79,7 @@ jobs:
                         -p 127.0.0.1:8888:8888/tcp \
                         --name buildkitd \
                         --entrypoint buildkitd \
-                        moby/buildkit:latest \
+                        moby/buildkit:0.30.0 \
                         --addr tcp://0.0.0.0:8888
 
                     # Wait for buildkit to be ready
