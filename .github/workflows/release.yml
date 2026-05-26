@@ -84,7 +84,7 @@ jobs:
 
                     # Wait for buildkit to be ready
                     for i in $(seq 1 60); do
-                        if docker exec buildkitd buildctl debug workers >/dev/null 2>&1; then
+                            if docker exec buildkitd buildctl --addr tcp://127.0.0.1:8888 debug workers >/dev/null 2>&1; then
                             echo "BuildKit is ready"
                             break
                         fi
