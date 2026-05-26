@@ -107,6 +107,7 @@ jobs:
                     ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
                     PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
                     FAIL_ON_SEVERITY: ${{ inputs.fail_on_severity || 'CRITICAL' }}
+                    TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
                 run: |
                     set -eux;
 
