@@ -79,7 +79,7 @@ jobs:
                         -p 127.0.0.1:8888:8888/tcp \
                         --name buildkitd \
                         --entrypoint buildkitd \
-                        moby/buildkit:0.30.0 \
+                            moby/buildkit:v0.30.0 \
                         --addr tcp://0.0.0.0:8888
 
                     # Wait for buildkit to be ready
@@ -89,7 +89,7 @@ jobs:
                             break
                         fi
                         if [ "$i" -eq 60 ]; then
-                            echo "::error::BuildKit failed to start within 30 seconds"
+                            echo "::error::BuildKit failed to start within 60 seconds"
                             exit 1
                         fi
                         sleep 1
