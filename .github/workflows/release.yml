@@ -6,7 +6,7 @@ on:
             publish:
                 description: 'Publish images to registries'
                 required: false
-                default: true
+                default: false
                 type: boolean
     push:
         tags:
@@ -55,6 +55,46 @@ jobs:
             -   name: Login to GitHub Container Registry
                 run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
 
+            -   name: Install Copa and Trivy
+                run: |
+                    set -eux
+                    # Install Trivy
+                    sudo apt-get update
+                    sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+                    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+                    echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee /etc/apt/sources.list.d/trivy.list
+                    sudo apt-get update
+                    sudo apt-get install -y trivy
+
+                    # Install Copa
+                    COPA_VERSION=$(curl -s https://api.github.com/repos/project-copacetic/copacetic/releases/latest | jq -r '.tag_name' | sed 's/^v//')
+                    curl -fsSL -o copa.tar.gz "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copa_${COPA_VERSION}_linux_$(dpkg --print-architecture).tar.gz"
+                    tar -xzf copa.tar.gz copa
+                    sudo mv copa /usr/local/bin/copa
+                    rm copa.tar.gz
+
+            -   name: Start buildkit daemon
+                run: |
+                    docker run --detach --rm --privileged \
+                        -p 127.0.0.1:8888:8888/tcp \
+                        --name buildkitd \
+                        --entrypoint buildkitd \
+                        moby/buildkit:latest \
+                        --addr tcp://0.0.0.0:8888
+
+                    # Wait for buildkit to be ready
+                    for i in $(seq 1 30); do
+                        if docker exec buildkitd buildctl debug workers >/dev/null 2>&1; then
+                            echo "BuildKit is ready"
+                            break
+                        fi
+                        if [ "$i" -eq 30 ]; then
+                            echo "::error::BuildKit failed to start within 30 seconds"
+                            exit 1
+                        fi
+                        sleep 1
+                    done
+
             -   name: Configure and build images
                 id: vars
                 env:
@@ -63,7 +103,6 @@ jobs:
                     PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
                 run: |
                     set -eux;
-                    sudo apt-get update
 
                     echo ${{ matrix.runner}}
 
@@ -121,13 +160,56 @@ jobs:
                             TAGS="$TAGS --tag $GHCR_TAG_MAJOR"
                         fi
 
-                        docker build --output "type=image,push=$PUSH" \
+                        # Build and load image locally
+                        docker build --load \
                             --provenance=false \
                             --platform "linux/${ARCH_TAG}" \
                             --target="pimcore_php_$imageVariant" \
                             --build-arg PHP_VERSION="${PHP_VERSION}" \
                             --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
-                            ${TAGS} .
+                            --tag "${IMAGE_NAME}:${TAG}" .
+
+                        # Patch OS-level vulnerabilities with Copa
+                        echo "Scanning and patching image ${IMAGE_NAME}:${TAG}"
+                        trivy image --vuln-type os --ignore-unfixed --format json \
+                            -o /tmp/trivy-report.json "${IMAGE_NAME}:${TAG}"
+
+                        if [ -s /tmp/trivy-report.json ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' /tmp/trivy-report.json > /dev/null 2>&1; then
+                            copa patch -i "${IMAGE_NAME}:${TAG}" \
+                                -r /tmp/trivy-report.json \
+                                -t "${TAG}-patched" \
+                                -a tcp://127.0.0.1:8888
+
+                            # Verify the patched image exists
+                            if ! docker image inspect "${IMAGE_NAME}:${TAG}-patched" > /dev/null 2>&1; then
+                                echo "::error::Patched image not found for ${IMAGE_NAME}:${TAG}"
+                                exit 1
+                            fi
+
+                            docker rmi "${IMAGE_NAME}:${TAG}"
+                            docker tag "${IMAGE_NAME}:${TAG}-patched" "${IMAGE_NAME}:${TAG}"
+                            docker rmi "${IMAGE_NAME}:${TAG}-patched"
+                            echo "Successfully patched ${IMAGE_NAME}:${TAG}"
+                        else
+                            echo "No fixable OS vulnerabilities found, skipping Copa patch"
+                        fi
+                        rm -f /tmp/trivy-report.json
+
+                        # Apply all tags to the (patched) image
+                        CLEAN_TAGS_FOR_TAGGING="${TAGS//--tag /}"
+                        read -r -a ALL_TAGS <<< "$CLEAN_TAGS_FOR_TAGGING"
+                        for additional_tag in "${ALL_TAGS[@]}"; do
+                            if [ "$additional_tag" != "${IMAGE_NAME}:${TAG}" ]; then
+                                docker tag "${IMAGE_NAME}:${TAG}" "$additional_tag"
+                            fi
+                        done
+
+                        # Push if publishing
+                        if [[ "$PUSH" == "true" ]]; then
+                            for additional_tag in "${ALL_TAGS[@]}"; do
+                                docker push "$additional_tag"
+                            done
+                        fi
 
                         docker inspect ${IMAGE_NAME}:${TAG} || true;
 
@@ -145,7 +227,17 @@ jobs:
                             done
                         fi
 
+                        # Clean up to save disk space
+                        docker rmi "${IMAGE_NAME}:${TAG}" || true
+                        for additional_tag in "${ALL_TAGS[@]}"; do
+                            docker rmi "$additional_tag" 2>/dev/null || true
+                        done
+
                     done
+
+            -   name: Stop buildkit daemon
+                if: always()
+                run: docker stop buildkitd || true
 
             -   name: Upload aggregated tags
                 if: github.event_name != 'workflow_dispatch' || inputs.publish
