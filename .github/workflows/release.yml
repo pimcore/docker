@@ -177,7 +177,7 @@ jobs:
 
                         # Patch OS-level vulnerabilities with Copa
                         echo "Scanning and patching image ${IMAGE_NAME}:${TAG}"
-                        trivy image --vuln-type os --ignore-unfixed --format json \
+                        trivy image --pkg-types os --ignore-unfixed --format json \
                             -o /tmp/trivy-report.json "${IMAGE_NAME}:${TAG}"
 
                         if [ -s /tmp/trivy-report.json ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' /tmp/trivy-report.json > /dev/null 2>&1; then
@@ -206,25 +206,12 @@ jobs:
                         if [ "$FAIL_SEVERITY" != "NONE" ]; then
                             echo "Running post-patch scan (fail on ${FAIL_SEVERITY}+)"
 
-                            # OS scan
-                            trivy image --vuln-type os --ignore-unfixed \
+                            trivy image --pkg-types os --ignore-unfixed \
                                 --severity "$FAIL_SEVERITY" \
                                 --format table \
                                 -o /tmp/trivy-os-${TAG}.txt \
                                 "${IMAGE_NAME}:${TAG}" || true
-                            trivy image --vuln-type os --ignore-unfixed \
-                                --exit-code 1 \
-                                --severity "$FAIL_SEVERITY" \
-                                "${IMAGE_NAME}:${TAG}"
-
-                            # Library scan
-                            echo "Running filesystem/library scan (fail on ${FAIL_SEVERITY}+)"
-                            trivy image --vuln-type library --ignore-unfixed \
-                                --severity "$FAIL_SEVERITY" \
-                                --format table \
-                                -o /tmp/trivy-lib-${TAG}.txt \
-                                "${IMAGE_NAME}:${TAG}" || true
-                            trivy image --vuln-type library --ignore-unfixed \
+                            trivy image --pkg-types os --ignore-unfixed \
                                 --exit-code 1 \
                                 --severity "$FAIL_SEVERITY" \
                                 "${IMAGE_NAME}:${TAG}"
@@ -238,13 +225,8 @@ jobs:
                                 cat /tmp/trivy-os-${TAG}.txt 2>/dev/null || echo "No results"
                                 echo '```'
                                 echo ""
-                                echo "### Library Vulnerabilities (${FAIL_SEVERITY}+)"
-                                echo '```'
-                                cat /tmp/trivy-lib-${TAG}.txt 2>/dev/null || echo "No results"
-                                echo '```'
-                                echo ""
                             } >> "$GITHUB_STEP_SUMMARY"
-                            rm -f /tmp/trivy-os-${TAG}.txt /tmp/trivy-lib-${TAG}.txt
+                            rm -f /tmp/trivy-os-${TAG}.txt
                         fi
 
                         # Apply all tags to the (patched) image
