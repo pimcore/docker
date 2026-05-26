@@ -83,12 +83,12 @@ jobs:
                         --addr tcp://0.0.0.0:8888
 
                     # Wait for buildkit to be ready
-                    for i in $(seq 1 30); do
+                    for i in $(seq 1 60); do
                         if docker exec buildkitd buildctl debug workers >/dev/null 2>&1; then
                             echo "BuildKit is ready"
                             break
                         fi
-                        if [ "$i" -eq 30 ]; then
+                        if [ "$i" -eq 60 ]; then
                             echo "::error::BuildKit failed to start within 30 seconds"
                             exit 1
                         fi
