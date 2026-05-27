@@ -100,7 +100,7 @@ jobs:
 
                     # Wait for buildkit to be ready
                     for i in $(seq 1 60); do
-                            if docker exec buildkitd buildctl --addr tcp://127.0.0.1:8888 debug workers >/dev/null 2>&1; then
+                        if docker exec buildkitd buildctl --addr tcp://127.0.0.1:8888 debug workers >/dev/null 2>&1; then
                             echo "BuildKit is ready"
                             break
                         fi
@@ -215,7 +215,7 @@ jobs:
                         rm -f /tmp/trivy-report.json
 
                         # Post-patch vulnerability gate
-                        FAIL_SEVERITY="${FAIL_ON_SEVERITY:-CRITICAL}"
+                        FAIL_SEVERITY="$FAIL_ON_SEVERITY"
                         if [ "$FAIL_SEVERITY" != "NONE" ]; then
                             echo "Running post-patch scan (fail on ${FAIL_SEVERITY}+)"
 
@@ -263,11 +263,9 @@ jobs:
                             fi
                         done
 
-                        # Push if publishing
+                        # Push if publishing (parallel for speed)
                         if [[ "$PUSH" == "true" ]]; then
-                            for additional_tag in "${ALL_TAGS[@]}"; do
-                                docker push "$additional_tag"
-                            done
+                            printf '%s\n' "${ALL_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
                         fi
 
                         docker inspect ${IMAGE_NAME}:${TAG} || true;
@@ -302,7 +300,7 @@ jobs:
                 if: always()
                 uses: actions/upload-artifact@v7
                 with:
-                    name: trivy-reports_${{ matrix.runner }}_${{ matrix.build.tag }}_${{ matrix.build.php }}
+                    name: trivy-reports_${{ matrix.runner }}_${{ matrix.build.tag }}_${{ matrix.build.php }}_${{ matrix.build.distro }}_${{ matrix.build.version-override }}_${{ matrix.build.latest-tag }}
                     path: trivy-reports/
                     if-no-files-found: ignore
 
