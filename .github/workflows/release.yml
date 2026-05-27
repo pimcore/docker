@@ -21,6 +21,9 @@ on:
 
 env:
     IMAGE_NAME: pimcore/pimcore
+    COPA_VERSION: "0.14.1"
+    BUILDKIT_VERSION: "0.30.0"
+    TRIVY_DB_REPOSITORY: "ghcr.io/aquasecurity/trivy-db:2"
 
 jobs:
     build-php:
@@ -72,7 +75,6 @@ jobs:
                     sudo apt-get install -y trivy
 
                     # Install Copa
-                    COPA_VERSION="0.14.1"
                     COPA_ARCH="$(dpkg --print-architecture)"
                     curl -fsSL -o copa.tar.gz "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz"
                     curl -fsSL -o copacetic_checksums.txt "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copacetic_checksums.txt"
@@ -93,7 +95,7 @@ jobs:
                         -p 127.0.0.1:8888:8888/tcp \
                         --name buildkitd \
                         --entrypoint buildkitd \
-                            moby/buildkit:v0.30.0 \
+                            moby/buildkit:v${{ env.BUILDKIT_VERSION }} \
                         --addr tcp://0.0.0.0:8888
 
                     # Wait for buildkit to be ready
@@ -116,10 +118,11 @@ jobs:
                     ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
                     PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
                     FAIL_ON_SEVERITY: ${{ inputs.fail_on_severity || 'CRITICAL,HIGH' }}
-                    TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db:2
+                    TRIVY_DB_REPOSITORY: ${{ env.TRIVY_DB_REPOSITORY }}
                 run: |
                     set -eux;
 
+                    mkdir -p trivy-reports
                     echo ${{ matrix.runner}}
 
                     if [[ "${{ matrix.build.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
@@ -216,11 +219,23 @@ jobs:
                         if [ "$FAIL_SEVERITY" != "NONE" ]; then
                             echo "Running post-patch scan (fail on ${FAIL_SEVERITY}+)"
 
+                            # Get the image hash for report naming
+                            IMAGE_HASH=$(docker image inspect "${IMAGE_NAME}:${TAG}" --format '{{.Id}}' | sed 's/sha256://' | head -c 12)
+
                             trivy image --pkg-types os --ignore-unfixed \
                                 --severity "$FAIL_SEVERITY" \
                                 --format table \
                                 -o /tmp/trivy-os-${TAG}.txt \
                                 "${IMAGE_NAME}:${TAG}" || true
+
+                            # Save report with image hash for artifact upload
+                            trivy image --pkg-types os --ignore-unfixed \
+                                --severity "$FAIL_SEVERITY" \
+                                --format json \
+                                -o "trivy-reports/${TAG}_${IMAGE_HASH}.json" \
+                                "${IMAGE_NAME}:${TAG}" || true
+                            cp /tmp/trivy-os-${TAG}.txt "trivy-reports/${TAG}_${IMAGE_HASH}.txt" 2>/dev/null || true
+
                             trivy image --pkg-types os --ignore-unfixed \
                                 --exit-code 1 \
                                 --severity "$FAIL_SEVERITY" \
@@ -282,6 +297,14 @@ jobs:
             -   name: Stop buildkit daemon
                 if: always()
                 run: docker stop buildkitd || true
+
+            -   name: Upload trivy reports
+                if: always()
+                uses: actions/upload-artifact@v7
+                with:
+                    name: trivy-reports_${{ matrix.runner }}_${{ matrix.build.tag }}_${{ matrix.build.php }}
+                    path: trivy-reports/
+                    if-no-files-found: ignore
 
             -   name: Upload aggregated tags
                 if: github.event_name != 'workflow_dispatch' || inputs.publish
