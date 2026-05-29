@@ -164,6 +164,9 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || inputs.publish
         steps:
             
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v4
+
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
@@ -190,9 +193,15 @@ jobs:
                     
                         echo "Processing tag: $tag"
 
-                        docker buildx imagetools create \
-                            --tag "$tag" \
-                            "${tag}-amd64" \
-                            "${tag}-arm64"
+                        # Verify both per-arch images exist in the registry before merging
+                        if docker buildx imagetools inspect "${tag}-amd64" > /dev/null 2>&1 \
+                            && docker buildx imagetools inspect "${tag}-arm64" > /dev/null 2>&1; then
+                            docker buildx imagetools create \
+                                --tag "$tag" \
+                                "${tag}-amd64" \
+                                "${tag}-arm64"
+                        else
+                            echo "Error: Missing per-arch image for $tag, skipping"
+                        fi
     
                     done
