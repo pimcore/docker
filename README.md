@@ -44,7 +44,16 @@ Use either of the following commands:
 | v5              | ❌  | ❌  | ❌      | ❌      | ❌   | ✅*   |
 
 
-> *) recommended version
+### Pimcore image versions support
+| Image | Supported |
+|-------|-----------|
+| v1    | ❌        |
+| v2    | ✅        |
+| v3    | ✅        |
+| v4    | ✅        |
+| v5    | ✅        |
+
+We are basing our images on top of the official PHP and Debian images and providing support until EOL for the [PHP versions](https://www.php.net/supported-versions.php) and [Debian versions](https://wiki.debian.org/LTS)
 
 ## Examples 
 
