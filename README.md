@@ -27,6 +27,21 @@ Additionally we're offering 2 special tag suffixes:
 
 We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`. 
 
+## Hardened images
+For our stable release tags we publish each image in two flavors so you can choose your trade-off:
+
+- **plain** (default, unsuffixed) – the image exactly as built from the Dockerfile, e.g. `php8.5-debug-v5`.
+- **hardened** (`-hardened` suffix) – the same image with known OS-level CVEs patched in via [Copacetic (Copa)](https://github.com/project-copacetic/copacetic), e.g. `php8.5-debug-v5-hardened`. Every hardened image is scanned with [Trivy](https://github.com/aquasecurity/trivy) and must pass a `CRITICAL,HIGH` vulnerability gate before it's published.
+
+```text
+php8.5-debug-v5          # plain image, as built
+php8.5-debug-v5-hardened # same image, OS CVEs patched with Copa
+```
+
+The `-hardened` suffix works with every tag form (e.g. `php8.5-debug-latest-hardened`, `php8.5.3-debug-v5-hardened`).
+
+Pick **hardened** for production or anywhere images are vulnerability-scanned. Pick **plain** when you need the unmodified base (e.g. for reproducible builds or when you run your own patching pipeline). The hardened flavor is only available for stable release tags – development tags (`-dev`) are published as plain only.
+
 ## Container registries
 Our images are available on both Docker Hub and the GitHub Container Registry, so you can choose the one that best fits your workflow.
 Use either of the following commands:
