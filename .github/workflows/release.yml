@@ -36,21 +36,21 @@ jobs:
                     - ubuntu-22.04
                     - ubuntu-22.04-arm
                 build:
-                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false }
-                    - { tag: 'v1.6', php: '8.1', distro: bullseye, version-override: "", latest-tag: true }
-                    - { tag: 'v1.6', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: 'v2.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
-                    - { tag: 'v3.8', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false }
-                    - { tag: 'v4.1', php: '8.4', distro: bookworm, version-override: "", latest-tag: true }
-                    - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false }
-                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "", latest-tag: false }
-                    - { tag: 'v5.1', php: '8.5', distro: trixie, version-override: "", latest-tag: true } 
-                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false } 
+                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false, imagePatch: false }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false, imagePatch: false }
+                    - { tag: 'v1.6', php: '8.1', distro: bullseye, version-override: "", latest-tag: true, imagePatch: true }
+                    - { tag: 'v1.6', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, imagePatch: true }
+                    - { tag: 'v2.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, imagePatch: true }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false, imagePatch: false }
+                    - { tag: 'v3.8', php: '8.2', distro: bookworm, version-override: "", latest-tag: true, imagePatch: true }
+                    - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true, imagePatch: true }
+                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, imagePatch: false }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false, imagePatch: false }
+                    - { tag: 'v4.1', php: '8.4', distro: bookworm, version-override: "", latest-tag: true, imagePatch: true }
+                    - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false, imagePatch: false }
+                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "", latest-tag: false, imagePatch: false }
+                    - { tag: 'v5.1', php: '8.5', distro: trixie, version-override: "", latest-tag: true, imagePatch: true }
+                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false, imagePatch: false }
 
         steps:
             -   uses: actions/checkout@v5
@@ -189,30 +189,34 @@ jobs:
                             --tag "${IMAGE_NAME}:${TAG}" .
 
                         # Patch OS-level vulnerabilities with Copa
-                        echo "Scanning and patching image ${IMAGE_NAME}:${TAG}"
-                        trivy image --pkg-types os --ignore-unfixed --format json \
-                            -o /tmp/trivy-report.json "${IMAGE_NAME}:${TAG}"
+                        if [ "${{ matrix.build.imagePatch }}" = "true" ]; then
+                            echo "Scanning and patching image ${IMAGE_NAME}:${TAG}"
+                            trivy image --pkg-types os --ignore-unfixed --format json \
+                                -o /tmp/trivy-report.json "${IMAGE_NAME}:${TAG}"
 
-                        if [ -s /tmp/trivy-report.json ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' /tmp/trivy-report.json > /dev/null 2>&1; then
-                            copa patch -i "${IMAGE_NAME}:${TAG}" \
-                                -r /tmp/trivy-report.json \
-                                -t "${TAG}-patched" \
-                                -a tcp://127.0.0.1:8888
+                            if [ -s /tmp/trivy-report.json ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' /tmp/trivy-report.json > /dev/null 2>&1; then
+                                copa patch -i "${IMAGE_NAME}:${TAG}" \
+                                    -r /tmp/trivy-report.json \
+                                    -t "${TAG}-patched" \
+                                    -a tcp://127.0.0.1:8888
 
-                            # Verify the patched image exists
-                            if ! docker image inspect "${IMAGE_NAME}:${TAG}-patched" > /dev/null 2>&1; then
-                                echo "::error::Patched image not found for ${IMAGE_NAME}:${TAG}"
-                                exit 1
+                                # Verify the patched image exists
+                                if ! docker image inspect "${IMAGE_NAME}:${TAG}-patched" > /dev/null 2>&1; then
+                                    echo "::error::Patched image not found for ${IMAGE_NAME}:${TAG}"
+                                    exit 1
+                                fi
+
+                                docker rmi "${IMAGE_NAME}:${TAG}"
+                                docker tag "${IMAGE_NAME}:${TAG}-patched" "${IMAGE_NAME}:${TAG}"
+                                docker rmi "${IMAGE_NAME}:${TAG}-patched"
+                                echo "Successfully patched ${IMAGE_NAME}:${TAG}"
+                            else
+                                echo "No fixable OS vulnerabilities found, skipping Copa patch"
                             fi
-
-                            docker rmi "${IMAGE_NAME}:${TAG}"
-                            docker tag "${IMAGE_NAME}:${TAG}-patched" "${IMAGE_NAME}:${TAG}"
-                            docker rmi "${IMAGE_NAME}:${TAG}-patched"
-                            echo "Successfully patched ${IMAGE_NAME}:${TAG}"
+                            rm -f /tmp/trivy-report.json
                         else
-                            echo "No fixable OS vulnerabilities found, skipping Copa patch"
+                            echo "Copa patching skipped (imagePatch: false)"
                         fi
-                        rm -f /tmp/trivy-report.json
 
                         # Post-patch vulnerability gate
                         FAIL_SEVERITY="$FAIL_ON_SEVERITY"
