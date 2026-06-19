@@ -100,7 +100,7 @@ RUN set -eux; \
     ; \
     \
     # ImageMagick
-    apt-get install -y \
+    apt-get install -y -t ${DEBIAN_VERSION}-backports \
         imagemagick \
     ; \
     apt-get clean; \
