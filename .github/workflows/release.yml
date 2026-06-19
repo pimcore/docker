@@ -63,6 +63,7 @@ jobs:
                 run: echo ${{ secrets.IMAGES_REPO_TOKEN }} | docker login ghcr.io -u ${{ secrets.IMAGES_REPO_USERNAME }} --password-stdin
 
             -   name: Install Copa and Trivy
+                if: ${{ matrix.build.hardened }}
                 run: |
                     set -eux
                     # Install Trivy
@@ -89,6 +90,7 @@ jobs:
                     rm copa.tar.gz copacetic_checksums.txt
 
             -   name: Start buildkit daemon
+                if: ${{ matrix.build.hardened }}
                 run: |
                     docker run --detach --rm --privileged \
                         -p 127.0.0.1:8888:8888/tcp \
@@ -324,7 +326,7 @@ jobs:
                     done
 
             -   name: Stop buildkit daemon
-                if: always()
+                if: ${{ always() && matrix.build.hardened }}
                 run: docker stop buildkitd || true
 
             -   name: Upload trivy reports
