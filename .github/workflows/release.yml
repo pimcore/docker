@@ -319,10 +319,8 @@ jobs:
                         fi
 
                         # Clean up per variant to reclaim disk space before the next variant.
-                        docker rmi "${PLAIN_IMAGE}" || true
-                        if [ -n "${HARDENED_IMAGE}" ]; then
-                            docker rmi "${HARDENED_IMAGE}" || true
-                        fi
+                        # ALL_TAGS already includes PLAIN_IMAGE and HARDENED_IMAGE as their
+                        # first entries, so a single loop covers everything.
                         for additional_tag in "${ALL_TAGS[@]}"; do
                             docker rmi "$additional_tag" 2>/dev/null || true
                         done
