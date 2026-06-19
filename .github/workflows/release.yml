@@ -209,7 +209,7 @@ jobs:
                         if [ -s /tmp/trivy-report.json ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' /tmp/trivy-report.json > /dev/null 2>&1; then
                             copa patch -i "${PLAIN_IMAGE}" \
                                 -r /tmp/trivy-report.json \
-                                -t "${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}" \
+                                -t "${HARDENED_IMAGE}" \
                                 -a tcp://127.0.0.1:8888
 
                             if ! docker image inspect "${HARDENED_IMAGE}" > /dev/null 2>&1; then
