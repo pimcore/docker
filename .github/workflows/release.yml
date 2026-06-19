@@ -79,7 +79,7 @@ jobs:
                     curl -fsSL -o copa.tar.gz "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz"
                     curl -fsSL -o copacetic_checksums.txt "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copacetic_checksums.txt"
                     # Verify checksum before extracting
-                    EXPECTED_SHA=$(grep "copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz" copacetic_checksums.txt | awk '{print $1}')
+                    EXPECTED_SHA=$(grep -F "copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz" copacetic_checksums.txt | awk '{print $1}')
                     ACTUAL_SHA=$(sha256sum copa.tar.gz | awk '{print $1}')
                     if [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
                         echo "::error::Copa checksum mismatch! Expected ${EXPECTED_SHA}, got ${ACTUAL_SHA}"
