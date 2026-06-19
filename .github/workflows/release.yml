@@ -110,170 +110,185 @@ jobs:
                         sleep 1
                     done
 
-            -   name: Configure and build images
-                id: vars
+            -   name: Build plain images
                 env:
                     VERSION_OVERRIDE: "${{ matrix.build.version-override }}"
                     ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
-                    PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
-                    FAIL_ON_SEVERITY: ${{ inputs.fail_on_severity || 'CRITICAL,HIGH' }}
-                    TRIVY_DB_REPOSITORY: ${{ env.TRIVY_DB_REPOSITORY }}
                 run: |
-                    set -eux;
+                    set -eux
+                    mkdir -p .docker-state
 
-                    mkdir -p trivy-reports
-                    echo ${{ matrix.runner}}
-
-                    if [[ "${{ matrix.build.tag }}" =~ ^v?1.[0-9x]+$ ]]; then
+                    if [[ "${{ matrix.build.tag }}" =~ ^v?1\.[0-9x]+$ ]]; then
                         imageVariants=("fpm" "debug" "supervisord")
                     else
                         imageVariants=("min" "default" "max" "debug" "supervisord")
                     fi
-                    for imageVariant in ${imageVariants[@]}; do
-                        echo "Building image variant $imageVariant"
-                        DOCKER_PLATFORMS=linux/amd64,linux/arm64
-                        PHP_VERSION=${{ matrix.build.php }}
-                        DEBIAN_VERSION="${{ matrix.build.distro }}"
+                    echo "${imageVariants[*]}" > .docker-state/variants.txt
+
+                    PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.build.php }}-fpm-${{ matrix.build.distro }} php -r 'echo PHP_VERSION;')
+
+                    for imageVariant in "${imageVariants[@]}"; do
+                        echo "Building plain image: $imageVariant"
+                        mkdir -p ".docker-state/${imageVariant}"
+
                         VERSION="${{ matrix.build.tag }}"
-                        # for the latest dev branch we use "dev" as the version and not the name of the branch
-                        if [ ! -z "$VERSION_OVERRIDE" ]; then
+                        if [ -n "$VERSION_OVERRIDE" ]; then
                             VERSION="$VERSION_OVERRIDE"
                         fi
-                        PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.build.php }}-fpm-${{ matrix.build.distro }} php -r 'echo PHP_VERSION;')
-                        if [ "$imageVariant" = "fpm"  ] || [ "$imageVariant" = "default"  ]; then
+
+                        if [ "$imageVariant" = "fpm" ] || [ "$imageVariant" = "default" ]; then
                             BASE_TAG="php${{ matrix.build.php }}"
                             BASE_TAG_DETAILED="php${PHP_SUB_VERSION}"
                         else
-                            BASE_TAG="php${{ matrix.build.php }}-$imageVariant"
-                            BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-$imageVariant"
+                            BASE_TAG="php${{ matrix.build.php }}-${imageVariant}"
+                            BASE_TAG_DETAILED="php${PHP_SUB_VERSION}-${imageVariant}"
                         fi
-                        # DEBUG / TEST
-                        #BASE_TAG="testv3-$BASE_TAG"
-                        #BASE_TAG_DETAILED="testv3-$BASE_TAG_DETAILED"
-
 
                         TAG="${BASE_TAG}-${VERSION}-${ARCH_TAG}"
-                        TAG_DETAILED="${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
-
-                        GHCR_TAG="ghcr.io/pimcore/pimcore:${TAG}"
-                        GHCR_TAG_DETAILED="ghcr.io/pimcore/pimcore:${TAG_DETAILED}"
-
-                        TAGS="--tag ${IMAGE_NAME}:${TAG}"
-                        TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_DETAILED}"
-
-                        TAGS="$TAGS --tag $GHCR_TAG"
-                        TAGS="$TAGS --tag $GHCR_TAG_DETAILED"
-
-                        # Tag latest with Version build too
-                        if [ "true" = "${{ matrix.build.latest-tag }}" ]; then
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:${BASE_TAG}-latest-${ARCH_TAG}"
-                            TAGS="$TAGS --tag ghcr.io/pimcore/pimcore:${BASE_TAG}-latest-${ARCH_TAG}"
-                        fi
-                        # Create tag for major version
-                        if [[ $VERSION =~ ^v[0-9]+.[0-9]+$ ]]; then
-                            VERSION_MAJOR="${VERSION//.[0-9]/}"
-                            TAG_MAJOR="${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
-                            GHCR_TAG_MAJOR="ghcr.io/pimcore/pimcore:${TAG_MAJOR}"
-                            TAGS="$TAGS --tag ${IMAGE_NAME}:${TAG_MAJOR}"
-                            TAGS="$TAGS --tag $GHCR_TAG_MAJOR"
-                        fi
-
-                        # Build and load the plain image locally. The plain image is
-                        # published as-is under the unsuffixed tags; it is never patched.
                         PLAIN_IMAGE="${IMAGE_NAME}:${TAG}"
+
+                        # Write plain tags one per line; avoids quoting issues in later steps.
+                        {
+                            echo "${IMAGE_NAME}:${TAG}"
+                            echo "${IMAGE_NAME}:${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
+                            echo "ghcr.io/pimcore/pimcore:${TAG}"
+                            echo "ghcr.io/pimcore/pimcore:${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
+                            if [ "true" = "${{ matrix.build.latest-tag }}" ]; then
+                                echo "${IMAGE_NAME}:${BASE_TAG}-latest-${ARCH_TAG}"
+                                echo "ghcr.io/pimcore/pimcore:${BASE_TAG}-latest-${ARCH_TAG}"
+                            fi
+                            if [[ $VERSION =~ ^v[0-9]+\.[0-9]+$ ]]; then
+                                VERSION_MAJOR="${VERSION%.*}"
+                                echo "${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
+                                echo "ghcr.io/pimcore/pimcore:${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
+                            fi
+                        } > ".docker-state/${imageVariant}/plain_tags.txt"
+
+                        echo "${PLAIN_IMAGE}" > ".docker-state/${imageVariant}/plain_image.txt"
+                        echo "${BASE_TAG}"    > ".docker-state/${imageVariant}/base_tag.txt"
+                        echo "${VERSION}"     > ".docker-state/${imageVariant}/version.txt"
+                        echo "${TAG}"         > ".docker-state/${imageVariant}/tag.txt"
+
                         docker build --load \
                             --provenance=false \
                             --platform "linux/${ARCH_TAG}" \
-                            --target="pimcore_php_$imageVariant" \
-                            --build-arg PHP_VERSION="${PHP_VERSION}" \
-                            --build-arg DEBIAN_VERSION="${DEBIAN_VERSION}" \
+                            --target="pimcore_php_${imageVariant}" \
+                            --build-arg PHP_VERSION="${{ matrix.build.php }}" \
+                            --build-arg DEBIAN_VERSION="${{ matrix.build.distro }}" \
                             --tag "${PLAIN_IMAGE}" .
+                    done
 
-                        # Plain tag set (every entry carries the -${ARCH_TAG} suffix).
-                        CLEAN_PLAIN_TAGS="${TAGS//--tag /}"
-                        read -r -a PLAIN_TAGS <<< "$CLEAN_PLAIN_TAGS"
+            -   name: Scan, patch, and gate hardened images
+                if: ${{ matrix.build.hardened }}
+                env:
+                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
+                    FAIL_ON_SEVERITY: ${{ inputs.fail_on_severity || 'CRITICAL,HIGH' }}
+                    TRIVY_DB_REPOSITORY: ${{ env.TRIVY_DB_REPOSITORY }}
+                run: |
+                    set -eux
+                    mkdir -p trivy-reports
 
-                        # ALL_TAGS accumulates everything we push, aggregate and clean up.
+                    read -r -a imageVariants < .docker-state/variants.txt
+
+                    for imageVariant in "${imageVariants[@]}"; do
+                        PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
+                        BASE_TAG=$(< ".docker-state/${imageVariant}/base_tag.txt")
+                        VERSION=$(< ".docker-state/${imageVariant}/version.txt")
+                        TAG=$(< ".docker-state/${imageVariant}/tag.txt")
+                        HARDENED_IMAGE="${IMAGE_NAME}:${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}"
+
+                        echo "Scanning plain image ${PLAIN_IMAGE} for OS vulnerabilities"
+                        trivy image --pkg-types os --ignore-unfixed --format json \
+                            -o /tmp/trivy-report.json "${PLAIN_IMAGE}"
+
+                        if [ -s /tmp/trivy-report.json ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' /tmp/trivy-report.json > /dev/null 2>&1; then
+                            copa patch -i "${PLAIN_IMAGE}" \
+                                -r /tmp/trivy-report.json \
+                                -t "${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}" \
+                                -a tcp://127.0.0.1:8888
+
+                            if ! docker image inspect "${HARDENED_IMAGE}" > /dev/null 2>&1; then
+                                echo "::error::Hardened image not found for ${PLAIN_IMAGE}"
+                                exit 1
+                            fi
+                            echo "Successfully patched ${PLAIN_IMAGE} into ${HARDENED_IMAGE}"
+                        else
+                            # Nothing fixable: hardened tag mirrors plain so it always exists.
+                            echo "No fixable OS vulnerabilities found; hardened image mirrors plain"
+                            docker tag "${PLAIN_IMAGE}" "${HARDENED_IMAGE}"
+                        fi
+                        rm -f /tmp/trivy-report.json
+
+                        # Derive hardened tags by inserting -hardened before the arch suffix on each plain tag.
+                        while IFS= read -r plain_tag; do
+                            echo "${plain_tag%-${ARCH_TAG}}-hardened-${ARCH_TAG}"
+                        done < ".docker-state/${imageVariant}/plain_tags.txt" \
+                            > ".docker-state/${imageVariant}/hardened_tags.txt"
+                        echo "${HARDENED_IMAGE}" > ".docker-state/${imageVariant}/hardened_image.txt"
+
+                        # Post-patch vulnerability gate -- runs before any push; failure aborts the step
+                        # so neither plain nor hardened tags ship for this variant.
+                        if [ "$FAIL_ON_SEVERITY" != "NONE" ]; then
+                            echo "Running post-patch scan (fail on ${FAIL_ON_SEVERITY}+)"
+
+                            IMAGE_HASH=$(docker image inspect "${HARDENED_IMAGE}" --format '{{.Id}}' | sed 's/sha256://' | head -c 12)
+                            REPORT_JSON="trivy-reports/${TAG}-hardened_${IMAGE_HASH}.json"
+                            REPORT_TXT="trivy-reports/${TAG}-hardened_${IMAGE_HASH}.txt"
+
+                            # Scan to JSON -- source for both the downloadable artifact and the gate.
+                            # Not soft: a Trivy error here should abort the step.
+                            trivy image --pkg-types os --ignore-unfixed \
+                                --severity "$FAIL_ON_SEVERITY" \
+                                --format json \
+                                -o "${REPORT_JSON}" \
+                                "${HARDENED_IMAGE}"
+
+                            # Scan to table for human-readable output only (soft -- display cannot gate).
+                            trivy image --pkg-types os --ignore-unfixed \
+                                --severity "$FAIL_ON_SEVERITY" \
+                                --format table \
+                                -o /tmp/trivy-os-${TAG}.txt \
+                                "${HARDENED_IMAGE}" || true
+                            cp /tmp/trivy-os-${TAG}.txt "${REPORT_TXT}" 2>/dev/null || true
+
+                            {
+                                echo "## Trivy Scan: ${HARDENED_IMAGE}"
+                                echo ""
+                                echo "### OS Vulnerabilities (${FAIL_ON_SEVERITY}+)"
+                                echo '```'
+                                cat /tmp/trivy-os-${TAG}.txt 2>/dev/null || echo "No results"
+                                echo '```'
+                                echo ""
+                            } >> "$GITHUB_STEP_SUMMARY"
+                            rm -f /tmp/trivy-os-${TAG}.txt
+
+                            # Gate on the JSON findings -- no third Trivy invocation needed.
+                            if jq -e '.Results[]? | select((.Vulnerabilities // []) | length > 0)' "${REPORT_JSON}" > /dev/null 2>&1; then
+                                echo "::error::${HARDENED_IMAGE} has unfixed ${FAIL_ON_SEVERITY} vulnerabilities after patching"
+                                exit 1
+                            fi
+                        fi
+                    done
+
+            -   name: Tag, push, and aggregate
+                env:
+                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
+                    PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
+                run: |
+                    set -eux
+
+                    read -r -a imageVariants < .docker-state/variants.txt
+
+                    for imageVariant in "${imageVariants[@]}"; do
+                        PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
+                        mapfile -t PLAIN_TAGS < ".docker-state/${imageVariant}/plain_tags.txt"
                         ALL_TAGS=("${PLAIN_TAGS[@]}")
 
-                        # Produce the hardened (Copa-patched) image and its -hardened tag set.
-                        if [ "${{ matrix.build.hardened }}" = "true" ]; then
-                            HARDENED_IMAGE="${IMAGE_NAME}:${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}"
-
-                            echo "Scanning plain image ${PLAIN_IMAGE} for OS vulnerabilities"
-                            trivy image --pkg-types os --ignore-unfixed --format json \
-                                -o /tmp/trivy-report.json "${PLAIN_IMAGE}"
-
-                            if [ -s /tmp/trivy-report.json ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' /tmp/trivy-report.json > /dev/null 2>&1; then
-                                # Patch from the plain image into a new -hardened tag; the plain image is left intact.
-                                copa patch -i "${PLAIN_IMAGE}" \
-                                    -r /tmp/trivy-report.json \
-                                    -t "${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}" \
-                                    -a tcp://127.0.0.1:8888
-
-                                if ! docker image inspect "${HARDENED_IMAGE}" > /dev/null 2>&1; then
-                                    echo "::error::Hardened image not found for ${PLAIN_IMAGE}"
-                                    exit 1
-                                fi
-                                echo "Successfully patched ${PLAIN_IMAGE} into ${HARDENED_IMAGE}"
-                            else
-                                # Nothing fixable: the hardened tag mirrors the plain image so it always exists.
-                                echo "No fixable OS vulnerabilities found; hardened image mirrors plain"
-                                docker tag "${PLAIN_IMAGE}" "${HARDENED_IMAGE}"
-                            fi
-                            rm -f /tmp/trivy-report.json
-
-                            # Derive the hardened tag set by inserting -hardened before the arch suffix.
-                            HARDENED_TAGS=()
-                            for plain_tag in "${PLAIN_TAGS[@]}"; do
-                                HARDENED_TAGS+=("${plain_tag%-${ARCH_TAG}}-hardened-${ARCH_TAG}")
-                            done
-
-                            # Post-patch vulnerability gate, run on the hardened image only.
-                            # The plain image is intentionally ungated. A failure here aborts the
-                            # step before any push, so nothing ships for this variant.
-                            FAIL_SEVERITY="$FAIL_ON_SEVERITY"
-                            if [ "$FAIL_SEVERITY" != "NONE" ]; then
-                                echo "Running post-patch scan (fail on ${FAIL_SEVERITY}+)"
-
-                                # Get the image hash for report naming
-                                IMAGE_HASH=$(docker image inspect "${HARDENED_IMAGE}" --format '{{.Id}}' | sed 's/sha256://' | head -c 12)
-
-                                trivy image --pkg-types os --ignore-unfixed \
-                                    --severity "$FAIL_SEVERITY" \
-                                    --format table \
-                                    -o /tmp/trivy-os-${TAG}.txt \
-                                    "${HARDENED_IMAGE}" || true
-
-                                # Save report with image hash for artifact upload
-                                trivy image --pkg-types os --ignore-unfixed \
-                                    --severity "$FAIL_SEVERITY" \
-                                    --format json \
-                                    -o "trivy-reports/${TAG}-hardened_${IMAGE_HASH}.json" \
-                                    "${HARDENED_IMAGE}" || true
-                                cp /tmp/trivy-os-${TAG}.txt "trivy-reports/${TAG}-hardened_${IMAGE_HASH}.txt" 2>/dev/null || true
-
-                                trivy image --pkg-types os --ignore-unfixed \
-                                    --exit-code 1 \
-                                    --severity "$FAIL_SEVERITY" \
-                                    "${HARDENED_IMAGE}"
-
-                                # Attach scan results to GitHub Actions job summary
-                                {
-                                    echo "## Trivy Scan: ${HARDENED_IMAGE}"
-                                    echo ""
-                                    echo "### OS Vulnerabilities (${FAIL_SEVERITY}+)"
-                                    echo '```'
-                                    cat /tmp/trivy-os-${TAG}.txt 2>/dev/null || echo "No results"
-                                    echo '```'
-                                    echo ""
-                                } >> "$GITHUB_STEP_SUMMARY"
-                                rm -f /tmp/trivy-os-${TAG}.txt
-                            fi
-
+                        HARDENED_IMAGE=""
+                        if [ -f ".docker-state/${imageVariant}/hardened_image.txt" ]; then
+                            HARDENED_IMAGE=$(< ".docker-state/${imageVariant}/hardened_image.txt")
+                            mapfile -t HARDENED_TAGS < ".docker-state/${imageVariant}/hardened_tags.txt"
                             ALL_TAGS+=("${HARDENED_TAGS[@]}")
-                        else
-                            echo "Copa patching skipped (hardened: false)"
                         fi
 
                         # Apply every tag to its source image (plain or hardened).
@@ -287,33 +302,25 @@ jobs:
                             fi
                         done
 
-                        # Push if publishing (parallel for speed)
+                        # Push and aggregate logical tags (parallel push for speed).
                         if [[ "$PUSH" == "true" ]]; then
                             printf '%s\n' "${ALL_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
-                        fi
 
-                        docker inspect "${PLAIN_IMAGE}" || true;
-
-                        # Only aggregate tags if we're publishing. Strip the arch suffix so the
-                        # process-tags job can merge per-arch tags into a multi-arch manifest.
-                        if [[ "$PUSH" == "true" ]]; then
                             for tag in "${ALL_TAGS[@]}"; do
                                 logical_tag="${tag//-arm64/}"
                                 logical_tag="${logical_tag//-amd64/}"
-                                echo "Processing tag: $logical_tag"
                                 echo "$logical_tag" >> aggregated_tags.txt
                             done
                         fi
 
-                        # Clean up to save disk space
+                        # Clean up per variant to reclaim disk space before the next variant.
                         docker rmi "${PLAIN_IMAGE}" || true
-                        if [ "${{ matrix.build.hardened }}" = "true" ]; then
+                        if [ -n "${HARDENED_IMAGE}" ]; then
                             docker rmi "${HARDENED_IMAGE}" || true
                         fi
                         for additional_tag in "${ALL_TAGS[@]}"; do
                             docker rmi "$additional_tag" 2>/dev/null || true
                         done
-
                     done
 
             -   name: Stop buildkit daemon
