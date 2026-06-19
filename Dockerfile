@@ -134,8 +134,8 @@ RUN set -eux; \
     \
     # ImageMagick
     apt-get install -y \
-        imagemagick-7 \
-        libmagickwand-7-dev \
+        imagemagick \
+        libmagickwand-dev \
     ; \
     \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp; \
