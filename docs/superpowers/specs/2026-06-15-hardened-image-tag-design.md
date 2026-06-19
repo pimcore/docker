@@ -25,7 +25,7 @@ releases — Copa hardening is mandatory and invisible. We want users to choose:
    un-patched image. The hardened image gets a `-hardened` suffix. Existing
    pullers of the unsuffixed tag will receive the plain image going forward
    (they lose the implicit auto-patching they get today).
-2. **Scope = only `imagePatch: true` builds.** Dev/rolling tags (`1.x`, `2.x`,
+2. **Scope = only `hardened: true` builds.** Dev/rolling tags (`1.x`, `2.x`,
    `3.x`, `4.x`, `5.x`, and all `*-dev` overrides) remain plain-only, exactly as
    today. No `-hardened` variant is produced for them.
 3. **Severity gate applies to the hardened image only.** The plain image is
@@ -43,7 +43,7 @@ architecture suffix. This lets the existing `process-tags` job (which strips the
 arch suffix and creates a multi-arch manifest) produce `…-hardened` manifests
 with no changes to that job.
 
-For an `imagePatch: true` build, both tag sets are produced and pushed:
+For a `hardened: true` build, both tag sets are produced and pushed:
 
 | Tag role        | Plain (default, unchanged) | Hardened (new)                        |
 |-----------------|----------------------------|---------------------------------------|
@@ -56,7 +56,7 @@ For an `imagePatch: true` build, both tag sets are produced and pushed:
 per existing logic. Internally every tag above carries an `-amd64`/`-arm64`
 suffix that the manifest job merges away.
 
-For `imagePatch: false` builds: only the plain set is produced (unchanged).
+For `hardened: false` builds: only the plain set is produced (unchanged).
 
 ## Build flow (per image variant, inside the existing loop)
 
@@ -65,7 +65,7 @@ For `imagePatch: false` builds: only the plain set is produced (unchanged).
    patch-and-replace logic** so the plain tag keeps the un-patched bytes.
 2. **Construct the plain tag list** exactly as today (primary, detailed, GHCR
    mirrors, `-latest` when `latest-tag: true`, major when applicable).
-3. **If `imagePatch: true`** — derive the hardened image *from the plain build*
+3. **If `hardened: true`** — derive the hardened image *from the plain build*
    (no second `docker build`):
    - Run Trivy (`--pkg-types os --ignore-unfixed`) against the plain image.
    - If fixable OS vulnerabilities exist, run `copa patch` to produce the
@@ -75,7 +75,7 @@ For `imagePatch: false` builds: only the plain set is produced (unchanged).
      these builds.
    - Construct the hardened tag list = the plain tag list with `-hardened`
      inserted before the arch suffix.
-4. **Severity gate** runs on the hardened image only (when `imagePatch: true`
+4. **Severity gate** runs on the hardened image only (when `hardened: true`
    and `fail_on_severity != NONE`), *before any push*. On failure the step
    aborts (`set -e`), so nothing ships for the variant. Trivy reports and the
    GitHub step-summary continue to be produced from the hardened image.
@@ -110,5 +110,5 @@ Add a short **"Hardened images"** section to `README.md` that:
 
 - No `-hardened` variant for dev/rolling images.
 - No new workflow input to toggle hardened production; it follows the existing
-  `imagePatch` matrix flag.
+  `hardened` matrix flag.
 - No changes to the gate's default severities or report formats.

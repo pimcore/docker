@@ -36,21 +36,21 @@ jobs:
                     - ubuntu-22.04
                     - ubuntu-22.04-arm
                 build:
-                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false, imagePatch: false }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false, imagePatch: false }
-                    - { tag: 'v1.6', php: '8.1', distro: bullseye, version-override: "", latest-tag: true, imagePatch: true }
-                    - { tag: 'v1.6', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, imagePatch: true }
-                    - { tag: 'v2.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, imagePatch: true }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false, imagePatch: false }
-                    - { tag: 'v3.8', php: '8.2', distro: bookworm, version-override: "", latest-tag: true, imagePatch: true }
-                    - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true, imagePatch: true }
-                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, imagePatch: false }
-                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false, imagePatch: false }
-                    - { tag: 'v4.1', php: '8.4', distro: bookworm, version-override: "", latest-tag: true, imagePatch: true }
-                    - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false, imagePatch: false }
-                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "", latest-tag: false, imagePatch: false }
-                    - { tag: 'v5.1', php: '8.5', distro: trixie, version-override: "", latest-tag: true, imagePatch: true }
-                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false, imagePatch: false }
+                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false, hardened: false }
+                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false, hardened: false }
+                    - { tag: 'v1.6', php: '8.1', distro: bullseye, version-override: "", latest-tag: true, hardened: true }
+                    - { tag: 'v1.6', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, hardened: true }
+                    - { tag: 'v2.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, hardened: true }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false, hardened: false }
+                    - { tag: 'v3.8', php: '8.2', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
+                    - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
+                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
+                    - { tag: 'v4.1', php: '8.4', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
+                    - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false, hardened: false }
+                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "", latest-tag: false, hardened: false }
+                    - { tag: 'v5.1', php: '8.5', distro: trixie, version-override: "", latest-tag: true, hardened: true }
+                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false, hardened: false }
 
         steps:
             -   uses: actions/checkout@v5
@@ -198,7 +198,7 @@ jobs:
                         ALL_TAGS=("${PLAIN_TAGS[@]}")
 
                         # Produce the hardened (Copa-patched) image and its -hardened tag set.
-                        if [ "${{ matrix.build.imagePatch }}" = "true" ]; then
+                        if [ "${{ matrix.build.hardened }}" = "true" ]; then
                             HARDENED_IMAGE="${IMAGE_NAME}:${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}"
 
                             echo "Scanning plain image ${PLAIN_IMAGE} for OS vulnerabilities"
@@ -274,7 +274,7 @@ jobs:
 
                             ALL_TAGS+=("${HARDENED_TAGS[@]}")
                         else
-                            echo "Copa patching skipped (imagePatch: false)"
+                            echo "Copa patching skipped (hardened: false)"
                         fi
 
                         # Apply every tag to its source image (plain or hardened).
@@ -308,7 +308,7 @@ jobs:
 
                         # Clean up to save disk space
                         docker rmi "${PLAIN_IMAGE}" || true
-                        if [ "${{ matrix.build.imagePatch }}" = "true" ]; then
+                        if [ "${{ matrix.build.hardened }}" = "true" ]; then
                             docker rmi "${HARDENED_IMAGE}" || true
                         fi
                         for additional_tag in "${ALL_TAGS[@]}"; do
