@@ -128,7 +128,7 @@ jobs:
                     else
                         imageVariants=("min" "default" "max" "debug" "supervisord")
                     fi
-                    echo "${imageVariants[*]}" > .docker-state/variants.txt
+                    printf '%s\n' "${imageVariants[@]}" > .docker-state/variants.txt
 
                     PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.build.php }}-fpm-${{ matrix.build.distro }} php -r 'echo PHP_VERSION;')
 
@@ -193,7 +193,7 @@ jobs:
                     set -eux
                     mkdir -p trivy-reports
 
-                    read -r -a imageVariants < .docker-state/variants.txt
+                    mapfile -t imageVariants < .docker-state/variants.txt
 
                     for imageVariant in "${imageVariants[@]}"; do
                         PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
@@ -282,7 +282,7 @@ jobs:
                 run: |
                     set -eux
 
-                    read -r -a imageVariants < .docker-state/variants.txt
+                    mapfile -t imageVariants < .docker-state/variants.txt
 
                     for imageVariant in "${imageVariants[@]}"; do
                         PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
