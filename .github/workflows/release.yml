@@ -46,9 +46,8 @@ jobs:
                     - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
                     - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
                     - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
-                    - { tag: 'v4.1', php: '8.4', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
+                    - { tag: 'v4.2', php: '8.4', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
                     - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false, hardened: false }
-                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "", latest-tag: false, hardened: false }
                     - { tag: 'v5.1', php: '8.5', distro: trixie, version-override: "", latest-tag: true, hardened: true }
                     - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false, hardened: false }
 
