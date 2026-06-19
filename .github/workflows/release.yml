@@ -268,7 +268,7 @@ jobs:
                             rm -f /tmp/trivy-os-${TAG}.txt
 
                             # Gate on the JSON findings -- no third Trivy invocation needed.
-                            if jq -e '.Results[]? | select((.Vulnerabilities // []) | length > 0)' "${REPORT_JSON}" > /dev/null 2>&1; then
+                            if jq -e '.Results[]? | select((.Vulnerabilities // []) | length > 0)' "${REPORT_JSON}" > /dev/null; then
                                 echo "::error::${HARDENED_IMAGE} has unfixed ${FAIL_ON_SEVERITY} vulnerabilities after patching"
                                 exit 1
                             fi
