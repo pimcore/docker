@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Stub trivy. Scenario via env: STUB_FIXABLE=yes|no (initial OS scan),
+# STUB_GATE=pass|fail (severity-filtered gate scan). SPDX just writes a minimal doc.
+out=""; sev=""; fmt=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -o) out="$2"; shift 2;;
+        --severity) sev="$2"; shift 2;;
+        --format) fmt="$2"; shift 2;;
+        *) shift;;
+    esac
+done
+case "$fmt" in
+    spdx-json) printf '{"spdxVersion":"SPDX-2.3","packages":[{"name":"libc6","versionInfo":"2.36-1"}]}\n' > "$out"; exit 0;;
+    table) echo "stub trivy table report" > "$out"; exit 0;;
+esac
+# JSON vulnerability scan
+if [ -n "$sev" ]; then
+    [ "${STUB_GATE:-pass}" = "fail" ] && v='[{"VulnerabilityID":"CVE-GATE"}]' || v='[]'
+else
+    [ "${STUB_FIXABLE:-yes}" = "no" ] && v='[]' || v='[{"VulnerabilityID":"CVE-FIX"}]'
+fi
+printf '{"Results":[{"Vulnerabilities":%s}]}\n' "$v" > "$out"
+exit 0

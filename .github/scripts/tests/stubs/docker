@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Stub docker: 'image inspect' exists-check exits 0; with --format prints a fake id.
+if [ "$1 $2" = "image inspect" ]; then
+    if printf '%s ' "$@" | grep -q -- '--format'; then echo "sha256:deadbeefcafe0000"; fi
+    exit 0
+fi
+exit 0
