@@ -193,6 +193,40 @@ jobs:
                     set -eux
                     mkdir -p trivy-reports
 
+                    # Normalise the severity gate into a validated, inclusive Trivy filter list.
+                    # fail_on_severity is a *threshold*: naming a severity also gates everything
+                    # above it (e.g. HIGH -> HIGH,CRITICAL), since Trivy's --severity is otherwise
+                    # an exact filter that would let higher severities slip through. NONE disables it.
+                    SEVERITY_ORDER="UNKNOWN LOW MEDIUM HIGH CRITICAL"
+                    GATE_SEVERITY="$FAIL_ON_SEVERITY"
+                    if [ "$GATE_SEVERITY" != "NONE" ]; then
+                        min_rank=-1
+                        IFS=',' read -r -a requested_severities <<< "${GATE_SEVERITY^^}"
+                        for sev in "${requested_severities[@]}"; do
+                            sev="${sev// /}"
+                            [ -z "$sev" ] && continue
+                            rank=-1; i=0
+                            for known in $SEVERITY_ORDER; do
+                                if [ "$known" = "$sev" ]; then rank=$i; fi
+                                i=$((i + 1))
+                            done
+                            if [ "$rank" -lt 0 ]; then
+                                echo "::error::Invalid fail_on_severity value '${sev}'. Allowed: ${SEVERITY_ORDER// /, }, or NONE."
+                                exit 1
+                            fi
+                            if [ "$min_rank" -lt 0 ] || [ "$rank" -lt "$min_rank" ]; then min_rank=$rank; fi
+                        done
+                        # Rebuild as the inclusive range from the lowest requested severity up to CRITICAL.
+                        GATE_SEVERITY=""; i=0
+                        for known in $SEVERITY_ORDER; do
+                            if [ "$i" -ge "$min_rank" ]; then
+                                GATE_SEVERITY="${GATE_SEVERITY:+$GATE_SEVERITY,}$known"
+                            fi
+                            i=$((i + 1))
+                        done
+                        echo "Severity gate: fail_on_severity='${FAIL_ON_SEVERITY}' -> '${GATE_SEVERITY}'"
+                    fi
+
                     mapfile -t imageVariants < .docker-state/variants.txt
 
                     for imageVariant in "${imageVariants[@]}"; do
@@ -233,8 +267,8 @@ jobs:
 
                         # Post-patch vulnerability gate -- runs before any push; failure aborts the step
                         # so neither plain nor hardened tags ship for this variant.
-                        if [ "$FAIL_ON_SEVERITY" != "NONE" ]; then
-                            echo "Running post-patch scan (fail on ${FAIL_ON_SEVERITY}+)"
+                        if [ "$GATE_SEVERITY" != "NONE" ]; then
+                            echo "Running post-patch scan (fail on ${GATE_SEVERITY})"
 
                             IMAGE_HASH=$(docker image inspect "${HARDENED_IMAGE}" --format '{{.Id}}' | sed 's/sha256://' | head -c 12)
                             REPORT_JSON="trivy-reports/${TAG}-hardened_${IMAGE_HASH}.json"
@@ -243,14 +277,14 @@ jobs:
                             # Scan to JSON -- source for both the downloadable artifact and the gate.
                             # Not soft: a Trivy error here should abort the step.
                             trivy image --pkg-types os --ignore-unfixed \
-                                --severity "$FAIL_ON_SEVERITY" \
+                                --severity "$GATE_SEVERITY" \
                                 --format json \
                                 -o "${REPORT_JSON}" \
                                 "${HARDENED_IMAGE}"
 
                             # Scan to table for human-readable output only (soft -- display cannot gate).
                             trivy image --pkg-types os --ignore-unfixed \
-                                --severity "$FAIL_ON_SEVERITY" \
+                                --severity "$GATE_SEVERITY" \
                                 --format table \
                                 -o /tmp/trivy-os-${TAG}.txt \
                                 "${HARDENED_IMAGE}" || true
@@ -259,7 +293,7 @@ jobs:
                             {
                                 echo "## Trivy Scan: ${HARDENED_IMAGE}"
                                 echo ""
-                                echo "### OS Vulnerabilities (${FAIL_ON_SEVERITY}+)"
+                                echo "### OS Vulnerabilities (${GATE_SEVERITY})"
                                 echo '```'
                                 cat /tmp/trivy-os-${TAG}.txt 2>/dev/null || echo "No results"
                                 echo '```'
@@ -269,7 +303,7 @@ jobs:
 
                             # Gate on the JSON findings -- no third Trivy invocation needed.
                             if jq -e '.Results[]? | select((.Vulnerabilities // []) | length > 0)' "${REPORT_JSON}" > /dev/null; then
-                                echo "::error::${HARDENED_IMAGE} has unfixed ${FAIL_ON_SEVERITY} vulnerabilities after patching"
+                                echo "::error::${HARDENED_IMAGE} has unfixed ${GATE_SEVERITY} vulnerabilities after patching"
                                 exit 1
                             fi
                         fi
