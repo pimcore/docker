@@ -80,3 +80,16 @@ jobs:
                     ignore-unfixed: true
                     vuln-type: 'os,library'
                     severity: 'CRITICAL,HIGH'
+    scripts:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v5
+            -   name: Install actionlint
+                run: |
+                    curl -fsSL -o actionlint.tar.gz https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz
+                    tar -xzf actionlint.tar.gz actionlint
+                    sudo mv actionlint /usr/local/bin/actionlint
+            -   name: Lint workflows
+                run: actionlint -color
+            -   name: Run script unit tests
+                run: .github/scripts/tests/run.sh
