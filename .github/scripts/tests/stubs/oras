@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Stub oras: succeeds unless STUB_ORAS=fail. Records the call for assertions.
+echo "oras $*" >> "${STUB_LOG:-/dev/null}"
+if [ "${STUB_ORAS:-ok}" = "fail" ]; then
+    echo "stub oras: simulated referrer rejection" >&2
+    exit 1
+fi
+exit 0
