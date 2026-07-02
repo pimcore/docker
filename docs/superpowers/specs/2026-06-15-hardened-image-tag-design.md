@@ -36,6 +36,10 @@ releases — Copa hardening is mandatory and invisible. We want users to choose:
    plain nor the hardened tags are published for that image variant — preserving
    the current "failed gate = nothing ships" contract.
 
+> **Superseded 2026-07-02** (see `2026-07-02-copa-plain-always-publish-sbom-design.md`):
+> the gate no longer blocks plain publishing. Plain images always publish; a hardened
+> gate failure skips only that variant's `-hardened` tags and turns the job red at the end.
+
 ## Tag scheme
 
 The `-hardened` marker is inserted **before** the internal `-amd64` / `-arm64`
