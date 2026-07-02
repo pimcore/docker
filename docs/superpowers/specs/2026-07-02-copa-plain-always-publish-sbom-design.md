@@ -51,6 +51,21 @@ tag set; the `-hardened` tag is created even when nothing was fixable (mirrors p
    produced), per architecture.
 4. **Package docs are committed MD files** in the repo, derived from the SBOMs.
 
+## Scope & sequencing (confirmed 2026-07-02)
+
+This spec lands in two PRs:
+
+- **PR #247 (this work):** Part 1 (gate restructure + resilience), Part 2 (SBOM
+  generation + oras attachment), Part 4 (README), Part 5 (spec supersession). These are
+  the must-haves — they unblock publishing and satisfy the SBOM legal requirement.
+- **Follow-up PR:** Part 3 (the `publish-package-docs` self-committing job + generator
+  script). It is the riskiest, non-blocking piece (bot commits, push token, race
+  handling) and depends only on the SBOM artifacts that Part 2 already produces, so it can
+  land independently without touching the publish path again.
+
+The implementation plan for this cycle therefore covers Parts 1, 2, 4, and 5. Part 3 is
+specified here for continuity but planned/implemented separately.
+
 ## Part 1 — Gate restructure (`release.yml`)
 
 ### Scan, patch, and gate step
@@ -136,7 +151,11 @@ oras attach --artifact-type application/spdx+json "<primary tag>" "sboms/<tag>.s
 This restores the `5.x` guarantee (SBOM attached to every pushed image) and extends it to
 the `-hardened` flavor, which the buildx attestation could never cover.
 
-## Part 3 — Hardened package docs (committed MD)
+## Part 3 — Hardened package docs (committed MD) — FOLLOW-UP PR
+
+> Not in PR #247. Specified here for continuity; planned and implemented separately.
+> Consumes the SBOM artifacts produced by Part 2, so it needs no further change to the
+> publish path.
 
 ### Data flow
 
@@ -213,8 +232,12 @@ this spec (plain-always-publish, deferred red). No other edits to the old spec.
 - **Gate logic:** unit-test the marker/continue flow by extracting the loop into a script
   with stubbed `trivy`/`copa`/`docker` (failing variant 2 of 3 → variants 1 and 3 push
   plain+hardened, variant 2 plain only, final step exits 1).
-- **Docs generator:** run `.github/scripts/generate-package-docs.sh` against two fixture
-  SPDX files (differing versions, added/removed package) and assert the MD output.
+- **SBOM:** assert `trivy image --format spdx-json` produces a valid SPDX file with
+  `packages[].versionInfo` populated for a sample image; confirm `oras attach` failure is
+  swallowed with a warning (stub a rejecting registry).
+- **Docs generator (follow-up PR):** run `.github/scripts/generate-package-docs.sh`
+  against two fixture SPDX files (differing versions, added/removed package) and assert the
+  MD output.
 - **Live validation:** `workflow_dispatch` with `publish: false` builds, patches, gates,
   and generates SBOMs without pushing; the docs job is skipped (publish-gated), validated
   on the first real publish run.
