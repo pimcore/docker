@@ -35,7 +35,9 @@ echo "Scanning plain image ${PLAIN_IMAGE} for OS vulnerabilities"
 trivy image --pkg-types os --ignore-unfixed --format json -o "$report" "${PLAIN_IMAGE}" \
     || fail_gate "Trivy scan of plain image failed"
 
-if [ -s "$report" ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' "$report" > /dev/null 2>&1; then
+jq empty "$report" 2>/dev/null || fail_gate "Trivy report of plain image is not valid JSON"
+
+if [ -s "$report" ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' "$report" > /dev/null; then
     copa patch -i "${PLAIN_IMAGE}" -r "$report" -t "${HARDENED_IMAGE}" -a "${BUILDKIT_ADDR}" \
         || fail_gate "Copa patch failed"
     docker image inspect "${HARDENED_IMAGE}" > /dev/null 2>&1 \
@@ -49,7 +51,11 @@ rm -f "$report"
 
 if [ "$GATE_SEVERITY" != "NONE" ]; then
     echo "Running post-patch scan (fail on ${GATE_SEVERITY})"
-    IMAGE_HASH=$(docker image inspect "${HARDENED_IMAGE}" --format '{{.Id}}' | sed 's/sha256://' | head -c 12)
+    if ! HARDENED_ID=$(docker image inspect "${HARDENED_IMAGE}" --format '{{.Id}}'); then
+        fail_gate "could not inspect hardened image for report hash"
+    fi
+    IMAGE_HASH="${HARDENED_ID#sha256:}"
+    IMAGE_HASH="${IMAGE_HASH:0:12}"
     REPORT_JSON="${REPORT_DIR}/${TAG}-hardened_${IMAGE_HASH}.json"
     REPORT_TXT="${REPORT_DIR}/${TAG}-hardened_${IMAGE_HASH}.txt"
 
@@ -71,18 +77,21 @@ if [ "$GATE_SEVERITY" != "NONE" ]; then
     } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
     rm -f "/tmp/spg-${variant}.txt"
 
+    jq empty "${REPORT_JSON}" 2>/dev/null || fail_gate "Trivy gate report is not valid JSON"
+
     if jq -e '.Results[]? | select((.Vulnerabilities // []) | length > 0)' "${REPORT_JSON}" > /dev/null; then
         fail_gate "unfixed ${GATE_SEVERITY} vulnerabilities remain after patching"
     fi
 fi
 
-# Gate passed (or disabled): publish hardened tags + SBOM.
+# Gate passed (or disabled): generate the SBOM first, then publish the markers atomically.
+HARDENED_SBOM="${SBOM_DIR}/${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}.spdx.json"
+trivy image --format spdx-json -o "${HARDENED_SBOM}" "${HARDENED_IMAGE}" \
+    || fail_gate "hardened SBOM generation failed"
+
 while IFS= read -r plain_tag; do
     echo "${plain_tag%-${ARCH_TAG}}-hardened-${ARCH_TAG}"
 done < "${vdir}/plain_tags.txt" > "${vdir}/hardened_tags.txt"
 echo "${HARDENED_IMAGE}" > "${vdir}/hardened_image.txt"
-
-HARDENED_SBOM="${SBOM_DIR}/${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}.spdx.json"
-trivy image --format spdx-json -o "${HARDENED_SBOM}" "${HARDENED_IMAGE}"
-echo "${HARDENED_SBOM}" > "${vdir}/hardened_sbom.txt"
+echo "${HARDENED_SBOM}"  > "${vdir}/hardened_sbom.txt"
 echo "Published hardened outputs for ${variant}"

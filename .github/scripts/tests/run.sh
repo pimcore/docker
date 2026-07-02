@@ -46,13 +46,14 @@ run_gate() { # runs scan-patch-gate.sh in <dir> with env already exported
 
 # Scenario A: fixable vulns, gate passes -> hardened published
 wA="$(mktemp -d)"; setup_variant "$wA" default
-outA="$(GATE_SEVERITY=CRITICAL,HIGH STUB_FIXABLE=yes STUB_GATE=pass run_gate "$wA" default)"; rcA=$?
+outA="$(GATE_SEVERITY=CRITICAL,HIGH STUB_FIXABLE=yes STUB_GATE=pass STUB_LOG="$wA/copa.log" run_gate "$wA" default)"; rcA=$?
 [ "$rcA" = 0 ] && echo "  ok: A exit 0" || { echo "  FAIL: A exit $rcA"; fail=1; }
 assert_file "$wA/.docker-state/default/hardened_image.txt" "A hardened_image"
 assert_file "$wA/.docker-state/default/hardened_tags.txt"  "A hardened_tags"
 assert_file "$wA/.docker-state/default/hardened_sbom.txt"  "A hardened_sbom"
 assert_no_file "$wA/.docker-state/default/gate_failed.txt" "A gate_failed"
 assert_contains "$(cat "$wA/.docker-state/default/hardened_tags.txt")" "hardened-amd64" "A tags carry -hardened"
+assert_contains "$(cat "$wA/copa.log" 2>/dev/null)" "-t pimcore/pimcore:php8.5-default-v5.1-hardened-amd64" "A copa invoked with full hardened image reference"
 
 # Scenario B: gate fails -> plain only, marker written, exit 0
 wB="$(mktemp -d)"; setup_variant "$wB" max
@@ -72,7 +73,10 @@ assert_no_file "$wC/.docker-state/min/gate_failed.txt" "C gate_failed"
 # Scenario D: gate disabled (NONE) -> hardened published without gate scan
 wD="$(mktemp -d)"; setup_variant "$wD" debug
 outD="$(GATE_SEVERITY=NONE STUB_FIXABLE=yes run_gate "$wD" debug)"; rcD=$?
+[ "$rcD" = 0 ] && echo "  ok: D exit 0" || { echo "  FAIL: D exit $rcD"; fail=1; }
 assert_file "$wD/.docker-state/debug/hardened_image.txt" "D hardened_image (NONE)"
+assert_file "$wD/.docker-state/debug/hardened_tags.txt" "D hardened_tags (NONE)"
+assert_file "$wD/.docker-state/debug/hardened_sbom.txt" "D hardened_sbom (NONE)"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
