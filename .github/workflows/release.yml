@@ -361,7 +361,7 @@ jobs:
     process-tags:
         runs-on: ubuntu-22.04
         needs: build-php
-        if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
+        if: ${{ always() && github.repository == 'pimcore/docker' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
         steps:
             
             -   name: Set up Docker Buildx
