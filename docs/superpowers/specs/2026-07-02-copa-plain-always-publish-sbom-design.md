@@ -198,7 +198,11 @@ this spec (plain-always-publish, deferred red). No other edits to the old spec.
 - No `-hardened` for dev/rolling lines.
 - No buildx attestation restoration (`--sbom=true` cannot survive `--load`; re-pushing via
   buildx would risk publishing bytes that differ from the gated image). The Trivy SBOM +
-  `oras` referrer replaces it.
+  `oras` referrer replaces it. A hybrid (containerd image store so `--load` keeps
+  attestations for plain, Trivy for hardened) was considered and declined on 2026-07-02:
+  it needs a daemon-reconfig spike, keeps two SBOM mechanisms permanently, and — since
+  even `5.x` only carries attestations on per-arch tags — buys no extra coverage over the
+  referrer approach.
 - No SBOM signing (cosign) — can be layered on later if compliance requires signatures.
 - No package docs for plain-only (dev) lines; their SBOMs exist as artifacts/referrers.
 - No change to gate defaults, severity normalisation, or Trivy report artifacts.
