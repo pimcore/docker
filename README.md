@@ -30,17 +30,22 @@ We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`
 ## Hardened images
 For our stable release tags we publish each image in two flavors so you can choose your trade-off:
 
-- **plain** (default, unsuffixed) – the image exactly as built from the Dockerfile, e.g. `php8.5-debug-v5`.
-- **hardened** (`-hardened` suffix) – the same image with known OS-level CVEs patched in via [Copacetic (Copa)](https://github.com/project-copacetic/copacetic), e.g. `php8.5-debug-v5-hardened`. Every hardened image is scanned with [Trivy](https://github.com/aquasecurity/trivy) and must pass a `CRITICAL,HIGH` vulnerability gate before it's published.
+- **plain** (default, unsuffixed) – the image exactly as built from the Dockerfile, e.g. `php8.5-debug-v5`. It is published as-is and may carry known OS-level CVEs.
+- **hardened** (`-hardened` suffix) – the same image with OS-level CVEs patched in via [Copacetic (Copa)](https://github.com/project-copacetic/copacetic), e.g. `php8.5-debug-v5-hardened`.
+
+**What hardening does:** after the plain image is built, it is scanned with [Trivy](https://github.com/aquasecurity/trivy) and Copa applies the available Debian security updates for OS-level packages as an extra image layer. PHP, its extensions, and all application-level content are identical to the plain image — only OS package versions differ.
+
+**Scope & guarantees:**
+- `-hardened` exists for **stable release tags only**; development tags (`-dev`) are published plain-only.
+- The plain tag **always publishes**, even when CVEs remain.
+- The `-hardened` tag publishes only when the patched image passes the vulnerability gate (`CRITICAL,HIGH` by default). If a fix is not yet available upstream, the gate fails and the `-hardened` tag temporarily stays at its previous version until the plain image can be patched clean — so a `-hardened` tag never regresses to a vulnerable state.
 
 ```text
-php8.5-debug-v5          # plain image, as built
-php8.5-debug-v5-hardened # same image, OS CVEs patched with Copa
+php8.5-debug-v5          # plain image, as built (may contain CVEs)
+php8.5-debug-v5-hardened # same image, OS CVEs patched with Copa, gate-clean
 ```
 
-The `-hardened` suffix works with every tag form (e.g. `php8.5-debug-latest-hardened`, `php8.5.3-debug-v5-hardened`).
-
-Pick **hardened** for production or anywhere images are vulnerability-scanned. Pick **plain** when you need the unmodified base (e.g. for reproducible builds or when you run your own patching pipeline). The hardened flavor is only available for stable release tags – development tags (`-dev`) are published as plain only.
+**SBOMs:** every published image (plain and hardened, per architecture) ships an SPDX SBOM, attached to the image in the registry as an OCI referrer and uploaded as a build artifact.
 
 ## Container registries
 Our images are available on both Docker Hub and the GitHub Container Registry, so you can choose the one that best fits your workflow.
