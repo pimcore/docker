@@ -4,9 +4,17 @@
 **Status:** Approved (pending user review)
 **Branch:** `image_copa` (PR #247)
 **Affected files:** `.github/workflows/release.yml`, `README.md`,
-`.github/scripts/generate-package-docs.sh` (new), `docs/hardened-packages/` (new,
-CI-generated), `docs/superpowers/specs/2026-06-15-hardened-image-tag-design.md` (decision
-4 superseded)
+`.github/scripts/scan-patch-gate.sh` (new), `.github/scripts/attach-sbom.sh` (new),
+`.github/scripts/tests/` (new, stub-driven tests),
+`.github/scripts/generate-package-docs.sh` (new, follow-up PR),
+`docs/hardened-packages/` (new, CI-generated, follow-up PR),
+`docs/superpowers/specs/2026-06-15-hardened-image-tag-design.md` (decision 4 superseded)
+
+**Implementation note:** the per-variant scan/patch/gate loop (Part 1) and the `oras`
+attach (Part 2) are extracted into small scripts under `.github/scripts/` so the workflow
+steps stay thin and the behavior is unit-testable with stubbed `trivy`/`copa`/`docker`/
+`oras` on `PATH`. Severity normalisation stays inline in the step (it runs once, before
+the loop).
 
 ## Problem
 
