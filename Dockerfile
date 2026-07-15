@@ -106,6 +106,11 @@ RUN set -eux; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
+# Harden ImageMagick against untrusted SVG assets: deny the file-read, text,
+# scripting and network coders that SVG xlink:href can invoke.
+
+COPY files/conf/imagemagick/policy.xml /etc/ImageMagick-7/policy.xml
+
 RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     install-php-extensions \
         apcu \
