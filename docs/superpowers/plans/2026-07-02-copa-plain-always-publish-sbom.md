@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Registry / image name: `pimcore/pimcore` (Docker Hub) and `ghcr.io/pimcore/pimcore` (verbatim).
-- `-hardened` produced **only** for `hardened: true` matrix entries (`v1.6`, `v2.3`, `v3.8`, `v4.2`, `v5.1`); dev/rolling lines stay plain-only.
+- `-hardened` produced **only** for `hardened: true` matrix entries (`v1.6`, `v2.3`, `v3.8`, `v4.2`, `v5.2`); dev/rolling lines stay plain-only.
 - Plain images **always publish**, even with CVEs. Only `-hardened` is gated.
 - SBOM format: **SPDX-JSON** (`trivy image --format spdx-json`), for every published image, per architecture.
 - `oras attach` is **non-fatal** — a registry rejecting referrers must only warn.
@@ -710,14 +710,14 @@ For our stable release tags we publish each image in two flavors so you can choo
 **Scope & guarantees:**
 - `-hardened` exists for **stable release tags only**; development tags (`-dev`) are published plain-only.
 - The plain tag **always publishes**, even when CVEs remain.
-- The `-hardened` tag publishes only when the patched image passes the vulnerability gate (`CRITICAL,HIGH` by default). If a fix is not yet available upstream, the gate fails and the `-hardened` tag temporarily stays at its previous version until the plain image can be patched clean — so a `-hardened` tag never regresses to a vulnerable state.
+- The `-hardened` tag publishes only when, after patching, no *fixable* CVE at or above the `fail_on_severity` threshold (default `CRITICAL,HIGH`) remains. It does **not** shield against CVEs with no upstream fix yet — those are excluded from the scan (`--ignore-unfixed`) and remain in *both* flavors until Debian ships a fix. `fail_on_severity` is a threshold (naming a severity gates it and everything above; `NONE` disables).
 
 ```text
 php8.5-debug-v5          # plain image, as built (may contain CVEs)
-php8.5-debug-v5-hardened # same image, OS CVEs patched with Copa, gate-clean
+php8.5-debug-v5-hardened # same image, all available OS CVE fixes applied
 ```
 
-**SBOMs:** every published image (plain and hardened, per architecture) ships an SPDX SBOM, attached to the image in the registry as an OCI referrer and uploaded as a build artifact.
+**SBOMs:** every published image (plain and hardened, per architecture) ships an SPDX SBOM — always uploaded as a build artifact, and attached to the image as an OCI referrer where the registry supports it.
 ```
 
 - [ ] **Step 2: Verify the section renders and links are intact**

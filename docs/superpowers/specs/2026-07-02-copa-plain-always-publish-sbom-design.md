@@ -205,7 +205,7 @@ the `-hardened` flavor, which the buildx attestation could never cover.
    - runs `.github/scripts/generate-package-docs.sh` (jq over SPDX `packages[]`
      name/versionInfo) to write one file per hardened matrix entry:
      `docs/hardened-packages/<line>-php<version>.md` (e.g.
-     `docs/hardened-packages/v5.1-php8.5.md`),
+     `docs/hardened-packages/v5.2-php8.5.md`),
    - commits and pushes with the default `GITHUB_TOKEN` (bot pushes do not re-trigger
      workflows); commit message `Update hardened image package docs`; no-op when nothing
      changed; one `git pull --rebase` retry on push rejection.
