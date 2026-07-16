@@ -7,7 +7,7 @@
 ## Problem
 
 Today, for every matrix build marked `imagePatch: true` (the stable releases:
-`v1.6`, `v2.3`, `v3.8`, `v4.2`, `v5.1`), the release workflow scans the freshly
+`v1.6`, `v2.3`, `v3.8`, `v4.2`, `v5.2`), the release workflow scans the freshly
 built image with Trivy, patches OS-level CVEs with Copa, and then **replaces the
 plain image in place** under the same tags (`release.yml` lines ~191–219). The
 patched image is retagged as the original tag, the original is deleted, and all

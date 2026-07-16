@@ -49,7 +49,7 @@ tag set; the `-hardened` tag is created even when nothing was fixable (mirrors p
 ## Decisions (confirmed with maintainer, 2026-07-02)
 
 1. **Scope stays stable-only.** `-hardened` is produced only for `hardened: true` matrix
-   entries (`v1.6`, `v2.3`, `v3.8`, `v4.2`, `v5.1`). Dev/rolling lines stay plain-only.
+   entries (`v1.6`, `v2.3`, `v3.8`, `v4.2`, `v5.2`). Dev/rolling lines stay plain-only.
 2. **Gate policy: publish plain, skip hardened, job red.** Plain tags always publish. A
    variant whose hardened image fails the gate (or whose scan/patch errors) does not get
    its `-hardened` tags pushed; other variants continue; the job ends red — after pushes
@@ -277,3 +277,26 @@ this spec (plain-always-publish, deferred red). No other edits to the old spec.
 - **Live validation:** `workflow_dispatch` with `publish: false` builds, patches, gates,
   and generates SBOMs without pushing; the docs job is skipped (publish-gated), validated
   on the first real publish run.
+
+## Post-review notes (2026-07-02, after the multi-dimension branch review)
+
+The exhaustive branch review surfaced two items that are **not** code changes but must be
+recorded:
+
+- **Copa image source (investigated, not a defect).** A finding suspected that Copa, using
+  the tcp-addressed buildkitd container (`-a tcp://127.0.0.1:8888`), pulls `PLAIN_IMAGE`
+  from the registry rather than the local Docker daemon — which would make `publish: false`
+  dry-runs patch the *previously published* image. This was judged a **false positive**:
+  the plain image is always `docker build --load`-ed into the local daemon regardless of
+  `PUSH`, and the pre-existing pipeline patched that same local image via the identical
+  tcp buildkitd setup, so Copa demonstrably operates on the freshly built local image.
+  (If a future Copa/buildkit upgrade changes image resolution, re-verify with a
+  `publish: false` dispatch.)
+- **Rollout / trigger scope (I5).** `schedule:` runs use the workflow file on the
+  **default branch**, and `push: tags:` runs use the file at the pushed tag. The `_ci`
+  checkout resolves scripts from `github.sha` (the workflow's own commit), so the pipeline
+  is correct for whatever ref actually runs it — but the new pipeline only takes effect for
+  the scheduled/tag cadence once this change (workflow **and** `.github/scripts/`) has
+  landed on the default branch and been forward-merged along the active line chain.
+  Until then, scheduled publishes keep running the old pipeline. This must be part of the
+  merge/rollout plan, not just the PR merge.
