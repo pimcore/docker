@@ -41,13 +41,55 @@ assert_no_glob() { # <glob-pattern> <msg>  (true if nothing matches the pattern)
     [ -z "$matches" ] && echo "  ok: $2" || { echo "  FAIL: $2 (found: $matches)"; fail=1; }
 }
 
+echo "== normalize-severity.sh =="
+nsErr="$(mktemp)"; tmpdirs+=("$nsErr")
+run_norm() { # <input>; sets NS_OUT (stdout) and NS_RC (exit code); stderr captured to $nsErr
+    NS_OUT="$("${ROOT}/.github/scripts/normalize-severity.sh" "$1" 2>"$nsErr")"; NS_RC=$?
+}
+
+run_norm "CRITICAL,HIGH"
+assert_eq "$NS_OUT" "HIGH,CRITICAL" "normalize CRITICAL,HIGH -> HIGH,CRITICAL"
+assert_eq "$NS_RC" "0" "normalize CRITICAL,HIGH exit 0"
+
+run_norm "HIGH"
+assert_eq "$NS_OUT" "HIGH,CRITICAL" "normalize HIGH -> HIGH,CRITICAL (threshold expansion)"
+assert_eq "$NS_RC" "0" "normalize HIGH exit 0"
+
+run_norm "none"
+assert_eq "$NS_OUT" "NONE" "normalize lowercase 'none' -> NONE"
+assert_eq "$NS_RC" "0" "normalize 'none' exit 0"
+
+run_norm "None"
+assert_eq "$NS_OUT" "NONE" "normalize 'None' -> NONE"
+assert_eq "$NS_RC" "0" "normalize 'None' exit 0"
+
+run_norm "medium"
+assert_eq "$NS_OUT" "MEDIUM,HIGH,CRITICAL" "normalize 'medium' -> MEDIUM,HIGH,CRITICAL (expansion + case-insensitive)"
+assert_eq "$NS_RC" "0" "normalize 'medium' exit 0"
+
+run_norm "critical,low"
+assert_eq "$NS_OUT" "LOW,MEDIUM,HIGH,CRITICAL" "normalize 'critical,low' -> LOW,MEDIUM,HIGH,CRITICAL (lowest member wins)"
+assert_eq "$NS_RC" "0" "normalize 'critical,low' exit 0"
+
+run_norm ","
+assert_eq "$NS_RC" "1" "normalize ',' exits 1"
+assert_contains "$(cat "$nsErr")" "names no valid severity" "normalize ',' stderr names no valid severity"
+
+run_norm "BOGUS"
+assert_eq "$NS_RC" "1" "normalize 'BOGUS' exits 1"
+assert_contains "$(cat "$nsErr")" "Invalid fail_on_severity value" "normalize 'BOGUS' stderr flags invalid value"
+
 echo "== attach-sbom.sh =="
 work="$(mktemp -d)"; tmpdirs+=("$work"); echo '{}' > "${work}/s.spdx.json"
 
 # success path
-out="$(STUB_ORAS=ok "${ROOT}/.github/scripts/attach-sbom.sh" pimcore/pimcore:php8.5-v5-amd64 "${work}/s.spdx.json" 2>&1)"; rc=$?
+orasLog="$(mktemp)"; tmpdirs+=("$orasLog")
+out="$(STUB_ORAS=ok STUB_LOG="$orasLog" "${ROOT}/.github/scripts/attach-sbom.sh" pimcore/pimcore:php8.5-v5-amd64 "${work}/s.spdx.json" 2>&1)"; rc=$?
 assert_contains "$out" "Attached" "success prints Attached"
 [ "$rc" = "0" ] && echo "  ok: exit 0 on success" || { echo "  FAIL: exit $rc"; fail=1; }
+orasCallLog="$(cat "$orasLog" 2>/dev/null)"
+assert_contains "$orasCallLog" "attach --artifact-type application/spdx+json" "oras invoked with attach --artifact-type application/spdx+json"
+assert_contains "$orasCallLog" "${work}/s.spdx.json:application/spdx+json" "oras blob arg carries :application/spdx+json media-type suffix"
 
 # failure path is swallowed
 out="$(STUB_ORAS=fail "${ROOT}/.github/scripts/attach-sbom.sh" pimcore/pimcore:php8.5-v5-amd64 "${work}/s.spdx.json" 2>&1)"; rc=$?
@@ -93,6 +135,13 @@ logA="$(cat "$wA/stub.log" 2>/dev/null)"
 assert_contains "$logA" "-t pimcore/pimcore:php8.5-default-v5.1-hardened-amd64" "A copa invoked with full hardened image reference"
 assert_contains "$logA" "format=json severity=CRITICAL,HIGH image=pimcore/pimcore:php8.5-default-v5.1-hardened-amd64" "A post-patch GATE scan targeted the HARDENED image"
 assert_contains "$logA" "format=spdx-json severity= image=pimcore/pimcore:php8.5-default-v5.1-hardened-amd64" "A SPDX SBOM generation targeted the HARDENED image"
+
+# R4: the gate scan must retain --ignore-unfixed and --pkg-types os in the RAW
+# invocation (not just the parsed summary above) -- dropping either would let
+# already-unfixed-upstream or non-OS vulnerabilities leak past the gate silently.
+gateRawA="$(grep -- '--format json' "$wA/stub.log" | grep -- '--severity' | grep 'hardened')"
+assert_contains "$gateRawA" "--ignore-unfixed" "A raw gate scan invocation carries --ignore-unfixed"
+assert_contains "$gateRawA" "--pkg-types os" "A raw gate scan invocation carries --pkg-types os"
 
 # Scenario B: gate fails -> plain only, marker written, exit 0
 wB="$(mktemp -d)"; tmpdirs+=("$wB"); setup_variant "$wB" max
