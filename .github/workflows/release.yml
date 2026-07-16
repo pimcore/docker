@@ -9,7 +9,7 @@ on:
                 default: false
                 type: boolean
             fail_on_severity:
-                description: 'Comma-separated list of severities that fail the build if post-patch CVEs remain (e.g. CRITICAL,HIGH). Valid values: CRITICAL, HIGH, MEDIUM, LOW. Use NONE to disable the gate entirely.'
+                description: 'Severity THRESHOLD for the post-patch gate: naming a severity also gates everything above it (e.g. HIGH gates HIGH,CRITICAL). Case-insensitive. Valid values: UNKNOWN, LOW, MEDIUM, HIGH, CRITICAL (or a comma-separated set — the lowest one wins). Use NONE to disable the gate entirely.'
                 required: false
                 default: 'CRITICAL,HIGH'
                 type: string
@@ -50,13 +50,24 @@ jobs:
                     - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
                     - { tag: 'v4.2', php: '8.4', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
                     - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false, hardened: false }
-                    - { tag: 'v5.1', php: '8.5', distro: trixie, version-override: "", latest-tag: true, hardened: true }
+                    - { tag: 'v5.2', php: '8.5', distro: trixie, version-override: "", latest-tag: true, hardened: true }
                     - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false, hardened: false }
 
         steps:
             -   uses: actions/checkout@v5
                 with:
                     ref: ${{ matrix.build.tag }}
+
+            # The build ref above (matrix.build.tag) is a release branch/tag that predates
+            # this pipeline and does NOT contain .github/scripts. Check the CI scripts out
+            # separately from the workflow's own commit (github.sha) into _ci/ so the steps
+            # below can call them regardless of which build ref is checked out into the root.
+            -   name: Check out CI scripts from the workflow ref
+                uses: actions/checkout@v5
+                with:
+                    path: _ci
+                    sparse-checkout: .github/scripts
+                    sparse-checkout-cone-mode: false
 
             -   name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v4
@@ -69,7 +80,7 @@ jobs:
 
             -   name: Install Trivy and oras
                 run: |
-                    set -eux
+                    set -euxo pipefail
                     sudo apt-get update
                     sudo apt-get install -y wget curl apt-transport-https gnupg lsb-release jq
                     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
@@ -229,14 +240,12 @@ jobs:
                         if [[ "$PUSH" == "true" ]]; then
                             printf '%s\n' "${PLAIN_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
 
-                            .github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
-                            .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
+                            _ci/.github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
+                            _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
 
-                            for tag in "${PLAIN_TAGS[@]}"; do
-                                logical_tag="${tag//-arm64/}"
-                                logical_tag="${logical_tag//-amd64/}"
-                                echo "$logical_tag" >> aggregated_tags.txt
-                            done
+                            # Record the full per-arch tags pushed THIS run; process-tags merges a
+                            # logical tag only when both arches were pushed in the same run.
+                            printf '%s\n' "${PLAIN_TAGS[@]}" >> aggregated_tags.txt
                         fi
                     done
 
@@ -254,11 +263,16 @@ jobs:
                     # fail_on_severity is a *threshold*: naming a severity also gates everything
                     # above it (e.g. HIGH -> HIGH,CRITICAL), since Trivy's --severity is otherwise
                     # an exact filter that would let higher severities slip through. NONE disables it.
+                    # fail_on_severity is a case-insensitive THRESHOLD. NONE disables the gate;
+                    # any other value normalises to the inclusive range from the lowest named
+                    # severity up to CRITICAL, so Trivy's exact --severity filter can't let a
+                    # higher severity slip through.
                     SEVERITY_ORDER="UNKNOWN LOW MEDIUM HIGH CRITICAL"
-                    GATE_SEVERITY="$FAIL_ON_SEVERITY"
-                    if [ "$GATE_SEVERITY" != "NONE" ]; then
+                    if [ "${FAIL_ON_SEVERITY^^}" = "NONE" ]; then
+                        GATE_SEVERITY="NONE"
+                    else
                         min_rank=-1
-                        IFS=',' read -r -a requested_severities <<< "${GATE_SEVERITY^^}"
+                        IFS=',' read -r -a requested_severities <<< "${FAIL_ON_SEVERITY^^}"
                         for sev in "${requested_severities[@]}"; do
                             sev="${sev// /}"
                             [ -z "$sev" ] && continue
@@ -273,6 +287,10 @@ jobs:
                             fi
                             if [ "$min_rank" -lt 0 ] || [ "$rank" -lt "$min_rank" ]; then min_rank=$rank; fi
                         done
+                        if [ "$min_rank" -lt 0 ]; then
+                            echo "::error::fail_on_severity='${FAIL_ON_SEVERITY}' names no valid severity. Use ${SEVERITY_ORDER// /, }, or NONE."
+                            exit 1
+                        fi
                         # Rebuild as the inclusive range from the lowest requested severity up to CRITICAL.
                         GATE_SEVERITY=""; i=0
                         for known in $SEVERITY_ORDER; do
@@ -289,7 +307,7 @@ jobs:
 
                     mapfile -t imageVariants < .docker-state/variants.txt
                     for imageVariant in "${imageVariants[@]}"; do
-                        .github/scripts/scan-patch-gate.sh "${imageVariant}"
+                        _ci/.github/scripts/scan-patch-gate.sh "${imageVariant}"
                     done
 
             -   name: Push hardened images
@@ -319,14 +337,12 @@ jobs:
                             printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
 
                             HARDENED_TAG="${HARDENED_IMAGE#${IMAGE_NAME}:}"
-                            .github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
-                            .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
+                            _ci/.github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
+                            _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
 
-                            for tag in "${HARDENED_TAGS[@]}"; do
-                                logical_tag="${tag//-arm64/}"
-                                logical_tag="${logical_tag//-amd64/}"
-                                echo "$logical_tag" >> aggregated_tags.txt
-                            done
+                            # Record the full per-arch tags pushed THIS run; process-tags merges a
+                            # logical tag only when both arches were pushed in the same run.
+                            printf '%s\n' "${HARDENED_TAGS[@]}" >> aggregated_tags.txt
                         fi
                     done
 
@@ -369,7 +385,7 @@ jobs:
                     if-no-files-found: ignore
 
             -   name: Upload aggregated tags
-                if: github.event_name != 'workflow_dispatch' || inputs.publish
+                if: ${{ always() && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
                 uses: actions/upload-artifact@v7
                 with:
                     name: aggregated_tags_${{ matrix.runner }}_${{ matrix.build.tag }}_${{ matrix.build.php }}_${{ matrix.build.distro }}_${{ matrix.build.version-override }}_${{ matrix.build.latest-tag }}
@@ -406,31 +422,36 @@ jobs:
                 uses: actions/download-artifact@v8
                 with:
                     path: artifacts
+                    pattern: aggregated_tags_*
 
             -   name: Process tags
                 run: |
+                    set -uo pipefail
                     find artifacts -type f -name "aggregated_tags.txt" -exec cat {} + > all_aggregated_tags.txt
 
-                    readarray -t TAGS_ARRAY < all_aggregated_tags.txt
+                    # aggregated_tags.txt holds the full per-arch tags (…-amd64 / …-arm64) pushed
+                    # THIS run. Merge a logical tag only when BOTH arches were pushed in the same
+                    # run, using exactly those per-arch tags — never a stale arch left in the
+                    # registry from a previous run (which would produce a mixed-generation manifest).
+                    declare -A HAS_AMD64 HAS_ARM64 LOGICAL
+                    while IFS= read -r t; do
+                        [ -z "$t" ] && continue
+                        case "$t" in
+                            *-amd64) lt="${t%-amd64}"; HAS_AMD64["$lt"]=1; LOGICAL["$lt"]=1 ;;
+                            *-arm64) lt="${t%-arm64}"; HAS_ARM64["$lt"]=1; LOGICAL["$lt"]=1 ;;
+                            *) echo "Skipping tag without arch suffix: $t" ;;
+                        esac
+                    done < all_aggregated_tags.txt
 
-                    declare -A UNIQUE_TAGS
-                    for tag in "${TAGS_ARRAY[@]}"; do
-                        UNIQUE_TAGS["$tag"]=1
-                    done
-
-                    for tag in "${!UNIQUE_TAGS[@]}"; do
-                    
-                        echo "Processing tag: $tag"
-
-                        # Verify both per-arch images exist in the registry before merging
-                        if docker buildx imagetools inspect "${tag}-amd64" > /dev/null 2>&1 \
-                            && docker buildx imagetools inspect "${tag}-arm64" > /dev/null 2>&1; then
+                    for lt in "${!LOGICAL[@]}"; do
+                        if [ -n "${HAS_AMD64[$lt]:-}" ] && [ -n "${HAS_ARM64[$lt]:-}" ]; then
+                            echo "Creating multi-arch manifest: $lt"
                             docker buildx imagetools create \
-                                --tag "$tag" \
-                                "${tag}-amd64" \
-                                "${tag}-arm64"
+                                --tag "$lt" \
+                                "${lt}-amd64" \
+                                "${lt}-arm64" \
+                                || echo "::warning::Failed to create manifest for $lt"
                         else
-                            echo "Error: Missing per-arch image for $tag, skipping"
+                            echo "Skipping $lt: only one arch pushed this run (amd64=${HAS_AMD64[$lt]:-0} arm64=${HAS_ARM64[$lt]:-0}); previous manifest left unchanged"
                         fi
-    
                     done
