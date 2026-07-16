@@ -206,7 +206,6 @@ jobs:
 
             -   name: Push plain images
                 env:
-                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
                     PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
                 run: |
                     set -eux
@@ -296,7 +295,6 @@ jobs:
             -   name: Push hardened images
                 if: ${{ matrix.build.hardened }}
                 env:
-                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
                     PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
                 run: |
                     set -eux
