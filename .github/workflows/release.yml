@@ -204,6 +204,43 @@ jobs:
                         echo "${PLAIN_SBOM}" > ".docker-state/${imageVariant}/plain_sbom.txt"
                     done
 
+            -   name: Push plain images
+                env:
+                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
+                    PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
+                run: |
+                    set -eux
+
+                    mapfile -t imageVariants < .docker-state/variants.txt
+
+                    for imageVariant in "${imageVariants[@]}"; do
+                        PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
+                        TAG=$(< ".docker-state/${imageVariant}/tag.txt")
+                        PLAIN_SBOM=$(< ".docker-state/${imageVariant}/plain_sbom.txt")
+                        mapfile -t PLAIN_TAGS < ".docker-state/${imageVariant}/plain_tags.txt"
+
+                        for plain_tag in "${PLAIN_TAGS[@]}"; do
+                            if [ "$plain_tag" != "$PLAIN_IMAGE" ]; then
+                                docker tag "$PLAIN_IMAGE" "$plain_tag"
+                            fi
+                        done
+
+                        # Plain ships unconditionally, before the gate ever runs.
+                        # Do NOT rmi here: the gate step patches this image into the hardened one.
+                        if [[ "$PUSH" == "true" ]]; then
+                            printf '%s\n' "${PLAIN_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
+
+                            .github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
+                            .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
+
+                            for tag in "${PLAIN_TAGS[@]}"; do
+                                logical_tag="${tag//-arm64/}"
+                                logical_tag="${logical_tag//-amd64/}"
+                                echo "$logical_tag" >> aggregated_tags.txt
+                            done
+                        fi
+                    done
+
             -   name: Scan, patch, and gate hardened images
                 if: ${{ matrix.build.hardened }}
                 env:
@@ -256,7 +293,8 @@ jobs:
                         .github/scripts/scan-patch-gate.sh "${imageVariant}"
                     done
 
-            -   name: Tag, push, and aggregate
+            -   name: Push hardened images
+                if: ${{ matrix.build.hardened }}
                 env:
                     ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
                     PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
@@ -266,56 +304,49 @@ jobs:
                     mapfile -t imageVariants < .docker-state/variants.txt
 
                     for imageVariant in "${imageVariants[@]}"; do
-                        PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
-                        TAG=$(< ".docker-state/${imageVariant}/tag.txt")
-                        PLAIN_SBOM=$(< ".docker-state/${imageVariant}/plain_sbom.txt")
-                        mapfile -t PLAIN_TAGS < ".docker-state/${imageVariant}/plain_tags.txt"
-                        ALL_TAGS=("${PLAIN_TAGS[@]}")
+                        # Variants whose gate failed have no hardened_image.txt -> skip (plain already shipped).
+                        [ -f ".docker-state/${imageVariant}/hardened_image.txt" ] || continue
 
-                        HARDENED_IMAGE=""
-                        if [ -f ".docker-state/${imageVariant}/hardened_image.txt" ]; then
-                            HARDENED_IMAGE=$(< ".docker-state/${imageVariant}/hardened_image.txt")
-                            mapfile -t HARDENED_TAGS < ".docker-state/${imageVariant}/hardened_tags.txt"
-                            ALL_TAGS+=("${HARDENED_TAGS[@]}")
-                        fi
+                        HARDENED_IMAGE=$(< ".docker-state/${imageVariant}/hardened_image.txt")
+                        HARDENED_SBOM=$(< ".docker-state/${imageVariant}/hardened_sbom.txt")
+                        mapfile -t HARDENED_TAGS < ".docker-state/${imageVariant}/hardened_tags.txt"
 
-                        # Apply every tag to its source image (plain or hardened).
-                        for additional_tag in "${ALL_TAGS[@]}"; do
-                            case "$additional_tag" in
-                                *-hardened-${ARCH_TAG}) src_image="${HARDENED_IMAGE}" ;;
-                                *) src_image="${PLAIN_IMAGE}" ;;
-                            esac
-                            if [ "$additional_tag" != "$src_image" ]; then
-                                docker tag "$src_image" "$additional_tag"
+                        for hardened_tag in "${HARDENED_TAGS[@]}"; do
+                            if [ "$hardened_tag" != "$HARDENED_IMAGE" ]; then
+                                docker tag "$HARDENED_IMAGE" "$hardened_tag"
                             fi
                         done
 
-                        # Push and aggregate logical tags (parallel push for speed).
                         if [[ "$PUSH" == "true" ]]; then
-                            printf '%s\n' "${ALL_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
+                            printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
 
-                            # Attach the SPDX SBOM to each pushed image (once per digest per registry).
-                            .github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
-                            .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
-                            if [ -n "${HARDENED_IMAGE}" ] && [ -f ".docker-state/${imageVariant}/hardened_sbom.txt" ]; then
-                                HARDENED_SBOM=$(< ".docker-state/${imageVariant}/hardened_sbom.txt")
-                                HARDENED_TAG="${HARDENED_IMAGE#${IMAGE_NAME}:}"
-                                .github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
-                                .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
-                            fi
+                            HARDENED_TAG="${HARDENED_IMAGE#${IMAGE_NAME}:}"
+                            .github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
+                            .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
 
-                            for tag in "${ALL_TAGS[@]}"; do
+                            for tag in "${HARDENED_TAGS[@]}"; do
                                 logical_tag="${tag//-arm64/}"
                                 logical_tag="${logical_tag//-amd64/}"
                                 echo "$logical_tag" >> aggregated_tags.txt
                             done
                         fi
+                    done
 
-                        # Clean up per variant to reclaim disk space before the next variant.
-                        # ALL_TAGS already includes PLAIN_IMAGE and HARDENED_IMAGE as their
-                        # first entries, so a single loop covers everything.
-                        for additional_tag in "${ALL_TAGS[@]}"; do
-                            docker rmi "$additional_tag" 2>/dev/null || true
+            -   name: Clean up images
+                if: ${{ always() }}
+                run: |
+                    set -u
+                    [ -f .docker-state/variants.txt ] || exit 0
+                    mapfile -t imageVariants < .docker-state/variants.txt
+                    for imageVariant in "${imageVariants[@]}"; do
+                        for tf in plain_tags hardened_tags; do
+                            f=".docker-state/${imageVariant}/${tf}.txt"
+                            [ -f "$f" ] || continue
+                            while IFS= read -r t; do docker rmi "$t" 2>/dev/null || true; done < "$f"
+                        done
+                        for imf in plain_image hardened_image; do
+                            f=".docker-state/${imageVariant}/${imf}.txt"
+                            [ -f "$f" ] && docker rmi "$(< "$f")" 2>/dev/null || true
                         done
                     done
 
