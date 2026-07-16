@@ -259,48 +259,11 @@ jobs:
                     set -eux
                     mkdir -p trivy-reports
 
-                    # Normalise the severity gate into a validated, inclusive Trivy filter list.
-                    # fail_on_severity is a *threshold*: naming a severity also gates everything
-                    # above it (e.g. HIGH -> HIGH,CRITICAL), since Trivy's --severity is otherwise
-                    # an exact filter that would let higher severities slip through. NONE disables it.
-                    # fail_on_severity is a case-insensitive THRESHOLD. NONE disables the gate;
-                    # any other value normalises to the inclusive range from the lowest named
-                    # severity up to CRITICAL, so Trivy's exact --severity filter can't let a
-                    # higher severity slip through.
-                    SEVERITY_ORDER="UNKNOWN LOW MEDIUM HIGH CRITICAL"
-                    if [ "${FAIL_ON_SEVERITY^^}" = "NONE" ]; then
-                        GATE_SEVERITY="NONE"
-                    else
-                        min_rank=-1
-                        IFS=',' read -r -a requested_severities <<< "${FAIL_ON_SEVERITY^^}"
-                        for sev in "${requested_severities[@]}"; do
-                            sev="${sev// /}"
-                            [ -z "$sev" ] && continue
-                            rank=-1; i=0
-                            for known in $SEVERITY_ORDER; do
-                                if [ "$known" = "$sev" ]; then rank=$i; fi
-                                i=$((i + 1))
-                            done
-                            if [ "$rank" -lt 0 ]; then
-                                echo "::error::Invalid fail_on_severity value '${sev}'. Allowed: ${SEVERITY_ORDER// /, }, or NONE."
-                                exit 1
-                            fi
-                            if [ "$min_rank" -lt 0 ] || [ "$rank" -lt "$min_rank" ]; then min_rank=$rank; fi
-                        done
-                        if [ "$min_rank" -lt 0 ]; then
-                            echo "::error::fail_on_severity='${FAIL_ON_SEVERITY}' names no valid severity. Use ${SEVERITY_ORDER// /, }, or NONE."
-                            exit 1
-                        fi
-                        # Rebuild as the inclusive range from the lowest requested severity up to CRITICAL.
-                        GATE_SEVERITY=""; i=0
-                        for known in $SEVERITY_ORDER; do
-                            if [ "$i" -ge "$min_rank" ]; then
-                                GATE_SEVERITY="${GATE_SEVERITY:+$GATE_SEVERITY,}$known"
-                            fi
-                            i=$((i + 1))
-                        done
-                        echo "Severity gate: fail_on_severity='${FAIL_ON_SEVERITY}' -> '${GATE_SEVERITY}'"
-                    fi
+                    # Normalise fail_on_severity into a validated, inclusive Trivy --severity
+                    # list (threshold semantics; NONE disables). Logic + unit tests live in
+                    # .github/scripts/normalize-severity.sh; an invalid value exits non-zero here.
+                    GATE_SEVERITY="$(_ci/.github/scripts/normalize-severity.sh "$FAIL_ON_SEVERITY")"
+                    echo "Severity gate: fail_on_severity='${FAIL_ON_SEVERITY}' -> '${GATE_SEVERITY}'"
 
                     export IMAGE_NAME GATE_SEVERITY ARCH_TAG TRIVY_DB_REPOSITORY
                     export BUILDKIT_ADDR="tcp://127.0.0.1:8888"
