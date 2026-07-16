@@ -777,3 +777,159 @@ git commit -m "spec: mark all-or-nothing gate decision superseded by 2026-07-02 
 **Type/name consistency:** state files (`plain_image.txt`, `base_tag.txt`, `version.txt`, `tag.txt`, `plain_tags.txt`, `plain_sbom.txt`, `hardened_image.txt`, `hardened_tags.txt`, `hardened_sbom.txt`, `gate_failed.txt`) are written and read with identical names across Tasks 2–4. `scan-patch-gate.sh` env contract (`IMAGE_NAME`, `ARCH_TAG`, `GATE_SEVERITY`, `BUILDKIT_ADDR`) matches the exports added in Task 3 Step 5. `attach-sbom.sh <ref> <file>` signature matches its calls in Task 4 Step 1.
 
 **Known follow-ups (not blocking):** Part 3 package-docs job; optional cosign signing of SBOMs.
+
+---
+
+### Task 8: Split the publish path so plain ships before the gate (added 2026-07-02)
+
+**Why:** the final review found that the single `Tag, push, and aggregate` step runs
+*after* the gate step with the implicit `if: success()`, so an unforeseen non-zero exit of
+the gate step would skip publishing the already-built plain images. Decision: make "plain
+always ships" ironclad by pushing plain **before** the gate and hardened **after** it.
+
+**Files:**
+- Modify: `.github/workflows/release.yml`
+
+**Interfaces:** unchanged — same `.docker-state/<variant>/*.txt` files and
+`.github/scripts/attach-sbom.sh`. Scripts are NOT modified; the existing unit tests remain
+valid.
+
+- [ ] **Step 1: Add `Push plain images` immediately after `Build plain images` (before `Scan, patch, and gate hardened images`)**
+
+```yaml
+            -   name: Push plain images
+                env:
+                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
+                    PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
+                run: |
+                    set -eux
+
+                    mapfile -t imageVariants < .docker-state/variants.txt
+
+                    for imageVariant in "${imageVariants[@]}"; do
+                        PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
+                        TAG=$(< ".docker-state/${imageVariant}/tag.txt")
+                        PLAIN_SBOM=$(< ".docker-state/${imageVariant}/plain_sbom.txt")
+                        mapfile -t PLAIN_TAGS < ".docker-state/${imageVariant}/plain_tags.txt"
+
+                        for plain_tag in "${PLAIN_TAGS[@]}"; do
+                            if [ "$plain_tag" != "$PLAIN_IMAGE" ]; then
+                                docker tag "$PLAIN_IMAGE" "$plain_tag"
+                            fi
+                        done
+
+                        # Plain ships unconditionally, before the gate ever runs.
+                        # Do NOT rmi here: the gate step patches this image into the hardened one.
+                        if [[ "$PUSH" == "true" ]]; then
+                            printf '%s\n' "${PLAIN_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
+
+                            .github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
+                            .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
+
+                            for tag in "${PLAIN_TAGS[@]}"; do
+                                logical_tag="${tag//-arm64/}"
+                                logical_tag="${logical_tag//-amd64/}"
+                                echo "$logical_tag" >> aggregated_tags.txt
+                            done
+                        fi
+                    done
+```
+
+- [ ] **Step 2: Replace the `Tag, push, and aggregate` step with `Push hardened images` (placed after `Scan, patch, and gate hardened images`)**
+
+Delete the entire existing `Tag, push, and aggregate` step and put this in its place:
+
+```yaml
+            -   name: Push hardened images
+                if: ${{ matrix.build.hardened }}
+                env:
+                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
+                    PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
+                run: |
+                    set -eux
+
+                    mapfile -t imageVariants < .docker-state/variants.txt
+
+                    for imageVariant in "${imageVariants[@]}"; do
+                        # Variants whose gate failed have no hardened_image.txt -> skip (plain already shipped).
+                        [ -f ".docker-state/${imageVariant}/hardened_image.txt" ] || continue
+
+                        HARDENED_IMAGE=$(< ".docker-state/${imageVariant}/hardened_image.txt")
+                        HARDENED_SBOM=$(< ".docker-state/${imageVariant}/hardened_sbom.txt")
+                        mapfile -t HARDENED_TAGS < ".docker-state/${imageVariant}/hardened_tags.txt"
+
+                        for hardened_tag in "${HARDENED_TAGS[@]}"; do
+                            if [ "$hardened_tag" != "$HARDENED_IMAGE" ]; then
+                                docker tag "$HARDENED_IMAGE" "$hardened_tag"
+                            fi
+                        done
+
+                        if [[ "$PUSH" == "true" ]]; then
+                            printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
+
+                            HARDENED_TAG="${HARDENED_IMAGE#${IMAGE_NAME}:}"
+                            .github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
+                            .github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
+
+                            for tag in "${HARDENED_TAGS[@]}"; do
+                                logical_tag="${tag//-arm64/}"
+                                logical_tag="${logical_tag//-amd64/}"
+                                echo "$logical_tag" >> aggregated_tags.txt
+                            done
+                        fi
+                    done
+```
+
+- [ ] **Step 3: Add `Clean up images` (after `Push hardened images`, before `Stop buildkit daemon`)**
+
+```yaml
+            -   name: Clean up images
+                if: ${{ always() }}
+                run: |
+                    set -u
+                    [ -f .docker-state/variants.txt ] || exit 0
+                    mapfile -t imageVariants < .docker-state/variants.txt
+                    for imageVariant in "${imageVariants[@]}"; do
+                        for tf in plain_tags hardened_tags; do
+                            f=".docker-state/${imageVariant}/${tf}.txt"
+                            [ -f "$f" ] || continue
+                            while IFS= read -r t; do docker rmi "$t" 2>/dev/null || true; done < "$f"
+                        done
+                        for imf in plain_image hardened_image; do
+                            f=".docker-state/${imageVariant}/${imf}.txt"
+                            [ -f "$f" ] && docker rmi "$(< "$f")" 2>/dev/null || true
+                        done
+                    done
+```
+
+- [ ] **Step 4: Confirm step order and leave the rest untouched**
+
+The `build-php` job step order must now be: `Build plain images` → `Push plain images` →
+`Scan, patch, and gate hardened images` → `Push hardened images` → `Clean up images` →
+`Stop buildkit daemon` → `Upload trivy reports` → `Upload SBOMs` → `Upload aggregated
+tags` → `Fail if severity gate failed`. Do not change any step other than the three
+added/replaced here. `process-tags` (with its `always() && github.repository == 'pimcore/docker' && …` guard) is untouched.
+
+- [ ] **Step 5: Lint and syntax-check**
+
+Run:
+```bash
+ALINT=$(command -v actionlint || echo /tmp/actionlint)
+"$ALINT" .github/workflows/release.yml; echo "actionlint exit=$?"
+for step in "Push plain images" "Push hardened images" "Clean up images"; do
+  START=$(grep -n "name: ${step}" .github/workflows/release.yml | head -1 | cut -d: -f1)
+  END=$(awk -v s="$START" 'NR>s && /^            -   name:/{print NR; exit}' .github/workflows/release.yml)
+  awk -v s="$START" -v e="$((END-1))" 'NR>=s && NR<=e' .github/workflows/release.yml \
+    | sed -E 's/\$\{\{[^}]*\}\}/x/g' | sed -n '/run: |/,$p' | tail -n +2 > /tmp/blk.sh
+  bash -n /tmp/blk.sh && echo "OK: ${step}" || echo "SYNTAX FAIL: ${step}"
+done
+.github/scripts/tests/run.sh >/dev/null 2>&1 && echo "script unit tests still pass" || echo "SCRIPT TESTS FAIL"
+```
+Expected: `actionlint exit=0`; `OK:` for all three steps; script unit tests still pass (scripts unchanged).
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add .github/workflows/release.yml
+git commit -m "release.yml: push plain before the gate, hardened after (plain always ships)"
+```

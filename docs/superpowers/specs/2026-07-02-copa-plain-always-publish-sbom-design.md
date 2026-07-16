@@ -91,12 +91,40 @@ image, Trivy scan error) with:
 The step itself always exits 0. The existing severity normalisation (`GATE_SEVERITY`)
 and Trivy report artifacts are unchanged.
 
-### Tag, push, and aggregate step
+### Publish ordering — plain ships *before* the gate (revised 2026-07-02)
 
-Unchanged logic — it already pushes hardened tags only when `hardened_image.txt` exists.
-Effect under the new markers: plain always pushes; gate-failed variants' `-hardened` tags
-are not pushed and remain at their previously published state in the registries
-(documented in README). Aggregation likewise skips absent hardened tags, so `process-tags`
+To make "plain always ships" ironclad — not merely "ships unless the gate step hits an
+unforeseen error" — the single combined push step is split so the plain push happens
+**before** the scan/patch/gate step, and hardened is pushed **after** it. New `build-php`
+step order on a hardened leg:
+
+1. **Build plain images** — builds every variant, writes state + plain SBOMs (unchanged).
+2. **Push plain images** (`if PUSH`) — tag + push the plain tag set, attach the plain
+   SBOM, aggregate the plain logical tags. Runs right after the build and depends only on
+   it, so the gate can never prevent plain from shipping. Does **not** `docker rmi` (the
+   gate still needs the plain image on hardened legs).
+3. **Scan, patch, and gate hardened images** (`if hardened`) — Copa builds the hardened
+   image from the already-pushed plain image and gates it; per-variant markers as above;
+   step exits 0.
+4. **Push hardened images** (`if hardened`, default `success()`) — for each variant that
+   has `hardened_image.txt`, tag + push the hardened tag set, attach the hardened SBOM,
+   aggregate the hardened logical tags. Because it defaults to `success()`, an *unforeseen
+   crash* of the gate step skips hardened push (plain already shipped, job goes red from
+   the crash); a normal gate *failure* (fail_gate → exit 0) still runs this step, which
+   simply skips the failed variants (no `hardened_image.txt`).
+5. **Cleanup images** (`if: always()`) — `docker rmi` the plain and hardened images for
+   every variant, reclaiming disk regardless of outcome.
+
+Outcomes:
+- Build fails → nothing pushed (can't publish what wasn't built).
+- Build ok, gate step crashes → **plain already pushed**; hardened skipped; job red.
+- Build ok, gate fail_gate on a variant → plain pushed; that variant's `-hardened` skipped
+  and left at its previously published state; other variants' hardened pushed; job red via
+  the deferred fail step.
+- All pass → plain + hardened pushed; green.
+
+Aggregation: both push steps append their logical tags (arch suffix stripped) to
+`aggregated_tags.txt`; gate-failed variants contribute no hardened tags, so `process-tags`
 never sees them.
 
 ### New final step: `Fail if severity gate failed`
