@@ -137,6 +137,8 @@ RUN set -eux; \
         imagemagick-7 \
         libmagickwand-7-dev \
     ; \
+    # Harden ImageMagick against untrusted SVG assets (GHSA-m656-jmhm-hfwv LFI via text:, GHSA-37r9-mm26-rw8f RCE via msl:): deny the coders an SVG xlink:href can invoke
+    sed -i 's|</policymap>|<policy domain="coder" rights="none" pattern="MSL" />\n<policy domain="coder" rights="none" pattern="TEXT" />\n<policy domain="coder" rights="none" pattern="LABEL" />\n<policy domain="coder" rights="none" pattern="CAPTION" />\n<policy domain="coder" rights="none" pattern="INFO" />\n<policy domain="coder" rights="none" pattern="URL" />\n<policy domain="coder" rights="none" pattern="HTTP" />\n<policy domain="coder" rights="none" pattern="HTTPS" />\n<policy domain="coder" rights="none" pattern="FTP" />\n<policy domain="coder" rights="none" pattern="EPHEMERAL" />\n<policy domain="coder" rights="none" pattern="SHOW" />\n<policy domain="coder" rights="none" pattern="WIN" />\n<policy domain="coder" rights="none" pattern="PLT" />\n<policy domain="path" rights="none" pattern="@*" />\n</policymap>|' /etc/ImageMagick-7/policy.xml; \
     \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install gd; \
