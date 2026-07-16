@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Stub docker: 'image inspect' exists-check exits 0; with --format prints a fake id.
+# Stub docker: records every invocation to STUB_LOG (so callers can assert
+# e.g. `docker tag <src> <dst>` direction). 'image inspect' exists-check
+# exits 0; with --format prints a fake sha256: id.
+echo "docker $*" >> "${STUB_LOG:-/dev/null}"
 if [ "$1 $2" = "image inspect" ]; then
     if printf '%s ' "$@" | grep -q -- '--format'; then echo "sha256:deadbeefcafe0000"; fi
     exit 0

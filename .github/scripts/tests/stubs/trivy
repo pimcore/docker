@@ -1,20 +1,40 @@
 #!/usr/bin/env bash
 # Stub trivy. Scenario via env: STUB_FIXABLE=yes|no (initial OS scan),
-# STUB_GATE=pass|fail (severity-filtered gate scan). SPDX just writes a minimal doc.
-out=""; sev=""; fmt=""
+# STUB_GATE=pass|fail (severity-filtered gate scan), STUB_BADJSON=1 (the
+# initial JSON vulnerability scan -- --format json, no --severity, no
+# spdx-json -- writes malformed JSON instead of a report, to exercise the
+# caller's `jq empty` fail-closed path on the plain-image scan specifically;
+# scoped to no-severity so it doesn't also corrupt the separate gate-scan
+# report and mask a regression in the initial check alone). SPDX just writes
+# a minimal doc. Every invocation is recorded to STUB_LOG, including a parsed
+# summary of which image reference (the trailing non-flag argument) was
+# targeted, so callers can assert scan/SBOM target.
+echo "trivy $*" >> "${STUB_LOG:-/dev/null}"
+
+out=""; sev=""; fmt=""; img=""
 while [ $# -gt 0 ]; do
     case "$1" in
         -o) out="$2"; shift 2;;
         --severity) sev="$2"; shift 2;;
         --format) fmt="$2"; shift 2;;
-        *) shift;;
+        --pkg-types) shift 2;;
+        --ignore-unfixed) shift;;
+        image) shift;;
+        -*) shift;;
+        *) img="$1"; shift;;
     esac
 done
+echo "trivy-call format=${fmt} severity=${sev} image=${img}" >> "${STUB_LOG:-/dev/null}"
+
 case "$fmt" in
     spdx-json) printf '{"spdxVersion":"SPDX-2.3","packages":[{"name":"libc6","versionInfo":"2.36-1"}]}\n' > "$out"; exit 0;;
     table) echo "stub trivy table report" > "$out"; exit 0;;
 esac
-# JSON vulnerability scan
+# JSON vulnerability scan (initial or severity-gated)
+if [ -z "$sev" ] && [ "${STUB_BADJSON:-0}" = "1" ]; then
+    printf '{ not valid' > "$out"
+    exit 0
+fi
 if [ -n "$sev" ]; then
     [ "${STUB_GATE:-pass}" = "fail" ] && v='[{"VulnerabilityID":"CVE-GATE"}]' || v='[]'
 else
