@@ -91,8 +91,14 @@ jobs:
                     ORAS_ARCH="$(dpkg --print-architecture)"
                     curl -fsSL -o oras.tar.gz "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz"
                     curl -fsSL -o oras_checksums.txt "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_checksums.txt"
-                    EXPECTED_SHA=$(grep -F "oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz" oras_checksums.txt | awk '{print $1}')
+                    # Match the filename exactly ($2 == f): a substring match can also hit
+                    # a sibling entry like *.tar.gz.sbom.json and return two hashes.
+                    EXPECTED_SHA=$(awk -v f="oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz" '$2 == f {print $1}' oras_checksums.txt)
                     ACTUAL_SHA=$(sha256sum oras.tar.gz | awk '{print $1}')
+                    if [ -z "$EXPECTED_SHA" ]; then
+                        echo "::error::No oras checksum entry for oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz"
+                        exit 1
+                    fi
                     if [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
                         echo "::error::oras checksum mismatch! Expected ${EXPECTED_SHA}, got ${ACTUAL_SHA}"
                         exit 1
@@ -100,47 +106,6 @@ jobs:
                     tar -xzf oras.tar.gz oras
                     sudo mv oras /usr/local/bin/oras
                     rm oras.tar.gz oras_checksums.txt
-
-            -   name: Install Copa
-                if: ${{ matrix.build.hardened }}
-                run: |
-                    set -eux
-                    COPA_ARCH="$(dpkg --print-architecture)"
-                    curl -fsSL -o copa.tar.gz "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz"
-                    curl -fsSL -o copacetic_checksums.txt "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copacetic_checksums.txt"
-                    # Verify checksum before extracting
-                    EXPECTED_SHA=$(grep -F "copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz" copacetic_checksums.txt | awk '{print $1}')
-                    ACTUAL_SHA=$(sha256sum copa.tar.gz | awk '{print $1}')
-                    if [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
-                        echo "::error::Copa checksum mismatch! Expected ${EXPECTED_SHA}, got ${ACTUAL_SHA}"
-                        exit 1
-                    fi
-                    tar -xzf copa.tar.gz copa
-                    sudo mv copa /usr/local/bin/copa
-                    rm copa.tar.gz copacetic_checksums.txt
-
-            -   name: Start buildkit daemon
-                if: ${{ matrix.build.hardened }}
-                run: |
-                    docker run --detach --rm --privileged \
-                        -p 127.0.0.1:8888:8888/tcp \
-                        --name buildkitd \
-                        --entrypoint buildkitd \
-                            moby/buildkit:v${{ env.BUILDKIT_VERSION }} \
-                        --addr tcp://0.0.0.0:8888
-
-                    # Wait for buildkit to be ready
-                    for i in $(seq 1 60); do
-                        if docker exec buildkitd buildctl --addr tcp://127.0.0.1:8888 debug workers >/dev/null 2>&1; then
-                            echo "BuildKit is ready"
-                            break
-                        fi
-                        if [ "$i" -eq 60 ]; then
-                            echo "::error::BuildKit failed to start within 60 seconds"
-                            exit 1
-                        fi
-                        sleep 1
-                    done
 
             -   name: Build plain images
                 env:
@@ -247,6 +212,55 @@ jobs:
                             # logical tag only when both arches were pushed in the same run.
                             printf '%s\n' "${PLAIN_TAGS[@]}" >> aggregated_tags.txt
                         fi
+                    done
+
+            # Copa + BuildKit are installed AFTER the plain push, so a failure in this
+            # scan/patch infrastructure aborts the leg only after plain has already shipped
+            # (plain-always-publish), never before it.
+            -   name: Install Copa
+                if: ${{ matrix.build.hardened }}
+                run: |
+                    set -eux
+                    COPA_ARCH="$(dpkg --print-architecture)"
+                    curl -fsSL -o copa.tar.gz "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz"
+                    curl -fsSL -o copacetic_checksums.txt "https://github.com/project-copacetic/copacetic/releases/download/v${COPA_VERSION}/copacetic_checksums.txt"
+                    # Verify checksum before extracting. Match the filename exactly ($2 == f):
+                    # a substring match also hits copa_..._linux_..._tar.gz.sbom.json (two hashes).
+                    EXPECTED_SHA=$(awk -v f="copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz" '$2 == f {print $1}' copacetic_checksums.txt)
+                    ACTUAL_SHA=$(sha256sum copa.tar.gz | awk '{print $1}')
+                    if [ -z "$EXPECTED_SHA" ]; then
+                        echo "::error::No Copa checksum entry for copa_${COPA_VERSION}_linux_${COPA_ARCH}.tar.gz"
+                        exit 1
+                    fi
+                    if [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
+                        echo "::error::Copa checksum mismatch! Expected ${EXPECTED_SHA}, got ${ACTUAL_SHA}"
+                        exit 1
+                    fi
+                    tar -xzf copa.tar.gz copa
+                    sudo mv copa /usr/local/bin/copa
+                    rm copa.tar.gz copacetic_checksums.txt
+
+            -   name: Start buildkit daemon
+                if: ${{ matrix.build.hardened }}
+                run: |
+                    docker run --detach --rm --privileged \
+                        -p 127.0.0.1:8888:8888/tcp \
+                        --name buildkitd \
+                        --entrypoint buildkitd \
+                            moby/buildkit:v${{ env.BUILDKIT_VERSION }} \
+                        --addr tcp://0.0.0.0:8888
+
+                    # Wait for buildkit to be ready
+                    for i in $(seq 1 60); do
+                        if docker exec buildkitd buildctl --addr tcp://127.0.0.1:8888 debug workers >/dev/null 2>&1; then
+                            echo "BuildKit is ready"
+                            break
+                        fi
+                        if [ "$i" -eq 60 ]; then
+                            echo "::error::BuildKit failed to start within 60 seconds"
+                            exit 1
+                        fi
+                        sleep 1
                     done
 
             -   name: Scan, patch, and gate hardened images
@@ -407,15 +421,25 @@ jobs:
                         esac
                     done < all_aggregated_tags.txt
 
+                    failed=0
                     for lt in "${!LOGICAL[@]}"; do
                         if [ -n "${HAS_AMD64[$lt]:-}" ] && [ -n "${HAS_ARM64[$lt]:-}" ]; then
                             echo "Creating multi-arch manifest: $lt"
-                            docker buildx imagetools create \
+                            # Both arches were pushed this run: a create failure means the logical
+                            # tag was NOT updated -> record it and fail the job (don't leave green).
+                            if ! docker buildx imagetools create \
                                 --tag "$lt" \
                                 "${lt}-amd64" \
-                                "${lt}-arm64" \
-                                || echo "::warning::Failed to create manifest for $lt"
+                                "${lt}-arm64"; then
+                                echo "::error::Failed to create multi-arch manifest for $lt"
+                                failed=1
+                            fi
                         else
                             echo "Skipping $lt: only one arch pushed this run (amd64=${HAS_AMD64[$lt]:-0} arm64=${HAS_ARM64[$lt]:-0}); previous manifest left unchanged"
                         fi
                     done
+
+                    if [ "$failed" -ne 0 ]; then
+                        echo "::error::One or more multi-arch manifests failed to publish"
+                        exit 1
+                    fi

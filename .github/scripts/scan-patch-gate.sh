@@ -26,6 +26,10 @@ fail_gate() { # <reason> -- record + skip hardened, but let plain ship
     echo "::error::${variant}: $1"
     { echo "## Gate failed: ${HARDENED_IMAGE}"; echo ""; echo "$1"; echo ""; } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
     echo "$1" > "${vdir}/gate_failed.txt"
+    # Remove the hardened image now: we're about to delete the state files the cleanup
+    # step reads, so it can no longer reclaim it -- avoid leaking large images across
+    # failed variants on a reused runner.
+    docker rmi "${HARDENED_IMAGE}" 2>/dev/null || true
     rm -f "${vdir}/hardened_image.txt" "${vdir}/hardened_tags.txt" "${vdir}/hardened_sbom.txt"
     rm -f "$report"
     exit 0
