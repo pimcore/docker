@@ -8,6 +8,11 @@ on:
                 required: false
                 default: false
                 type: boolean
+            publish_hardened:
+                description: 'Also publish the Copa-hardened (-hardened) tags. Requires publish=true. Off by default so hardened stays unpublished (built + scanned + gated but not pushed) on scheduled/tag runs and during testing, until explicitly enabled on a manual dispatch.'
+                required: false
+                default: false
+                type: boolean
             fail_on_severity:
                 description: 'Severity THRESHOLD for the post-patch gate: naming a severity also gates everything above it (e.g. HIGH gates HIGH,CRITICAL). Case-insensitive. Valid values: UNKNOWN, LOW, MEDIUM, HIGH, CRITICAL (or a comma-separated set — the lowest one wins). Use NONE to disable the gate entirely.'
                 required: false
@@ -287,10 +292,14 @@ jobs:
                         _ci/.github/scripts/scan-patch-gate.sh "${imageVariant}"
                     done
 
+            # Hardened images are always built + scanned + gated above; publishing them is a
+            # separate opt-in. PUSH_HARDENED is true only on a manual dispatch with both
+            # publish=true and publish_hardened=true, so scheduled/tag runs (and plain-only
+            # test dispatches) build and gate the hardened images but do not push them.
             -   name: Push hardened images
                 if: ${{ matrix.build.hardened }}
                 env:
-                    PUSH: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
+                    PUSH_HARDENED: ${{ github.event_name == 'workflow_dispatch' && inputs.publish && inputs.publish_hardened }}
                 run: |
                     set -eux
 
@@ -310,7 +319,7 @@ jobs:
                             fi
                         done
 
-                        if [[ "$PUSH" == "true" ]]; then
+                        if [[ "$PUSH_HARDENED" == "true" ]]; then
                             printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
 
                             HARDENED_TAG="${HARDENED_IMAGE#"${IMAGE_NAME}":}"

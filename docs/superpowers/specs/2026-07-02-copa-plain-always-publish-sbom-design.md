@@ -278,6 +278,26 @@ this spec (plain-always-publish, deferred red). No other edits to the old spec.
   and generates SBOMs without pushing; the docs job is skipped (publish-gated), validated
   on the first real publish run.
 
+## Hardened-publish rollout gate (`publish_hardened`, 2026-07-16)
+
+A `publish_hardened` `workflow_dispatch` input (boolean, default `false`) gates **publishing**
+of the `-hardened` tags, independently of plain publishing:
+
+- Hardened images are **always built, scanned, patched, and gated** for `hardened: true`
+  matrix entries (unchanged) — the input only controls the registry push.
+- `-hardened` tags are pushed **only when** `github.event_name == 'workflow_dispatch' &&
+  inputs.publish && inputs.publish_hardened`. So:
+  - **Scheduled / tag-push runs push plain only** — hardened is built + gated but not
+    published until someone opts in. (Deliberate safe rollout; revisit the formula once
+    hardened is validated in production.)
+  - A **`publish=true, publish_hardened=false` dispatch** publishes plain and exercises the
+    full hardened build/gate (Copa pulls the just-pushed plain image, so the gate is
+    accurate) without pushing `-hardened` — the intended test mode.
+- The deferred "Fail if severity gate failed" step still runs whenever hardened is built,
+  so a gate failure turns the job red even on a non-publishing run (honest signal that
+  patching left CVEs). README describes the two-flavor scheme as the target state; until
+  `publish_hardened` is enabled, `-hardened` tags are not refreshed in the registries.
+
 ## Post-review notes (2026-07-02, after the multi-dimension branch review)
 
 The exhaustive branch review surfaced two items that are **not** code changes but must be
