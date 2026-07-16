@@ -299,7 +299,7 @@ jobs:
                         if [[ "$PUSH" == "true" ]]; then
                             printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
 
-                            HARDENED_TAG="${HARDENED_IMAGE#${IMAGE_NAME}:}"
+                            HARDENED_TAG="${HARDENED_IMAGE#"${IMAGE_NAME}":}"
                             _ci/.github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
                             _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
 
@@ -323,7 +323,8 @@ jobs:
                         done
                         for imf in plain_image hardened_image; do
                             f=".docker-state/${imageVariant}/${imf}.txt"
-                            [ -f "$f" ] && docker rmi "$(< "$f")" 2>/dev/null || true
+                            [ -f "$f" ] || continue
+                            docker rmi "$(< "$f")" 2>/dev/null || true
                         done
                     done
 

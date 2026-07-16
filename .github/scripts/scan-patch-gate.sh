@@ -90,7 +90,7 @@ trivy image --format spdx-json -o "${HARDENED_SBOM}" "${HARDENED_IMAGE}" \
     || fail_gate "hardened SBOM generation failed"
 
 while IFS= read -r plain_tag; do
-    echo "${plain_tag%-${ARCH_TAG}}-hardened-${ARCH_TAG}"
+    echo "${plain_tag%-"${ARCH_TAG}"}-hardened-${ARCH_TAG}"
 done < "${vdir}/plain_tags.txt" > "${vdir}/hardened_tags.txt"
 echo "${HARDENED_IMAGE}" > "${vdir}/hardened_image.txt"
 echo "${HARDENED_SBOM}"  > "${vdir}/hardened_sbom.txt"
