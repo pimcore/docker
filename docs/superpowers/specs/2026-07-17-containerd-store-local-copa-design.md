@@ -88,13 +88,15 @@ an unmodified runner and is unaffected (it operates on the registry).
 1. `workflow_dispatch` with `publish: false` on `image_copa` — expect: hardened legs enable
    the containerd store, build, Copa-patch, gate, and generate SBOMs, with **zero** pushes
    to Docker Hub / GHCR; the deferred gate step reports pass/fail.
-   - **Un-foolable check that Copa patched the *local* image (not a registry pull):** a green
-     gate alone is **not** proof — the stable plain tags already exist in the registry from
-     prior runs, so a registry-pulling Copa would silently patch the previously published
-     image and still pass. Run Copa with debug logging for this validation (add `--debug` to
-     the `copa patch` call, or raise its log level) and confirm the log shows the **docker
-     driver** connected — i.e. it does *not* print `Could not use docker driver` and fall
-     through to buildx/buildkitd.
+   - **Confirm Copa patched the *local* image (not a registry pull):** a green gate alone is
+     **not** proof — the stable plain tags already exist in the registry from prior runs, so a
+     registry-pulling Copa would silently patch the previously published image and still pass.
+     Run Copa with debug logging for this validation (add `--debug` to the `copa patch` call,
+     or raise its log level) and confirm the log shows the **docker driver** connected — i.e.
+     it does *not* print `Could not use docker driver` and fall through to buildx/buildkitd.
+     (Since the containerd store is verified active in the enable step, "docker driver
+     connected" implies the local store was used. For the strongest check, also compare the
+     locally built plain image's digest against the base of the patched hardened image.)
 2. `workflow_dispatch` with `publish: true, publish_hardened: false` — expect: plain tags
    published, hardened built + gated but **not** pushed.
 3. Only after both pass: allow the scheduled cadence to exercise it.
