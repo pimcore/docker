@@ -39,6 +39,12 @@ For our stable release tags we publish each image in two flavors so you can choo
 
 **Scope:** `-hardened` exists for **stable release tags only**; development tags (`-dev`) are plain-only. The plain tag **always publishes**, even when CVEs remain.
 
+> **Testing the hardened path without publishing:** trigger the release workflow via
+> **workflow_dispatch** with `publish: false`. The stable images are built, Copa-patched,
+> scanned, and gated entirely on the runner (using the containerd image store) — **nothing
+> is pushed** to Docker Hub or GHCR. Use `publish: true` with `publish_hardened: false` to
+> publish the plain tags while still building and gating the hardened images locally.
+
 **Choosing a flavor:** prefer **hardened** for production or vulnerability-scanned environments where you want the latest available OS fixes baked in; use **plain** when you need the image exactly as built (reproducibility, or you run your own patching/scanning pipeline).
 
 ```text

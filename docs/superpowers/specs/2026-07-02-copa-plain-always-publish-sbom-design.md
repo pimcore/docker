@@ -303,24 +303,13 @@ of the `-hardened` tags, independently of plain publishing:
 The exhaustive branch review surfaced two items that are **not** code changes but must be
 recorded:
 
-- **Copa image source (OPEN — needs CI validation; earlier "false positive" was wrong).**
-  Copa runs against the standalone `buildkitd` container (`-a tcp://127.0.0.1:8888`), whose
-  image store is isolated from the host Docker daemon that `docker build --load` populated.
-  It does not automatically see the local `PLAIN_IMAGE`; it resolves the reference through
-  BuildKit, which pulls from the registry. Consequence:
-    - **`publish: true` (real publishes / cron / tag): correct.** Because plain is now pushed
-      *before* the gate (this spec's publish-ordering change), `PLAIN_IMAGE` is in the
-      registry when Copa runs, so BuildKit pulls exactly the just-built image.
-    - **`publish: false` (dry-run, the new dispatch default): NOT reliable.** The fresh image
-      isn't in the registry, so Copa may patch a *previously published* image (or fail for a
-      never-published tag). A dry-run therefore does not faithfully exercise the hardened
-      path. An earlier note here called this a false positive on the premise that the
-      pre-existing pipeline patched a local image the same way — that premise was unfounded
-      (the Copa checksum bug meant hardened legs almost certainly never completed before), so
-      it is retracted.
-  Options if dry-run fidelity is required: skip the gate/hardened steps on `publish: false`,
-  or make the fresh image available to `buildkitd` (shared store / local registry). Tracked
-  for a follow-up; real publishing is unaffected.
+- **I4 — Copa image source (RESOLVED 2026-07-17):** Copa no longer pulls the target
+  from the registry. The hardened legs enable Docker's containerd image store, so
+  Copa's default connection (dockerd's embedded BuildKit) patches the **locally built**
+  plain image directly. Consequences: `publish: false` is a full hardened dry-run
+  (build + patch + gate + SBOM, zero pushes), and real runs no longer depend on plain
+  being pushed before the gate. See
+  `docs/superpowers/specs/2026-07-17-containerd-store-local-copa-design.md`.
 - **Rollout / trigger scope (I5).** `schedule:` runs use the workflow file on the
   **default branch**, and `push: tags:` runs use the file at the pushed tag. The `_ci`
   checkout resolves scripts from `github.sha` (the workflow's own commit), so the pipeline
