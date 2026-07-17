@@ -282,10 +282,11 @@ git commit -m "docs: resolve I4 (Copa patches local image via containerd store);
 Per the spec's validation gate — run these before relying on the change for the scheduled cadence:
 
 1. `workflow_dispatch` on `image_copa` with `publish: false` → hardened legs enable the containerd store, build, Copa-patch, gate, and produce SBOMs with **zero** pushes; the deferred gate step reports pass/fail.
+   - **Confirm Copa patched the *local* image, not a registry pull.** A green gate alone is not proof: the stable plain tags already exist in the registry from prior runs, so a registry-pulling Copa would silently patch the previously published image and still pass. Make the check un-foolable — run Copa with debug logging for this validation (add `--debug` to the `copa patch` call, or raise its log level) and confirm the log shows the **docker driver** connected (it must *not* print `Could not use docker driver` and fall through to buildx/buildkitd). Per Copa v0.14.1 `autoClient`, the docker driver is tried first and, with the containerd store active, is the one used.
 2. `workflow_dispatch` with `publish: true, publish_hardened: false` → plain tags published, hardened built + gated but **not** pushed.
 3. Only after both pass: allow the scheduled cadence to exercise it.
 
-**If Copa selects an isolated `docker-container` builder instead of the docker driver** (spec risk note): pin the default builder to `default` (docker driver) before the gate loop, or fall back to the local-`registry:2` sidecar (spec Rollback). The `publish: false` run is what confirms which path Copa took.
+**Contingency (not expected — driver selection is source-verified).** Copa v0.14.1 tries the docker driver first and it is independent of the selected buildx builder (`pkg/buildkit/drivers.go`, `connhelpers/docker.go`), so the isolated `docker-container` builder should never be chosen. If the debug-log check above nonetheless shows Copa failing over off the docker driver, pin the builder with `docker buildx use default` before the gate loop, or fall back to the local-`registry:2` sidecar (spec Rollback).
 
 ## Self-Review
 

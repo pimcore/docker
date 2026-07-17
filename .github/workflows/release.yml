@@ -27,7 +27,6 @@ on:
 env:
     IMAGE_NAME: pimcore/pimcore
     COPA_VERSION: "0.14.1"
-    BUILDKIT_VERSION: "0.30.0"
     ORAS_VERSION: "1.2.0"
     TRIVY_DB_REPOSITORY: "ghcr.io/aquasecurity/trivy-db:2"
 
@@ -255,9 +254,12 @@ jobs:
                         fi
                     done
 
-            # Copa + BuildKit are installed AFTER the plain push, so a failure in this
-            # scan/patch infrastructure aborts the leg only after plain has already shipped
-            # (plain-always-publish), never before it.
+            # Copa is installed AFTER the plain push, and gate failures are contained
+            # (scan-patch-gate.sh records the failure and exits 0), so a problem in the
+            # scan/patch/gate path never blocks plain publishing (plain-always-publish).
+            # Note: the containerd image store is enabled earlier, before the plain build,
+            # because it must be active before the image Copa patches locally is built --
+            # a failure of that early step aborts the hardened leg before plain ships.
             -   name: Install Copa
                 if: ${{ matrix.build.hardened }}
                 run: |

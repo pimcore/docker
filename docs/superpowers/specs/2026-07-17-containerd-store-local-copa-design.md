@@ -58,10 +58,16 @@ registry round-trip.
    The gate step stops exporting `BUILDKIT_ADDR`, so Copa uses its default connection, which
    under the containerd store resolves to dockerd's embedded BuildKit and **sees local
    images**.
-4. **Copa must use the docker driver (embedded dockerd BuildKit), not an isolated
-   `docker-container` buildx builder.** The `publish: false` validation confirms this; if
-   Copa selects an isolated builder, pin the default builder to `default` (docker driver)
-   before the gate, or fall back to the local-registry approach (see Rollback).
+4. **Copa uses the docker driver (dockerd's embedded BuildKit), not the isolated
+   `docker-container` buildx builder.** Verified against Copa v0.14.1 source
+   (`pkg/buildkit/drivers.go` `autoClient`): with no `-a`, Copa tries the **docker driver
+   first**, then the buildx driver, then the default buildkitd socket. The docker connhelper
+   (`pkg/buildkit/connhelpers/docker.go`) dials dockerd's `/grpc` endpoint directly (via
+   `DOCKER_HOST` / the docker context), so it is **independent of whichever builder
+   `docker buildx` has selected**. With the containerd store enabled, the docker driver passes
+   Copa's `CapMergeOp`/`CapDiffOp` validation and is the one used — the buildx
+   `docker-container` builder (a later fallback) is never reached, so **no builder pin is
+   required**. The `publish: false` validation run confirms this end-to-end on the runner.
 
 Everything else — plain build, plain push, the gate logic, hardened push (`PUSH_HARDENED`),
 cleanup, SBOM/CVE data, `process-tags` — is unchanged. `process-tags` runs in its own job on
@@ -82,6 +88,13 @@ an unmodified runner and is unaffected (it operates on the registry).
 1. `workflow_dispatch` with `publish: false` on `image_copa` — expect: hardened legs enable
    the containerd store, build, Copa-patch, gate, and generate SBOMs, with **zero** pushes
    to Docker Hub / GHCR; the deferred gate step reports pass/fail.
+   - **Un-foolable check that Copa patched the *local* image (not a registry pull):** a green
+     gate alone is **not** proof — the stable plain tags already exist in the registry from
+     prior runs, so a registry-pulling Copa would silently patch the previously published
+     image and still pass. Run Copa with debug logging for this validation (add `--debug` to
+     the `copa patch` call, or raise its log level) and confirm the log shows the **docker
+     driver** connected — i.e. it does *not* print `Could not use docker driver` and fall
+     through to buildx/buildkitd.
 2. `workflow_dispatch` with `publish: true, publish_hardened: false` — expect: plain tags
    published, hardened built + gated but **not** pushed.
 3. Only after both pass: allow the scheduled cadence to exercise it.
@@ -97,9 +110,14 @@ point Copa at it (Option 2 from the discussion) — keeps everything local, more
 
 ## Risk / uncertainty (explicit)
 
-- The exact Copa↔BuildKit selection under the containerd store on GitHub-hosted runners is
-  **confirmed by the validation run**, not yet proven end-to-end here (the local spike could
-  not enable the containerd store without disrupting the session daemon).
+- Copa's **driver selection** under the containerd store is verified from Copa v0.14.1 source
+  (see Design §4): the docker driver is tried first and, once the store is active, is the one
+  used — independent of the selected buildx builder. What the local spike could **not** prove
+  is the full **end-to-end** patch on a GitHub-hosted runner (the spike could not enable the
+  containerd store without disrupting the session daemon): that dockerd's embedded BuildKit
+  resolves the locally built image from the shared containerd store during a Copa patch. The
+  `publish: false` validation run is that end-to-end confirmation — see the Validation gate
+  for how to make the check un-foolable (a green gate alone is not proof).
 - The 5 stable legs' plain build/push move to the containerd store; the containerd store is
   the modern Docker default and supports `build --load`, `tag`, `push`, `buildx`, and
   `manifest`, but the `publish: false` → `publish: true` validation sequence is what guards
