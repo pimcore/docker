@@ -133,6 +133,7 @@ assert_eq "$(cat "$wA/.docker-state/default/hardened_tags.txt")" "$expectedA_tag
 
 logA="$(cat "$wA/stub.log" 2>/dev/null)"
 assert_contains "$logA" "-t pimcore/pimcore:php8.5-default-v5.1-hardened-amd64" "A copa invoked with full hardened image reference"
+assert_not_contains "$logA" " -a " "A copa invoked WITHOUT -a when BUILDKIT_ADDR unset (containerd store / default connection)"
 assert_contains "$logA" "format=json severity=CRITICAL,HIGH image=pimcore/pimcore:php8.5-default-v5.1-hardened-amd64" "A post-patch GATE scan targeted the HARDENED image"
 assert_contains "$logA" "format=spdx-json severity= image=pimcore/pimcore:php8.5-default-v5.1-hardened-amd64" "A SPDX SBOM generation targeted the HARDENED image"
 
@@ -193,6 +194,13 @@ outF="$(GATE_SEVERITY=CRITICAL,HIGH STUB_BADJSON=1 STUB_LOG="$wF/stub.log" run_g
 assert_file "$wF/.docker-state/badjson/gate_failed.txt" "F gate_failed marker"
 assert_no_file "$wF/.docker-state/badjson/hardened_image.txt" "F hardened_image absent"
 assert_contains "$(cat "$wF/.docker-state/badjson/gate_failed.txt")" "not valid JSON" "F gate_failed reason mentions invalid JSON"
+
+# Scenario G: BUILDKIT_ADDR set -> copa receives -a <addr> (rollback / standalone buildkitd path)
+wG="$(mktemp -d)"; tmpdirs+=("$wG"); setup_variant "$wG" default
+outG="$(BUILDKIT_ADDR=tcp://127.0.0.1:8888 GATE_SEVERITY=CRITICAL,HIGH STUB_FIXABLE=yes STUB_GATE=pass STUB_LOG="$wG/stub.log" run_gate "$wG" default)"; rcG=$?
+[ "$rcG" = 0 ] && echo "  ok: G exit 0" || { echo "  FAIL: G exit $rcG"; fail=1; }
+logG="$(cat "$wG/stub.log" 2>/dev/null)"
+assert_contains "$logG" "-a tcp://127.0.0.1:8888" "G copa receives -a <addr> when BUILDKIT_ADDR set"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"

@@ -11,7 +11,7 @@ variant="${1:?usage: scan-patch-gate.sh <variant>}"
 STATE_DIR="${STATE_DIR:-.docker-state}"
 SBOM_DIR="${SBOM_DIR:-sboms}"
 REPORT_DIR="${REPORT_DIR:-trivy-reports}"
-BUILDKIT_ADDR="${BUILDKIT_ADDR:-tcp://127.0.0.1:8888}"
+BUILDKIT_ADDR="${BUILDKIT_ADDR:-}"
 vdir="${STATE_DIR}/${variant}"
 mkdir -p "$SBOM_DIR" "$REPORT_DIR"
 
@@ -42,7 +42,13 @@ trivy image --pkg-types os --ignore-unfixed --format json -o "$report" "${PLAIN_
 jq empty "$report" 2>/dev/null || fail_gate "Trivy report of plain image is not valid JSON"
 
 if [ -s "$report" ] && jq -e '.Results[]? | select(.Vulnerabilities != null and (.Vulnerabilities | length > 0))' "$report" > /dev/null; then
-    copa patch -i "${PLAIN_IMAGE}" -r "$report" -t "${HARDENED_IMAGE}" -a "${BUILDKIT_ADDR}" \
+    # Pass -a only when an address is configured. With the containerd image store
+    # enabled, BUILDKIT_ADDR is unset and Copa uses its default connection
+    # (docker driver -> dockerd's embedded BuildKit), which sees the local image.
+    # Setting BUILDKIT_ADDR (e.g. a standalone buildkitd) restores the -a path.
+    copa_addr=()
+    [ -n "${BUILDKIT_ADDR}" ] && copa_addr=(-a "${BUILDKIT_ADDR}")
+    copa patch -i "${PLAIN_IMAGE}" -r "$report" -t "${HARDENED_IMAGE}" "${copa_addr[@]}" \
         || fail_gate "Copa patch failed"
     docker image inspect "${HARDENED_IMAGE}" > /dev/null 2>&1 \
         || fail_gate "Hardened image not found after copa patch"
