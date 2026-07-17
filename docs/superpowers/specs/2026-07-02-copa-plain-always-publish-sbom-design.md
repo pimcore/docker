@@ -291,8 +291,9 @@ of the `-hardened` tags, independently of plain publishing:
     published until someone opts in. (Deliberate safe rollout; revisit the formula once
     hardened is validated in production.)
   - A **`publish=true, publish_hardened=false` dispatch** publishes plain and exercises the
-    full hardened build/gate (Copa pulls the just-pushed plain image, so the gate is
-    accurate) without pushing `-hardened` — the intended test mode.
+    full hardened build/gate (Copa patches the locally built plain image via the containerd
+    store, so the gate is accurate — see I4 below) without pushing `-hardened` — the intended
+    test mode.
 - The deferred "Fail if severity gate failed" step still runs whenever hardened is built,
   so a gate failure turns the job red even on a non-publishing run (honest signal that
   patching left CVEs). README describes the two-flavor scheme as the target state; until
