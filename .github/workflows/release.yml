@@ -74,6 +74,42 @@ jobs:
                     sparse-checkout: .github/scripts
                     sparse-checkout-cone-mode: false
 
+            -   name: Enable containerd image store
+                if: ${{ matrix.build.hardened }}
+                run: |
+                    set -euxo pipefail
+                    # Copa's mergeop/diffop (required to patch) are only available with the
+                    # containerd image store backend, which also gives dockerd's embedded
+                    # BuildKit a shared image store. With it enabled, Copa's default connection
+                    # patches the locally built plain image -- no registry round-trip and no
+                    # standalone buildkitd. Enable it on the hardened legs only, before any
+                    # builder is created (this restarts the daemon).
+                    sudo mkdir -p /etc/docker
+                    if [ -s /etc/docker/daemon.json ]; then
+                        existing="$(sudo cat /etc/docker/daemon.json)"
+                    else
+                        existing='{}'
+                    fi
+                    printf '%s' "$existing" \
+                        | jq '.features = ((.features // {}) + {"containerd-snapshotter": true})' \
+                        | sudo tee /etc/docker/daemon.json >/dev/null
+                    sudo systemctl restart docker
+                    # Wait for the daemon to come back up.
+                    for i in $(seq 1 30); do
+                        if docker info >/dev/null 2>&1; then break; fi
+                        if [ "$i" -eq 30 ]; then
+                            echo "::error::Docker did not come back after restart"
+                            exit 1
+                        fi
+                        sleep 1
+                    done
+                    # Verify the containerd snapshotter storage backend is active.
+                    if ! docker info | grep -q 'io.containerd.snapshotter'; then
+                        echo "::error::containerd image store is not active after restart"
+                        docker info || true
+                        exit 1
+                    fi
+
             -   name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v4
 
@@ -245,29 +281,6 @@ jobs:
                     sudo mv copa /usr/local/bin/copa
                     rm copa.tar.gz copacetic_checksums.txt
 
-            -   name: Start buildkit daemon
-                if: ${{ matrix.build.hardened }}
-                run: |
-                    docker run --detach --rm --privileged \
-                        -p 127.0.0.1:8888:8888/tcp \
-                        --name buildkitd \
-                        --entrypoint buildkitd \
-                            moby/buildkit:v${{ env.BUILDKIT_VERSION }} \
-                        --addr tcp://0.0.0.0:8888
-
-                    # Wait for buildkit to be ready
-                    for i in $(seq 1 60); do
-                        if docker exec buildkitd buildctl --addr tcp://127.0.0.1:8888 debug workers >/dev/null 2>&1; then
-                            echo "BuildKit is ready"
-                            break
-                        fi
-                        if [ "$i" -eq 60 ]; then
-                            echo "::error::BuildKit failed to start within 60 seconds"
-                            exit 1
-                        fi
-                        sleep 1
-                    done
-
             -   name: Scan, patch, and gate hardened images
                 if: ${{ matrix.build.hardened }}
                 env:
@@ -285,7 +298,6 @@ jobs:
                     echo "Severity gate: fail_on_severity='${FAIL_ON_SEVERITY}' -> '${GATE_SEVERITY}'"
 
                     export IMAGE_NAME GATE_SEVERITY ARCH_TAG TRIVY_DB_REPOSITORY
-                    export BUILDKIT_ADDR="tcp://127.0.0.1:8888"
 
                     mapfile -t imageVariants < .docker-state/variants.txt
                     for imageVariant in "${imageVariants[@]}"; do
@@ -350,10 +362,6 @@ jobs:
                             docker rmi "$(< "$f")" 2>/dev/null || true
                         done
                     done
-
-            -   name: Stop buildkit daemon
-                if: ${{ always() && matrix.build.hardened }}
-                run: docker stop buildkitd || true
 
             -   name: Upload trivy reports
                 if: always()
