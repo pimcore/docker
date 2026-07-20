@@ -213,8 +213,10 @@ Extend the merge-manifests scenario in `run.sh` so the agg file has the `tag<TAB
 ```bash
 # Task 2: tag<TAB>sbom format -> attach both per-arch SBOMs to the logical tag
 wS="$(mktemp -d)"; tmpdirs+=("$wS"); mkdir -p "$wS/sboms"
-: > "$wS/sboms/php8.5-v5.2-amd64.spdx.json"
-: > "$wS/sboms/php8.5-v5.2-arm64.spdx.json"
+# NON-EMPTY: attach-sbom.sh skips empty SBOM files ([ ! -s ]), so an empty file
+# would produce zero oras calls and a false test failure.
+echo '{"spdxVersion":"SPDX-2.3"}' > "$wS/sboms/php8.5-v5.2-amd64.spdx.json"
+echo '{"spdxVersion":"SPDX-2.3"}' > "$wS/sboms/php8.5-v5.2-arm64.spdx.json"
 printf '%s\t%s\n' \
     "pimcore/pimcore:php8.5-v5.2-amd64" "sboms/php8.5-v5.2-amd64.spdx.json" \
     "pimcore/pimcore:php8.5-v5.2-arm64" "sboms/php8.5-v5.2-arm64.spdx.json" > "$wS/agg.txt"
