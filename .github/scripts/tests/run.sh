@@ -257,9 +257,13 @@ printf '%s\t%s\n' \
 logS="$wS/stub.log"
 outS="$( cd "$wS" && AGG_FILE="$wS/agg.txt" STUB_LOG="$logS" STUB_ORAS=ok "${ROOT}/.github/scripts/merge-manifests.sh" )"; rcS=$?
 [ "$rcS" = 0 ] && echo "  ok: S exit 0" || { echo "  FAIL: S exit $rcS"; fail=1; }
-oras_attaches="$(grep -c 'attach' "$logS" 2>/dev/null || echo 0)"
-[ "$oras_attaches" = "2" ] && echo "  ok: S two SBOM referrers attached to logical tag" || { echo "  FAIL: S expected 2 attach calls, got $oras_attaches"; fail=1; }
-assert_contains "$(cat "$logS")" "pimcore/pimcore:php8.5-v5.2" "S attach targeted the logical tag"
+oras_attaches="$(grep -c 'attach' "$logS" 2>/dev/null || true)"
+[ "${oras_attaches:-0}" = "2" ] && echo "  ok: S two SBOM referrers attached to logical tag" || { echo "  FAIL: S expected 2 attach calls, got ${oras_attaches:-0}"; fail=1; }
+# Exact subject binding: each referrer must target the LOGICAL tag (no arch suffix),
+# keyed to the matching per-arch SBOM. Catches a regression that attaches to the child
+# (…-amd64/…-arm64) ref instead of the index -- which would defeat the whole feature.
+assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-amd64.spdx.json" "S amd64 SBOM attached to the LOGICAL tag"
+assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-arm64.spdx.json" "S arm64 SBOM attached to the LOGICAL tag"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
