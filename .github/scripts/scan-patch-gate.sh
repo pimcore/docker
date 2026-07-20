@@ -32,6 +32,10 @@ fail_gate() { # <reason> -- record + skip hardened, but let plain ship
     docker rmi "${HARDENED_IMAGE}" 2>/dev/null || true
     rm -f "${vdir}/hardened_image.txt" "${vdir}/hardened_tags.txt" "${vdir}/hardened_sbom.txt"
     rm -f "$report"
+    # If SBOM generation created/truncated its output before failing, drop the partial file
+    # so the always-runs artifact upload never exposes a hardened SBOM for a variant whose
+    # gate failed (HARDENED_SBOM is unset for failures before the SBOM step -> no-op).
+    [ -n "${HARDENED_SBOM:-}" ] && rm -f "${HARDENED_SBOM}"
     exit 0
 }
 

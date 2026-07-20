@@ -202,5 +202,27 @@ outG="$(BUILDKIT_ADDR=tcp://127.0.0.1:8888 GATE_SEVERITY=CRITICAL,HIGH STUB_FIXA
 logG="$(cat "$wG/stub.log" 2>/dev/null)"
 assert_contains "$logG" "-a tcp://127.0.0.1:8888" "G copa receives -a <addr> when BUILDKIT_ADDR set"
 
+# Scenario H: the POST-PATCH gate report is malformed JSON -> fail-closed at the gate
+# jq-empty check (line ~90). Distinct from Scenario F, which corrupts the INITIAL plain
+# scan; here the initial scan is valid and fixable, copa patches, and only the gate report
+# is bad -- exercising the second fail-closed branch that Scenario F cannot reach.
+wH="$(mktemp -d)"; tmpdirs+=("$wH"); setup_variant "$wH" gatebadjson
+outH="$(GATE_SEVERITY=CRITICAL,HIGH STUB_FIXABLE=yes STUB_BADJSON_GATE=1 STUB_LOG="$wH/stub.log" run_gate "$wH" gatebadjson)"; rcH=$?
+[ "$rcH" = 0 ] && echo "  ok: H exit 0 (gate report malformed, contained)" || { echo "  FAIL: H exit $rcH"; fail=1; }
+assert_file "$wH/.docker-state/gatebadjson/gate_failed.txt" "H gate_failed marker"
+assert_no_file "$wH/.docker-state/gatebadjson/hardened_image.txt" "H hardened_image absent"
+assert_contains "$(cat "$wH/.docker-state/gatebadjson/gate_failed.txt")" "gate report is not valid JSON" "H gate_failed reason mentions gate report invalid JSON"
+
+# Scenario I: hardened SBOM generation fails after the gate passed. fail_gate must not leave
+# a partial SBOM in the sboms/ dir (the always-runs artifact upload would otherwise expose a
+# hardened SBOM for a variant that was never published).
+wI="$(mktemp -d)"; tmpdirs+=("$wI"); setup_variant "$wI" sbomfail
+outI="$(GATE_SEVERITY=CRITICAL,HIGH STUB_FIXABLE=yes STUB_GATE=pass STUB_SBOM=fail STUB_LOG="$wI/stub.log" run_gate "$wI" sbomfail)"; rcI=$?
+[ "$rcI" = 0 ] && echo "  ok: I exit 0 (SBOM failure contained)" || { echo "  FAIL: I exit $rcI"; fail=1; }
+assert_file "$wI/.docker-state/sbomfail/gate_failed.txt" "I gate_failed marker"
+assert_no_file "$wI/.docker-state/sbomfail/hardened_image.txt" "I hardened_image absent"
+assert_no_file "$wI/sboms/php8.5-sbomfail-v5.1-hardened-amd64.spdx.json" "I partial hardened SBOM removed from sboms/"
+assert_contains "$(cat "$wI/.docker-state/sbomfail/gate_failed.txt")" "hardened SBOM generation failed" "I gate_failed reason mentions SBOM failure"
+
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
