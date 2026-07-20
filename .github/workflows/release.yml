@@ -391,7 +391,7 @@ jobs:
                     if compgen -G '.docker-state/*/gate_failed.txt' > /dev/null; then
                         echo "The following variants failed the severity gate; their -hardened tags were NOT published:"
                         grep -H . .docker-state/*/gate_failed.txt
-                        echo "::error::One or more variants failed the severity gate (plain images were published as-is)"
+                        echo "::error::One or more variants failed the severity gate; only their -hardened tags were skipped (plain image handling is unaffected)"
                         exit 1
                     fi
                     echo "All hardened variants passed the severity gate."
