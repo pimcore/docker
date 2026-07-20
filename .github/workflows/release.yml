@@ -42,20 +42,16 @@ jobs:
                     - ubuntu-22.04
                     - ubuntu-22.04-arm
                 build:
-                    - { tag: '1.x', php: '8.1', distro: bullseye, version-override: "v1-dev", latest-tag: false, hardened: false }
-                    - { tag: '1.x', php: '8.2', distro: bullseye, version-override: "v1-dev", latest-tag: false, hardened: false }
-                    - { tag: 'v1.6', php: '8.1', distro: bullseye, version-override: "", latest-tag: true, hardened: true }
-                    - { tag: 'v1.6', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, hardened: true }
-                    - { tag: 'v2.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, hardened: true }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false, hardened: false }
-                    - { tag: 'v3.8', php: '8.2', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
-                    - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
-                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
-                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
-                    - { tag: 'v4.2', php: '8.4', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
-                    - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false, hardened: false }
-                    - { tag: 'v5.2', php: '8.5', distro: trixie, version-override: "", latest-tag: true, hardened: true }
-                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false, hardened: false }
+                    - { tag: 'v2.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false }
+                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false }
+                    - { tag: 'v3.8', php: '8.2', distro: bookworm, version-override: "", latest-tag: true }
+                    - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true }
+                    - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false }
+                    - { tag: '3.x', php: '8.3', distro: bookworm, version-override: "v3-dev", latest-tag: false }
+                    - { tag: 'v4.2', php: '8.4', distro: bookworm, version-override: "", latest-tag: true }
+                    - { tag: '4.x', php: '8.4', distro: bookworm, version-override: "v4-dev", latest-tag: false }
+                    - { tag: 'v5.2', php: '8.5', distro: trixie, version-override: "", latest-tag: true } 
+                    - { tag: '5.x', php: '8.5', distro: trixie, version-override: "v5-dev", latest-tag: false } 
 
         steps:
             -   uses: actions/checkout@v5
