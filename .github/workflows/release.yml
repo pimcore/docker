@@ -6,7 +6,7 @@ on:
             publish:
                 description: 'Publish images to registries'
                 required: false
-                default: false
+                default: true
                 type: boolean
             publish_hardened:
                 description: 'Also publish the Copa-hardened (-hardened) tags. Requires publish=true. Off by default so hardened stays unpublished (built + scanned + gated but not pushed) on scheduled/tag runs and during testing, until explicitly enabled on a manual dispatch.'
