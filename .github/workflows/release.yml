@@ -124,24 +124,7 @@ jobs:
                     sudo apt-get update
                     sudo apt-get install -y trivy
 
-                    ORAS_ARCH="$(dpkg --print-architecture)"
-                    curl -fsSL -o oras.tar.gz "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz"
-                    curl -fsSL -o oras_checksums.txt "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_checksums.txt"
-                    # Match the filename exactly ($2 == f): a substring match can also hit
-                    # a sibling entry like *.tar.gz.sbom.json and return two hashes.
-                    EXPECTED_SHA=$(awk -v f="oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz" '$2 == f {print $1}' oras_checksums.txt)
-                    ACTUAL_SHA=$(sha256sum oras.tar.gz | awk '{print $1}')
-                    if [ -z "$EXPECTED_SHA" ]; then
-                        echo "::error::No oras checksum entry for oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz"
-                        exit 1
-                    fi
-                    if [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
-                        echo "::error::oras checksum mismatch! Expected ${EXPECTED_SHA}, got ${ACTUAL_SHA}"
-                        exit 1
-                    fi
-                    tar -xzf oras.tar.gz oras
-                    sudo mv oras /usr/local/bin/oras
-                    rm oras.tar.gz oras_checksums.txt
+                    ORAS_VERSION="${ORAS_VERSION}" _ci/.github/scripts/install-oras.sh
 
             -   name: Build plain images
                 env:
@@ -401,7 +384,14 @@ jobs:
         needs: build-php
         if: ${{ always() && github.repository == 'pimcore/docker' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
         steps:
-            
+
+            -   name: Check out CI scripts from the workflow ref
+                uses: actions/checkout@v5
+                with:
+                    path: _ci
+                    sparse-checkout: .github/scripts
+                    sparse-checkout-cone-mode: false
+
             -   name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v4
 
@@ -421,40 +411,4 @@ jobs:
                 run: |
                     set -uo pipefail
                     find artifacts -type f -name "aggregated_tags.txt" -exec cat {} + > all_aggregated_tags.txt
-
-                    # aggregated_tags.txt holds the full per-arch tags (…-amd64 / …-arm64) pushed
-                    # THIS run. Merge a logical tag only when BOTH arches were pushed in the same
-                    # run, using exactly those per-arch tags — never a stale arch left in the
-                    # registry from a previous run (which would produce a mixed-generation manifest).
-                    declare -A HAS_AMD64 HAS_ARM64 LOGICAL
-                    while IFS= read -r t; do
-                        [ -z "$t" ] && continue
-                        case "$t" in
-                            *-amd64) lt="${t%-amd64}"; HAS_AMD64["$lt"]=1; LOGICAL["$lt"]=1 ;;
-                            *-arm64) lt="${t%-arm64}"; HAS_ARM64["$lt"]=1; LOGICAL["$lt"]=1 ;;
-                            *) echo "Skipping tag without arch suffix: $t" ;;
-                        esac
-                    done < all_aggregated_tags.txt
-
-                    failed=0
-                    for lt in "${!LOGICAL[@]}"; do
-                        if [ -n "${HAS_AMD64[$lt]:-}" ] && [ -n "${HAS_ARM64[$lt]:-}" ]; then
-                            echo "Creating multi-arch manifest: $lt"
-                            # Both arches were pushed this run: a create failure means the logical
-                            # tag was NOT updated -> record it and fail the job (don't leave green).
-                            if ! docker buildx imagetools create \
-                                --tag "$lt" \
-                                "${lt}-amd64" \
-                                "${lt}-arm64"; then
-                                echo "::error::Failed to create multi-arch manifest for $lt"
-                                failed=1
-                            fi
-                        else
-                            echo "Skipping $lt: only one arch pushed this run (amd64=${HAS_AMD64[$lt]:-0} arm64=${HAS_ARM64[$lt]:-0}); previous manifest left unchanged"
-                        fi
-                    done
-
-                    if [ "$failed" -ne 0 ]; then
-                        echo "::error::One or more multi-arch manifests failed to publish"
-                        exit 1
-                    fi
+                    _ci/.github/scripts/merge-manifests.sh

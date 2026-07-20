@@ -224,5 +224,26 @@ assert_no_file "$wI/.docker-state/sbomfail/hardened_image.txt" "I hardened_image
 assert_no_file "$wI/sboms/php8.5-sbomfail-v5.1-hardened-amd64.spdx.json" "I partial hardened SBOM removed from sboms/"
 assert_contains "$(cat "$wI/.docker-state/sbomfail/gate_failed.txt")" "hardened SBOM generation failed" "I gate_failed reason mentions SBOM failure"
 
+# --- merge-manifests.sh ---
+echo "merge-manifests.sh:"
+wM="$(mktemp -d)"; tmpdirs+=("$wM")
+printf '%s\n' \
+    "pimcore/pimcore:php8.5-v5.2-amd64" \
+    "pimcore/pimcore:php8.5-v5.2-arm64" \
+    "pimcore/pimcore:php8.5-latest-amd64" \
+    "pimcore/pimcore:php8.5-onlyone-amd64" > "$wM/agg.txt"
+logM="$wM/stub.log"
+outM="$(AGG_FILE="$wM/agg.txt" STUB_LOG="$logM" "${ROOT}/.github/scripts/merge-manifests.sh")"; rcM=$?
+[ "$rcM" = 0 ] && echo "  ok: M exit 0" || { echo "  FAIL: M exit $rcM"; fail=1; }
+assert_contains "$(cat "$logM")" "buildx imagetools create --tag pimcore/pimcore:php8.5-v5.2 pimcore/pimcore:php8.5-v5.2-amd64 pimcore/pimcore:php8.5-v5.2-arm64" "M both-arch tag merged"
+assert_not_contains "$outM" "Creating multi-arch manifest: pimcore/pimcore:php8.5-onlyone" "M single-arch tag skipped (not created)"
+assert_contains "$outM" "Skipping pimcore/pimcore:php8.5-onlyone" "M single-arch tag reported as skipped"
+
+# imagetools create failure -> non-zero exit
+wMf="$(mktemp -d)"; tmpdirs+=("$wMf")
+printf '%s\n' "pimcore/pimcore:x-amd64" "pimcore/pimcore:x-arm64" > "$wMf/agg.txt"
+AGG_FILE="$wMf/agg.txt" STUB_IMAGETOOLS=fail STUB_LOG="$wMf/stub.log" "${ROOT}/.github/scripts/merge-manifests.sh"; rcMf=$?
+[ "$rcMf" != 0 ] && echo "  ok: Mf exit non-zero on create failure" || { echo "  FAIL: Mf should fail"; fail=1; }
+
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
