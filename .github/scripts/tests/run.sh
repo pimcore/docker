@@ -245,5 +245,21 @@ printf '%s\n' "pimcore/pimcore:x-amd64" "pimcore/pimcore:x-arm64" > "$wMf/agg.tx
 AGG_FILE="$wMf/agg.txt" STUB_IMAGETOOLS=fail STUB_LOG="$wMf/stub.log" "${ROOT}/.github/scripts/merge-manifests.sh"; rcMf=$?
 [ "$rcMf" != 0 ] && echo "  ok: Mf exit non-zero on create failure" || { echo "  FAIL: Mf should fail"; fail=1; }
 
+# Task 2: tag<TAB>sbom format -> attach both per-arch SBOMs to the logical tag
+wS="$(mktemp -d)"; tmpdirs+=("$wS"); mkdir -p "$wS/sboms"
+# NON-EMPTY: attach-sbom.sh skips empty SBOM files ([ ! -s ]), so an empty file
+# would produce zero oras calls and a false test failure.
+echo '{"spdxVersion":"SPDX-2.3"}' > "$wS/sboms/php8.5-v5.2-amd64.spdx.json"
+echo '{"spdxVersion":"SPDX-2.3"}' > "$wS/sboms/php8.5-v5.2-arm64.spdx.json"
+printf '%s\t%s\n' \
+    "pimcore/pimcore:php8.5-v5.2-amd64" "sboms/php8.5-v5.2-amd64.spdx.json" \
+    "pimcore/pimcore:php8.5-v5.2-arm64" "sboms/php8.5-v5.2-arm64.spdx.json" > "$wS/agg.txt"
+logS="$wS/stub.log"
+outS="$( cd "$wS" && AGG_FILE="$wS/agg.txt" STUB_LOG="$logS" STUB_ORAS=ok "${ROOT}/.github/scripts/merge-manifests.sh" )"; rcS=$?
+[ "$rcS" = 0 ] && echo "  ok: S exit 0" || { echo "  FAIL: S exit $rcS"; fail=1; }
+oras_attaches="$(grep -c 'attach' "$logS" 2>/dev/null || echo 0)"
+[ "$oras_attaches" = "2" ] && echo "  ok: S two SBOM referrers attached to logical tag" || { echo "  FAIL: S expected 2 attach calls, got $oras_attaches"; fail=1; }
+assert_contains "$(cat "$logS")" "pimcore/pimcore:php8.5-v5.2" "S attach targeted the logical tag"
+
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"

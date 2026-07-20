@@ -227,9 +227,13 @@ jobs:
                             _ci/.github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
                             _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
 
-                            # Record the full per-arch tags pushed THIS run; process-tags merges a
-                            # logical tag only when both arches were pushed in the same run.
-                            printf '%s\n' "${PLAIN_TAGS[@]}" >> aggregated_tags.txt
+                            # Record the full per-arch tags pushed THIS run, paired with the SBOM
+                            # that documents that image; process-tags merges a logical tag only
+                            # when both arches were pushed in the same run, and attaches both
+                            # per-arch SBOMs to it as OCI referrers.
+                            for t in "${PLAIN_TAGS[@]}"; do
+                                printf '%s\t%s\n' "$t" "${PLAIN_SBOM}"
+                            done >> aggregated_tags.txt
                         fi
                     done
 
@@ -319,9 +323,13 @@ jobs:
                             _ci/.github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
                             _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
 
-                            # Record the full per-arch tags pushed THIS run; process-tags merges a
-                            # logical tag only when both arches were pushed in the same run.
-                            printf '%s\n' "${HARDENED_TAGS[@]}" >> aggregated_tags.txt
+                            # Record the full per-arch tags pushed THIS run, paired with the SBOM
+                            # that documents that image; process-tags merges a logical tag only
+                            # when both arches were pushed in the same run, and attaches both
+                            # per-arch SBOMs to it as OCI referrers.
+                            for t in "${HARDENED_TAGS[@]}"; do
+                                printf '%s\t%s\n' "$t" "${HARDENED_SBOM}"
+                            done >> aggregated_tags.txt
                         fi
                     done
 
@@ -395,6 +403,9 @@ jobs:
             -   name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v4
 
+            -   name: Install oras
+                run: ORAS_VERSION="${ORAS_VERSION}" _ci/.github/scripts/install-oras.sh
+
             -   name: Login to DockerHub Registry
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
@@ -406,6 +417,13 @@ jobs:
                 with:
                     path: artifacts
                     pattern: aggregated_tags_*
+
+            -   name: Download SBOMs
+                uses: actions/download-artifact@v8
+                with:
+                    path: sboms
+                    pattern: sboms_*
+                    merge-multiple: true
 
             -   name: Process tags
                 run: |

@@ -52,7 +52,7 @@ php8.5-debug-v5          # plain image, as built (may contain CVEs)
 php8.5-debug-v5-hardened # same image, all available OS CVE fixes applied
 ```
 
-**SBOMs:** every published image (plain and hardened, per architecture) ships an SPDX SBOM. It is always uploaded as a build artifact, and — where the target registry supports OCI referrers — also attached to the published image (discoverable with `oras discover`).
+**SBOMs:** every published image (plain and hardened, per architecture) ships an SPDX SBOM. It is always uploaded as a build artifact, and — where the registry supports OCI referrers — attached to the published image so it is discoverable with `oras discover` on the tag you pull (the multi-arch tag carries a referrer per architecture).
 
 ## Container registries
 Our images are available on both Docker Hub and the GitHub Container Registry, so you can choose the one that best fits your workflow.
