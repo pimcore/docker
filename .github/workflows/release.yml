@@ -500,6 +500,10 @@ jobs:
         steps:
             -   uses: actions/checkout@v5
             -   name: Download CVE report data
+                # Best-effort: if no cve-report-data_* artifacts exist this run (or the
+                # download hiccups), don't fail the job -- the next step's no-data check
+                # then exits 0 and leaves docs/known-cves.md unchanged.
+                continue-on-error: true
                 uses: actions/download-artifact@v8
                 with:
                     path: cve-artifacts
