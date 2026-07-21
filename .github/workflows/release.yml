@@ -29,6 +29,7 @@ env:
     COPA_VERSION: "0.14.1"
     ORAS_VERSION: "1.2.0"
     TRIVY_DB_REPOSITORY: "ghcr.io/aquasecurity/trivy-db:2"
+    TRIVY_JAVA_DB_REPOSITORY: "ghcr.io/aquasecurity/trivy-java-db:1"
 
 jobs:
     build-php:
@@ -195,7 +196,7 @@ jobs:
 
                         mkdir -p sboms
                         PLAIN_SBOM="sboms/${TAG}.spdx.json"
-                        trivy image --format spdx-json -o "${PLAIN_SBOM}" "${PLAIN_IMAGE}"
+                        _ci/.github/scripts/with-retry.sh trivy image --format spdx-json -o "${PLAIN_SBOM}" "${PLAIN_IMAGE}"
                         echo "${PLAIN_SBOM}" > ".docker-state/${imageVariant}/plain_sbom.txt"
                     done
 

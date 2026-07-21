@@ -134,7 +134,10 @@ setup_variant() { # <dir> <variant>
         "ghcr.io/pimcore/pimcore:php8.5-$2-v5.1-amd64" > "$d/plain_tags.txt"
 }
 run_gate() { # runs scan-patch-gate.sh in <dir> with env already exported
-    ( cd "$1" && IMAGE_NAME=pimcore/pimcore ARCH_TAG=amd64 \
+    # RETRY_MAX=1: the with-retry.sh wrapper around trivy runs the command exactly
+    # once here (no sleeps, behaviour identical to the unwrapped call). with-retry's
+    # own retry/backoff is covered by its dedicated tests below.
+    ( cd "$1" && IMAGE_NAME=pimcore/pimcore ARCH_TAG=amd64 RETRY_MAX=1 \
         "${ROOT}/.github/scripts/scan-patch-gate.sh" "$2" ) 2>&1
 }
 
@@ -285,6 +288,31 @@ oras_attaches="$(grep -c 'attach' "$logS" 2>/dev/null || true)"
 # (…-amd64/…-arm64) ref instead of the index -- which would defeat the whole feature.
 assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-amd64.spdx.json" "S amd64 SBOM attached to the LOGICAL tag (docker.io-qualified)"
 assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-arm64.spdx.json" "S arm64 SBOM attached to the LOGICAL tag (docker.io-qualified)"
+
+echo "== with-retry.sh =="
+WR="${ROOT}/.github/scripts/with-retry.sh"
+
+# 1. success on the first try -> exit 0, command run once
+cf1="$(mktemp)"; tmpdirs+=("$cf1"); echo 0 > "$cf1"
+CF="$cf1" RETRY_DELAY=0 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) > "$CF"' ; rc=$?
+[ "$rc" = 0 ] && echo "  ok: success -> exit 0" || { echo "  FAIL: rc $rc"; fail=1; }
+[ "$(cat "$cf1")" = 1 ] && echo "  ok: ran exactly once" || { echo "  FAIL: ran $(cat "$cf1")x"; fail=1; }
+
+# 2. fails twice then succeeds (max 3) -> overall success, 3 attempts
+cf2="$(mktemp)"; tmpdirs+=("$cf2"); echo 0 > "$cf2"
+CF="$cf2" RETRY_DELAY=0 RETRY_MAX=3 "$WR" bash -c 'n=$(( $(cat "$CF") + 1 )); echo $n > "$CF"; [ "$n" -ge 3 ]'; rc=$?
+[ "$rc" = 0 ] && echo "  ok: retries then succeeds -> exit 0" || { echo "  FAIL: rc $rc"; fail=1; }
+[ "$(cat "$cf2")" = 3 ] && echo "  ok: took 3 attempts" || { echo "  FAIL: took $(cat "$cf2")"; fail=1; }
+
+# 3. always fails -> returns the command's last exit code after RETRY_MAX attempts
+cf3="$(mktemp)"; tmpdirs+=("$cf3"); echo 0 > "$cf3"
+CF="$cf3" RETRY_DELAY=0 RETRY_MAX=2 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) > "$CF"; exit 7'; rc=$?
+[ "$rc" = 7 ] && echo "  ok: returns last exit code (7)" || { echo "  FAIL: rc $rc (want 7)"; fail=1; }
+[ "$(cat "$cf3")" = 2 ] && echo "  ok: tried RETRY_MAX (2) times" || { echo "  FAIL: tried $(cat "$cf3")x"; fail=1; }
+
+# 4. no command given -> usage error (exit 2), not a silent success
+"$WR" >/dev/null 2>&1; rc=$?
+[ "$rc" = 2 ] && echo "  ok: no-args -> exit 2 (usage)" || { echo "  FAIL: no-args rc $rc (want 2)"; fail=1; }
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
