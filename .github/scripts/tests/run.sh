@@ -101,6 +101,17 @@ ghCallLog="$(cat "$ghLog" 2>/dev/null)"
 assert_contains "$ghCallLog" "attach --artifact-type application/spdx+json ghcr.io/pimcore/pimcore:php8.5-v5-amd64" "ghcr.io ref left unqualified (already a registry host)"
 assert_not_contains "$ghCallLog" "docker.io/ghcr.io" "ghcr.io ref not double-prefixed with docker.io"
 
+# single-component ref (no slash) is an official image -> docker.io/library/<name>
+scLog="$(mktemp)"; tmpdirs+=("$scLog")
+STUB_ORAS=ok STUB_LOG="$scLog" "${ROOT}/.github/scripts/attach-sbom.sh" alpine:latest "${work}/s.spdx.json" >/dev/null 2>&1
+assert_contains "$(cat "$scLog")" "attach --artifact-type application/spdx+json docker.io/library/alpine:latest" "single-component ref -> docker.io/library/"
+
+# localhost is a registry host -> left as-is (not rewritten to Docker Hub)
+lhLog="$(mktemp)"; tmpdirs+=("$lhLog")
+STUB_ORAS=ok STUB_LOG="$lhLog" "${ROOT}/.github/scripts/attach-sbom.sh" localhost/repo:tag "${work}/s.spdx.json" >/dev/null 2>&1
+assert_contains "$(cat "$lhLog")" "attach --artifact-type application/spdx+json localhost/repo:tag" "localhost recognized as registry host (left as-is)"
+assert_not_contains "$(cat "$lhLog")" "docker.io/localhost" "localhost ref not prefixed with docker.io"
+
 # failure path is swallowed
 out="$(STUB_ORAS=fail "${ROOT}/.github/scripts/attach-sbom.sh" pimcore/pimcore:php8.5-v5-amd64 "${work}/s.spdx.json" 2>&1)"; rc=$?
 assert_contains "$out" "::warning::" "failure prints warning"
