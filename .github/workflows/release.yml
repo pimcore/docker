@@ -511,7 +511,9 @@ jobs:
             -   name: Generate and commit docs/known-cves.md
                 run: |
                     set -euo pipefail
-                    mkdir -p _cvedata docs
+                    # cve-artifacts may not exist if the download matched zero artifacts;
+                    # create it so the find below can't fail before the no-data skip fires.
+                    mkdir -p _cvedata docs cve-artifacts
                     # Flatten all per-leg artifact dirs into one (filenames are unique per image+arch).
                     find cve-artifacts -type f \( -name '*.meta.json' -o -name '*.plain.json' -o -name '*.hardened.json' \) \
                         -exec cp -n {} _cvedata/ \;
