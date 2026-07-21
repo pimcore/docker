@@ -490,3 +490,45 @@ jobs:
                     set -uo pipefail
                     find artifacts -type f -name "aggregated_tags.txt" -exec cat {} + > all_aggregated_tags.txt
                     _ci/.github/scripts/merge-manifests.sh
+
+    publish-cve-report:
+        runs-on: ubuntu-22.04
+        needs: build-php
+        if: ${{ always() && github.repository == 'pimcore/docker' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
+        permissions:
+            contents: write
+        steps:
+            -   uses: actions/checkout@v5
+            -   name: Download CVE report data
+                uses: actions/download-artifact@v8
+                with:
+                    path: cve-artifacts
+                    pattern: cve-report-data_*
+            -   name: Generate and commit docs/known-cves.md
+                run: |
+                    set -euo pipefail
+                    mkdir -p _cvedata docs
+                    # Flatten all per-leg artifact dirs into one (filenames are unique per image+arch).
+                    find cve-artifacts -type f \( -name '*.meta.json' -o -name '*.plain.json' -o -name '*.hardened.json' \) \
+                        -exec cp -n {} _cvedata/ \;
+                    if [ -z "$(find _cvedata -name '*.meta.json' -print -quit)" ]; then
+                        echo "No CVE report data this run; leaving docs/known-cves.md unchanged."
+                        exit 0
+                    fi
+                    if [ "${GITHUB_REF_TYPE:-}" != "branch" ]; then
+                        echo "Not a branch run (ref_type=${GITHUB_REF_TYPE:-unknown}); skipping known-cves.md commit."
+                        exit 0
+                    fi
+                    TS="$(date -u '+%Y-%m-%d %H:%M UTC')"
+                    .github/scripts/generate-cve-report.sh _cvedata "$TS" > docs/known-cves.md
+
+                    git config user.name  "github-actions[bot]"
+                    git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                    git add docs/known-cves.md
+                    if git diff --cached --quiet; then
+                        echo "docs/known-cves.md unchanged."
+                        exit 0
+                    fi
+                    git commit -m "docs: update known-CVEs report [skip ci]"
+                    git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+                    git push origin "HEAD:${GITHUB_REF_NAME}"
