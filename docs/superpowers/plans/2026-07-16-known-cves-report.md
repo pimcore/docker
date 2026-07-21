@@ -161,22 +161,43 @@ for meta in $metas; do
     rows=""
     if [ -f "$hardened_json" ]; then
         # residual = every vuln still in the hardened image
+        # Capture jq output into a variable first (under set -e) rather than reading
+        # it via process substitution: `while … done < <(jq …)` hides a jq failure
+        # from set -e/pipefail entirely -- the loop just reads zero lines and the
+        # script still exits 0, silently producing an incomplete report on malformed
+        # Trivy JSON. A plain command-substitution assignment aborts loudly instead.
+        residual_tsv="$(jq -r '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID+.PkgName) | .[] | [.VulnerabilityID,.Severity,.PkgName,.InstalledVersion,(.FixedVersion//"")] | @tsv' "$hardened_json")"
         while IFS=$'\t' read -r id sev pkg _installed fixed; do
             [ -z "$id" ] && continue
             if [ -n "$fixed" ]; then fv="fix ${fixed} available"; else fv="no fix"; fi
             rows+="$(sev_rank "$sev")1"$'\t'"| \`${image}\` | ${arch} | \`${hd_short}\` | ${id} | ${sev} | ${pkg} | ⚠️ residual · ${fv} |"$'\n'
-        done < <(jq -r '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID+.PkgName) | .[] | [.VulnerabilityID,.Severity,.PkgName,.InstalledVersion,(.FixedVersion//"")] | @tsv' "$hardened_json")
-        # fixed = in plain, absent from hardened
+        done <<< "$residual_tsv"
+        # fixed = in plain, absent from hardened -- keyed on VulnerabilityID+PkgName
+        # (NUL-joined) with EXACT array membership (index), not id-only `inside`.
+        # `inside`/`contains` on string arrays is recursive substring matching (e.g.
+        # ["CVE-2024-1"] | inside(["CVE-2024-12345"]) is true), and keying on id
+        # alone conflates a CVE across packages: if a CVE affects both pkgA and
+        # pkgB and Copa fixes only pkgA, the id stays in the hardened id set (via
+        # pkgB) and the pkgA row would incorrectly be excluded from "fixed" (and
+        # isn't residual for pkgA either) -- it would vanish from both tables.
+        fixed_tsv="$(jq -r --slurpfile h "$hardened_json" '
+            ([$h[0].Results[]?.Vulnerabilities[]? | .VulnerabilityID + "\u0000" + .PkgName] | unique) as $hkeys
+            | [.Results[]?.Vulnerabilities[]?]
+            | map(select( (.VulnerabilityID + "\u0000" + .PkgName) as $key | ($hkeys | index($key)) == null ))
+            | unique_by(.VulnerabilityID+.PkgName)
+            | .[] | [.VulnerabilityID,.Severity,.PkgName,.InstalledVersion,(.FixedVersion//"?")] | @tsv
+        ' "$plain_json")"
         while IFS=$'\t' read -r id sev pkg old new; do
             [ -z "$id" ] && continue
             rows+="$(sev_rank "$sev")0"$'\t'"| \`${image}\` | ${arch} | \`${pd_short}\` | ${id} | ${sev} | ${pkg} | ✅ fixed · ${old} → ${new} |"$'\n'
-        done < <(jq -r --slurpfile h "$hardened_json" '([$h[0].Results[]?.Vulnerabilities[]?.VulnerabilityID]|unique) as $hids | [.Results[]?.Vulnerabilities[]?] | map(select([.VulnerabilityID]|inside($hids)|not)) | unique_by(.VulnerabilityID+.PkgName) | .[] | [.VulnerabilityID,.Severity,.PkgName,.InstalledVersion,(.FixedVersion//"?")] | @tsv' "$plain_json")
+        done <<< "$fixed_tsv"
     else
         # hardened image was not produced (gate failed) — list the plain CVEs as unpatched
+        unpatched_tsv="$(jq -r '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID+.PkgName) | .[] | [.VulnerabilityID,.Severity,.PkgName,.InstalledVersion,(.FixedVersion//"")] | @tsv' "$plain_json")"
         while IFS=$'\t' read -r id sev pkg _installed _fixed; do
             [ -z "$id" ] && continue
             rows+="$(sev_rank "$sev")1"$'\t'"| \`${image}\` | ${arch} | \`${pd_short}\` | ${id} | ${sev} | ${pkg} | ⚠️ unpatched · hardened not produced |"$'\n'
-        done < <(jq -r '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID+.PkgName) | .[] | [.VulnerabilityID,.Severity,.PkgName,.InstalledVersion,(.FixedVersion//"")] | @tsv' "$plain_json")
+        done <<< "$unpatched_tsv"
     fi
     # sort this image's rows by severity then fixed-before-residual, drop the sort key
     [ -n "$rows" ] && printf '%s' "$rows" | sort -t$'\t' -k1,1 | cut -f2-

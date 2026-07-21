@@ -330,6 +330,13 @@ assert_contains "$CVE_OUT" "| \`8ad4c17b93e0\` | CVE-2025-6020 | HIGH | libpam0g
 # hardened not produced: plain IS still published, so the row points at the PLAIN short digest
 assert_contains "$CVE_OUT" "| \`44bec0a1d2e3\` | CVE-2024-7883 | MEDIUM | libxml2 | ⚠️ unpatched · hardened not produced |" "unpublished-hardened variant lists plain CVEs as unpatched (plain digest pointer)"
 assert_contains "$CVE_OUT" "Development / rolling tags" "header notes dev exclusion"
+# Regression: one CVE id affecting two packages, fixed on one (pkga) and residual on
+# the other (pkgb) -- the fixed-set query must key on id+package (exact), not id
+# alone, or the pkga row silently vanishes from BOTH tables (see fixture
+# v5.2-multipkg-amd64: CVE-2025-9999 present in plain for pkga+pkgb, hardened only
+# still has pkgb).
+assert_contains "$CVE_OUT" "| \`dd81d549a32e\` | CVE-2025-9999 | HIGH | pkga | ✅ fixed · 1.0 → 1.1 |" "same CVE id fixed on one package (id+package keying)"
+assert_contains "$CVE_OUT" "| \`d07739baf7cd\` | CVE-2025-9999 | HIGH | pkgb | ⚠️ residual · no fix |" "same CVE id residual on a different package (id+package keying)"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
