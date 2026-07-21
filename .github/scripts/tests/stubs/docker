@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Stub docker: records every invocation to STUB_LOG (so callers can assert
+# e.g. `docker tag <src> <dst>` direction). 'image inspect' exists-check
+# exits 0; with --format prints a fake sha256: id.
+echo "docker $*" >> "${STUB_LOG:-/dev/null}"
+if [ "$1 $2" = "image inspect" ]; then
+    if printf '%s ' "$@" | grep -q -- '--format'; then echo "sha256:deadbeefcafe0000"; fi
+    exit 0
+fi
+# imagetools create failure knob: STUB_IMAGETOOLS=fail
+if [ "${1:-}" = "buildx" ] && [ "${2:-}" = "imagetools" ] && [ "${3:-}" = "create" ]; then
+    [ "${STUB_IMAGETOOLS:-ok}" = "fail" ] && { echo "stub docker: imagetools create failed" >&2; exit 1; }
+    exit 0
+fi
+exit 0

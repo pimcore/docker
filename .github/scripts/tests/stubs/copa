@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+echo "copa $*" >> "${STUB_LOG:-/dev/null}"
+[ "${STUB_COPA:-ok}" = "fail" ] && { echo "stub copa: simulated failure" >&2; exit 1; }
+exit 0
