@@ -1,0 +1,3 @@
+{"Results":[{"Vulnerabilities":[
+{"VulnerabilityID":"CVE-2025-6020","Severity":"HIGH","PkgName":"libpam0g","InstalledVersion":"1.5.3-7","FixedVersion":""}
+]}]}

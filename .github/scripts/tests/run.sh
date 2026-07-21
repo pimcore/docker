@@ -314,5 +314,22 @@ CF="$cf3" RETRY_DELAY=0 RETRY_MAX=2 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) 
 "$WR" >/dev/null 2>&1; rc=$?
 [ "$rc" = 2 ] && echo "  ok: no-args -> exit 2 (usage)" || { echo "  FAIL: no-args rc $rc (want 2)"; fail=1; }
 
+echo "== generate-cve-report.sh =="
+CVE_FIX="${ROOT}/.github/scripts/tests/fixtures/cve"
+CVE_OUT="$(bash "${ROOT}/.github/scripts/generate-cve-report.sh" "$CVE_FIX" "2026-07-16 02:41 UTC" 2>/tmp/cve-err)"; CVE_RC=$?
+assert_eq "$CVE_RC" "0" "generate-cve-report exits 0"
+# digests table: full digest for a published image
+assert_contains "$CVE_OUT" "sha256:1f3a9c4e2b7d05a8c1e6f4b9d3072a5e8c1b6f0d4a7e2c9b5083f1d6a4c7e2b90" "full plain digest in digests table"
+assert_contains "$CVE_OUT" "sha256:8ad4c17b93e0a5d2f4681c9b0e3a7d5c2b8f1069a4e7c3b05d9f28a1c6e4b0f37" "full hardened digest in digests table"
+assert_contains "$CVE_OUT" "not published this run" "unpublished hardened shown in digests table"
+# fixed row: short PLAIN digest pointer + old->new + fixed status
+assert_contains "$CVE_OUT" "| \`1f3a9c4e2b7d\` | CVE-2024-45491 | HIGH | libexpat1 | ✅ fixed · 2.6.2-1 → 2.6.2-2+deb13u1 |" "fixed row rendered with plain short digest and version bump"
+# residual row: short HARDENED digest pointer + no fix
+assert_contains "$CVE_OUT" "| \`8ad4c17b93e0\` | CVE-2025-6020 | HIGH | libpam0g | ⚠️ residual · no fix |" "residual row rendered with hardened short digest"
+# unpublished-hardened image: residual rows use 'unpublished' pointer + unpatched status
+# hardened not produced: plain IS still published, so the row points at the PLAIN short digest
+assert_contains "$CVE_OUT" "| \`44bec0a1d2e3\` | CVE-2024-7883 | MEDIUM | libxml2 | ⚠️ unpatched · hardened not produced |" "unpublished-hardened variant lists plain CVEs as unpatched (plain digest pointer)"
+assert_contains "$CVE_OUT" "Development / rolling tags" "header notes dev exclusion"
+
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
