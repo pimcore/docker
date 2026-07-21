@@ -90,6 +90,16 @@ assert_contains "$out" "Attached" "success prints Attached"
 orasCallLog="$(cat "$orasLog" 2>/dev/null)"
 assert_contains "$orasCallLog" "attach --artifact-type application/spdx+json" "oras invoked with attach --artifact-type application/spdx+json"
 assert_contains "$orasCallLog" "${work}/s.spdx.json:application/spdx+json" "oras blob arg carries :application/spdx+json media-type suffix"
+# oras needs a fully-qualified registry: a bare Docker Hub ref must be prefixed docker.io/
+# (else oras reads "pimcore" as the registry host and the attach is silently lost).
+assert_contains "$orasCallLog" "attach --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5-amd64" "bare Docker Hub ref qualified to docker.io for oras"
+
+# a ref that already carries a registry host (ghcr.io/...) is left untouched
+ghLog="$(mktemp)"; tmpdirs+=("$ghLog")
+STUB_ORAS=ok STUB_LOG="$ghLog" "${ROOT}/.github/scripts/attach-sbom.sh" ghcr.io/pimcore/pimcore:php8.5-v5-amd64 "${work}/s.spdx.json" >/dev/null 2>&1
+ghCallLog="$(cat "$ghLog" 2>/dev/null)"
+assert_contains "$ghCallLog" "attach --artifact-type application/spdx+json ghcr.io/pimcore/pimcore:php8.5-v5-amd64" "ghcr.io ref left unqualified (already a registry host)"
+assert_not_contains "$ghCallLog" "docker.io/ghcr.io" "ghcr.io ref not double-prefixed with docker.io"
 
 # failure path is swallowed
 out="$(STUB_ORAS=fail "${ROOT}/.github/scripts/attach-sbom.sh" pimcore/pimcore:php8.5-v5-amd64 "${work}/s.spdx.json" 2>&1)"; rc=$?
@@ -262,8 +272,8 @@ oras_attaches="$(grep -c 'attach' "$logS" 2>/dev/null || true)"
 # Exact subject binding: each referrer must target the LOGICAL tag (no arch suffix),
 # keyed to the matching per-arch SBOM. Catches a regression that attaches to the child
 # (…-amd64/…-arm64) ref instead of the index -- which would defeat the whole feature.
-assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-amd64.spdx.json" "S amd64 SBOM attached to the LOGICAL tag"
-assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-arm64.spdx.json" "S arm64 SBOM attached to the LOGICAL tag"
+assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-amd64.spdx.json" "S amd64 SBOM attached to the LOGICAL tag (docker.io-qualified)"
+assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-arm64.spdx.json" "S arm64 SBOM attached to the LOGICAL tag (docker.io-qualified)"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"

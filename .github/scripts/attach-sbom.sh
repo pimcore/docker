@@ -6,6 +6,16 @@ set -euo pipefail
 ref="${1:?usage: attach-sbom.sh <image-ref> <sbom-file>}"
 sbom="${2:?usage: attach-sbom.sh <image-ref> <sbom-file>}"
 
+# oras does not apply the docker CLI's implicit docker.io default: a bare
+# "repo/name:tag" is parsed with registry = "repo" (DNS lookup fails, attach is
+# lost). Qualify bare Docker Hub refs so oras resolves and authenticates against
+# docker.io. Refs whose first path segment already looks like a registry host
+# (contains a "." or a ":port") are left untouched (e.g. ghcr.io/..., localhost:5000/...).
+case "${ref%%/*}" in
+    *.*|*:*) ;;
+    *) ref="docker.io/${ref}" ;;
+esac
+
 if [ ! -s "$sbom" ]; then
     echo "::warning::SBOM '$sbom' missing or empty; skipping attach for ${ref}"
     exit 0
