@@ -348,6 +348,9 @@ jobs:
                     set -euxo pipefail
                     mkdir -p cve-report-data
                     mapfile -t imageVariants < .docker-state/variants.txt
+                    # Best-effort, like the severity gate: a scan failure (after retries) omits
+                    # that variant from this run's report and warns, but never fails the leg --
+                    # the images already published, and the report is transparency, not a gate.
                     for imageVariant in "${imageVariants[@]}"; do
                         TAG=$(< ".docker-state/${imageVariant}/tag.txt")
                         BASE_TAG=$(< ".docker-state/${imageVariant}/base_tag.txt")
@@ -355,11 +358,13 @@ jobs:
                         PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
 
                         # Full CVE scan (all severities, OS+library, includes unfixable) of the plain image.
-                        _ci/.github/scripts/with-retry.sh trivy image --format json -o "cve-report-data/${TAG}.plain.json" "${PLAIN_IMAGE}"
+                        _ci/.github/scripts/with-retry.sh trivy image --format json -o "cve-report-data/${TAG}.plain.json" "${PLAIN_IMAGE}" \
+                            || { echo "::warning::CVE report: plain scan failed for ${imageVariant}; omitting it from this run's report"; rm -f "cve-report-data/${TAG}.plain.json"; continue; }
 
                         if [ -f ".docker-state/${imageVariant}/hardened_image.txt" ]; then
                             HARDENED_IMAGE=$(< ".docker-state/${imageVariant}/hardened_image.txt")
-                            _ci/.github/scripts/with-retry.sh trivy image --format json -o "cve-report-data/${TAG}.hardened.json" "${HARDENED_IMAGE}"
+                            _ci/.github/scripts/with-retry.sh trivy image --format json -o "cve-report-data/${TAG}.hardened.json" "${HARDENED_IMAGE}" \
+                                || { echo "::warning::CVE report: hardened scan failed for ${imageVariant}; omitting it from this run's report"; rm -f "cve-report-data/${TAG}.plain.json" "cve-report-data/${TAG}.hardened.json"; continue; }
                         fi
 
                         PLAIN_DIGEST=$(cat ".docker-state/${imageVariant}/plain_digest.txt" 2>/dev/null || echo "unpublished")
