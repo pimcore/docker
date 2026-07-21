@@ -376,16 +376,22 @@ jobs:
                     path: aggregated_tags.txt
                     if-no-files-found: ignore
 
-            -   name: Fail if severity gate failed
+            -   name: Report severity gate results
                 if: ${{ matrix.build.hardened }}
                 run: |
+                    # Hardened publishing is best-effort: a gate / Copa-patch failure skips the
+                    # -hardened tag for that variant but must NOT fail the job -- the plain image
+                    # already shipped, and some stable lines (e.g. EOL Debian releases whose fixed
+                    # packages are no longer served) can never be fully patched. The failure is
+                    # surfaced as a warning and in the step summary (scan-patch-gate.sh records the
+                    # reason there), not as a red pipeline.
                     if compgen -G '.docker-state/*/gate_failed.txt' > /dev/null; then
-                        echo "The following variants failed the severity gate; their -hardened tags were NOT published:"
+                        echo "The following variants failed the severity gate; their -hardened tags were NOT published (plain images shipped as usual):"
                         grep -H . .docker-state/*/gate_failed.txt
-                        echo "::error::One or more variants failed the severity gate; only their -hardened tags were skipped (plain image handling is unaffected)"
-                        exit 1
+                        echo "::warning::One or more variants failed the severity gate; their -hardened tags were skipped (plain image handling is unaffected)."
+                    else
+                        echo "All hardened variants passed the severity gate."
                     fi
-                    echo "All hardened variants passed the severity gate."
 
     process-tags:
         runs-on: ubuntu-22.04
