@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policymap [
+  <!ELEMENT policymap (policy)*>
+  <!ATTLIST policymap xmlns CDATA #FIXED ''>
+  <!ELEMENT policy EMPTY>
+  <!ATTLIST policy xmlns CDATA #FIXED '' domain NMTOKEN #REQUIRED
+    name NMTOKEN #IMPLIED pattern CDATA #IMPLIED rights NMTOKEN #IMPLIED
+    stealth NMTOKEN #IMPLIED value CDATA #IMPLIED>
+]>
+<!--
+  Hardened ImageMagick policy for Pimcore.
+
+  Pimcore rasterises uploaded, untrusted SVG assets through ImageMagick (via the
+  Imagick PHP extension). ImageMagick's SVG renderer follows <image xlink:href="...">
+  references to other "coders" / pseudo-protocols. 
+  
+  This policy denies the coders those hrefs invoke. SVG itself stays enabled, so
+  legitimate SVG thumbnails still render, but any href that points at a file-reading,
+  text-rendering, scripting, or network coder is refused with "not authorized".
+
+  NOTE (scope): This is an ImageMagick-level control. It cannot inspect SVG XML and
+  therefore does NOT literally strip <script> tags or href attributes. Removing
+  <script>/href from SVG (the stored-XSS concern, and defence-in-depth for the above)
+  is an application-layer job for an SVG sanitiser in pimcore/pimcore, not this image.
+
+  Coders deliberately LEFT ENABLED so Pimcore previews keep working:
+    * SVG / MSVG / MVG - SVG thumbnail rasterisation (internal renderer needs MVG)
+    * PDF / PS / EPS / XPS - document thumbnails via the Ghostscript delegate
+    * image/video coders - normal asset processing
+-->
+<policymap>
+  <!-- Scripting coder that can read files and execute read/write steps (RCE vector). -->
+  <policy domain="coder" rights="none" pattern="MSL" />
+
+  <!-- Text/label coders that read a local file or embed arbitrary content. -->
+  <policy domain="coder" rights="none" pattern="TEXT" />
+  <policy domain="coder" rights="none" pattern="LABEL" />
+  <policy domain="coder" rights="none" pattern="CAPTION" />
+  <policy domain="coder" rights="none" pattern="INFO" />
+
+  <!-- Network coders reachable via href (remote include / SSRF). -->
+  <policy domain="coder" rights="none" pattern="URL" />
+  <policy domain="coder" rights="none" pattern="HTTP" />
+  <policy domain="coder" rights="none" pattern="HTTPS" />
+  <policy domain="coder" rights="none" pattern="FTP" />
+
+  <!-- Miscellaneous coders with no legitimate use in a server-side pipeline. -->
+  <policy domain="coder" rights="none" pattern="EPHEMERAL" />
+  <policy domain="coder" rights="none" pattern="SHOW" />
+  <policy domain="coder" rights="none" pattern="WIN" />
+  <policy domain="coder" rights="none" pattern="PLT" />
+
+  <!-- Refuse indirect reads via the @filename syntax (e.g. @/etc/passwd). -->
+  <policy domain="path" rights="none" pattern="@*" />
+</policymap>
