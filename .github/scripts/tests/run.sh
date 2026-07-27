@@ -134,7 +134,10 @@ setup_variant() { # <dir> <variant>
         "ghcr.io/pimcore/pimcore:php8.5-$2-v5.1-amd64" > "$d/plain_tags.txt"
 }
 run_gate() { # runs scan-patch-gate.sh in <dir> with env already exported
-    ( cd "$1" && IMAGE_NAME=pimcore/pimcore ARCH_TAG=amd64 \
+    # RETRY_MAX=1: the with-retry.sh wrapper around trivy runs the command exactly
+    # once here (no sleeps, behaviour identical to the unwrapped call). with-retry's
+    # own retry/backoff is covered by its dedicated tests below.
+    ( cd "$1" && IMAGE_NAME=pimcore/pimcore ARCH_TAG=amd64 RETRY_MAX=1 \
         "${ROOT}/.github/scripts/scan-patch-gate.sh" "$2" ) 2>&1
 }
 
@@ -285,6 +288,55 @@ oras_attaches="$(grep -c 'attach' "$logS" 2>/dev/null || true)"
 # (…-amd64/…-arm64) ref instead of the index -- which would defeat the whole feature.
 assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-amd64.spdx.json" "S amd64 SBOM attached to the LOGICAL tag (docker.io-qualified)"
 assert_contains "$(cat "$logS")" "attach --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5.2 sboms/php8.5-v5.2-arm64.spdx.json" "S arm64 SBOM attached to the LOGICAL tag (docker.io-qualified)"
+
+echo "== with-retry.sh =="
+WR="${ROOT}/.github/scripts/with-retry.sh"
+
+# 1. success on the first try -> exit 0, command run once
+cf1="$(mktemp)"; tmpdirs+=("$cf1"); echo 0 > "$cf1"
+CF="$cf1" RETRY_DELAY=0 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) > "$CF"' ; rc=$?
+[ "$rc" = 0 ] && echo "  ok: success -> exit 0" || { echo "  FAIL: rc $rc"; fail=1; }
+[ "$(cat "$cf1")" = 1 ] && echo "  ok: ran exactly once" || { echo "  FAIL: ran $(cat "$cf1")x"; fail=1; }
+
+# 2. fails twice then succeeds (max 3) -> overall success, 3 attempts
+cf2="$(mktemp)"; tmpdirs+=("$cf2"); echo 0 > "$cf2"
+CF="$cf2" RETRY_DELAY=0 RETRY_MAX=3 "$WR" bash -c 'n=$(( $(cat "$CF") + 1 )); echo $n > "$CF"; [ "$n" -ge 3 ]'; rc=$?
+[ "$rc" = 0 ] && echo "  ok: retries then succeeds -> exit 0" || { echo "  FAIL: rc $rc"; fail=1; }
+[ "$(cat "$cf2")" = 3 ] && echo "  ok: took 3 attempts" || { echo "  FAIL: took $(cat "$cf2")"; fail=1; }
+
+# 3. always fails -> returns the command's last exit code after RETRY_MAX attempts
+cf3="$(mktemp)"; tmpdirs+=("$cf3"); echo 0 > "$cf3"
+CF="$cf3" RETRY_DELAY=0 RETRY_MAX=2 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) > "$CF"; exit 7'; rc=$?
+[ "$rc" = 7 ] && echo "  ok: returns last exit code (7)" || { echo "  FAIL: rc $rc (want 7)"; fail=1; }
+[ "$(cat "$cf3")" = 2 ] && echo "  ok: tried RETRY_MAX (2) times" || { echo "  FAIL: tried $(cat "$cf3")x"; fail=1; }
+
+# 4. no command given -> usage error (exit 2), not a silent success
+"$WR" >/dev/null 2>&1; rc=$?
+[ "$rc" = 2 ] && echo "  ok: no-args -> exit 2 (usage)" || { echo "  FAIL: no-args rc $rc (want 2)"; fail=1; }
+
+echo "== generate-cve-report.sh =="
+CVE_FIX="${ROOT}/.github/scripts/tests/fixtures/cve"
+CVE_OUT="$(bash "${ROOT}/.github/scripts/generate-cve-report.sh" "$CVE_FIX" "2026-07-16 02:41 UTC" 2>/tmp/cve-err)"; CVE_RC=$?
+assert_eq "$CVE_RC" "0" "generate-cve-report exits 0"
+# digests table: full digest for a published image
+assert_contains "$CVE_OUT" "sha256:1f3a9c4e2b7d05a8c1e6f4b9d3072a5e8c1b6f0d4a7e2c9b5083f1d6a4c7e2b90" "full plain digest in digests table"
+assert_contains "$CVE_OUT" "sha256:8ad4c17b93e0a5d2f4681c9b0e3a7d5c2b8f1069a4e7c3b05d9f28a1c6e4b0f37" "full hardened digest in digests table"
+assert_contains "$CVE_OUT" "not published this run" "unpublished hardened shown in digests table"
+# fixed row: short PLAIN digest pointer + old->new + fixed status
+assert_contains "$CVE_OUT" "| \`1f3a9c4e2b7d\` | CVE-2024-45491 | HIGH | libexpat1 | ✅ fixed · 2.6.2-1 → 2.6.2-2+deb13u1 |" "fixed row rendered with plain short digest and version bump"
+# residual row: short HARDENED digest pointer + no fix
+assert_contains "$CVE_OUT" "| \`8ad4c17b93e0\` | CVE-2025-6020 | HIGH | libpam0g | ⚠️ residual · no fix |" "residual row rendered with hardened short digest"
+# unpublished-hardened image: residual rows use 'unpublished' pointer + unpatched status
+# hardened not produced: plain IS still published, so the row points at the PLAIN short digest
+assert_contains "$CVE_OUT" "| \`44bec0a1d2e3\` | CVE-2024-7883 | MEDIUM | libxml2 | ⚠️ unpatched · hardened not produced |" "unpublished-hardened variant lists plain CVEs as unpatched (plain digest pointer)"
+assert_contains "$CVE_OUT" "Development / rolling tags" "header notes dev exclusion"
+# Regression: one CVE id affecting two packages, fixed on one (pkga) and residual on
+# the other (pkgb) -- the fixed-set query must key on id+package (exact), not id
+# alone, or the pkga row silently vanishes from BOTH tables (see fixture
+# v5.2-multipkg-amd64: CVE-2025-9999 present in plain for pkga+pkgb, hardened only
+# still has pkgb).
+assert_contains "$CVE_OUT" "| \`dd81d549a32e\` | CVE-2025-9999 | HIGH | pkga | ✅ fixed · 1.0 → 1.1 |" "same CVE id fixed on one package (id+package keying)"
+assert_contains "$CVE_OUT" "| \`d07739baf7cd\` | CVE-2025-9999 | HIGH | pkgb | ⚠️ residual · no fix |" "same CVE id residual on a different package (id+package keying)"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"

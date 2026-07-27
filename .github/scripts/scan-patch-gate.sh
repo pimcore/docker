@@ -6,6 +6,7 @@
 # still ships and other variants continue. Genuine infra errors abort (set -e).
 set -euo pipefail
 
+HERE="$(cd "$(dirname "$0")" && pwd)"   # for sibling helpers (with-retry.sh)
 variant="${1:?usage: scan-patch-gate.sh <variant>}"
 : "${IMAGE_NAME:?}"; : "${ARCH_TAG:?}"; : "${GATE_SEVERITY:?}"
 STATE_DIR="${STATE_DIR:-.docker-state}"
@@ -40,7 +41,7 @@ fail_gate() { # <reason> -- record + skip hardened, but let plain ship
 }
 
 echo "Scanning plain image ${PLAIN_IMAGE} for OS vulnerabilities"
-trivy image --pkg-types os --ignore-unfixed --format json -o "$report" "${PLAIN_IMAGE}" \
+"${HERE}/with-retry.sh" trivy image --pkg-types os --ignore-unfixed --format json -o "$report" "${PLAIN_IMAGE}" \
     || fail_gate "Trivy scan of plain image failed"
 
 jq empty "$report" 2>/dev/null || fail_gate "Trivy report of plain image is not valid JSON"
@@ -73,7 +74,7 @@ if [ "$GATE_SEVERITY" != "NONE" ]; then
     REPORT_JSON="${REPORT_DIR}/${TAG}-hardened_${IMAGE_HASH}.json"
     REPORT_TXT="${REPORT_DIR}/${TAG}-hardened_${IMAGE_HASH}.txt"
 
-    trivy image --pkg-types os --ignore-unfixed --severity "$GATE_SEVERITY" \
+    "${HERE}/with-retry.sh" trivy image --pkg-types os --ignore-unfixed --severity "$GATE_SEVERITY" \
         --format json -o "${REPORT_JSON}" "${HARDENED_IMAGE}" \
         || fail_gate "Trivy gate scan failed"
 
@@ -100,7 +101,7 @@ fi
 
 # Gate passed (or disabled): generate the SBOM first, then publish the markers atomically.
 HARDENED_SBOM="${SBOM_DIR}/${BASE_TAG}-${VERSION}-hardened-${ARCH_TAG}.spdx.json"
-trivy image --format spdx-json -o "${HARDENED_SBOM}" "${HARDENED_IMAGE}" \
+"${HERE}/with-retry.sh" trivy image --format spdx-json -o "${HARDENED_SBOM}" "${HARDENED_IMAGE}" \
     || fail_gate "hardened SBOM generation failed"
 
 while IFS= read -r plain_tag; do

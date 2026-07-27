@@ -54,6 +54,30 @@ php8.5-debug-v5-hardened # same image, all available OS CVE fixes applied
 
 **SBOMs:** every published image (plain and hardened, per architecture) ships an SPDX SBOM. It is always uploaded as a build artifact, and — where the registry supports OCI referrers — attached to the published image so it is discoverable with `oras discover` on the tag you pull (the multi-arch tag carries a referrer per architecture).
 
+Retrieving the SBOM with [`oras`](https://oras.land/):
+
+```text
+# Discover the SBOM referrer(s) on the tag you pull (one per architecture).
+# Note the docker.io/ prefix for Docker Hub — oras (unlike docker) does not
+# apply that default, so a bare "pimcore/pimcore:..." ref will not resolve.
+oras discover --artifact-type application/spdx+json ghcr.io/pimcore/pimcore:php8.5-v5.2
+oras discover --artifact-type application/spdx+json docker.io/pimcore/pimcore:php8.5-v5.2
+
+# Pull the SBOM blob using a referrer digest from the discover output above.
+oras pull ghcr.io/pimcore/pimcore@<referrer-digest> -o ./sbom
+```
+
+Attaching is best-effort (it's skipped if the registry rejects OCI referrers), so if `oras discover` comes up empty, fall back to the guaranteed copy: download the `sboms_*` artifact from the corresponding release workflow run.
+
+## Known CVEs
+
+For every **published stable release image** we publish a per-architecture CVE and patch
+report: [`docs/known-cves.md`](docs/known-cves.md). For each image it lists the plain and
+Copa-hardened image digests, the CVEs Copa **fixed** (with the library version bump), and
+the **residual** known CVEs still present in the hardened image (including CVEs with no
+upstream fix yet). It is regenerated on each publish. Development / rolling (`-dev`) tags are
+plain-only and are not covered.
+
 ## Container registries
 Our images are available on both Docker Hub and the GitHub Container Registry, so you can choose the one that best fits your workflow.
 Use either of the following commands:

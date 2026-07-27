@@ -29,6 +29,7 @@ env:
     COPA_VERSION: "0.14.1"
     ORAS_VERSION: "1.2.0"
     TRIVY_DB_REPOSITORY: "ghcr.io/aquasecurity/trivy-db:2"
+    TRIVY_JAVA_DB_REPOSITORY: "ghcr.io/aquasecurity/trivy-java-db:1"
 
 jobs:
     build-php:
@@ -195,7 +196,7 @@ jobs:
 
                         mkdir -p sboms
                         PLAIN_SBOM="sboms/${TAG}.spdx.json"
-                        trivy image --format spdx-json -o "${PLAIN_SBOM}" "${PLAIN_IMAGE}"
+                        _ci/.github/scripts/with-retry.sh trivy image --format spdx-json -o "${PLAIN_SBOM}" "${PLAIN_IMAGE}"
                         echo "${PLAIN_SBOM}" > ".docker-state/${imageVariant}/plain_sbom.txt"
                     done
 
@@ -223,6 +224,9 @@ jobs:
                         # Do NOT rmi here: the gate step patches this image into the hardened one.
                         if [[ "$PUSH" == "true" ]]; then
                             printf '%s\n' "${PLAIN_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
+
+                            PLAIN_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$PLAIN_IMAGE" 2>/dev/null | sed 's/.*@//')
+                            echo "${PLAIN_DIGEST:-unpublished}" > ".docker-state/${imageVariant}/plain_digest.txt"
 
                             _ci/.github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
                             _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
@@ -319,6 +323,9 @@ jobs:
                         if [[ "$PUSH_HARDENED" == "true" ]]; then
                             printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
 
+                            HARDENED_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$HARDENED_IMAGE" 2>/dev/null | sed 's/.*@//')
+                            echo "${HARDENED_DIGEST:-unpublished}" > ".docker-state/${imageVariant}/hardened_digest.txt"
+
                             HARDENED_TAG="${HARDENED_IMAGE#"${IMAGE_NAME}":}"
                             _ci/.github/scripts/attach-sbom.sh "${HARDENED_IMAGE}" "${HARDENED_SBOM}"
                             _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${HARDENED_TAG}" "${HARDENED_SBOM}"
@@ -331,6 +338,45 @@ jobs:
                                 printf '%s\t%s\n' "$t" "${HARDENED_SBOM}"
                             done >> aggregated_tags.txt
                         fi
+                    done
+
+            -   name: Collect CVE report data
+                if: ${{ matrix.build.hardened }}
+                env:
+                    ARCH_TAG: ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
+                run: |
+                    set -euxo pipefail
+                    mkdir -p cve-report-data
+                    mapfile -t imageVariants < .docker-state/variants.txt
+                    # Best-effort, like the severity gate: a scan failure (after retries) omits
+                    # that variant from this run's report and warns, but never fails the leg --
+                    # the images already published, and the report is transparency, not a gate.
+                    for imageVariant in "${imageVariants[@]}"; do
+                        TAG=$(< ".docker-state/${imageVariant}/tag.txt")
+                        BASE_TAG=$(< ".docker-state/${imageVariant}/base_tag.txt")
+                        VERSION=$(< ".docker-state/${imageVariant}/version.txt")
+                        PLAIN_IMAGE=$(< ".docker-state/${imageVariant}/plain_image.txt")
+
+                        # Full CVE scan (all severities, OS+library, includes unfixable) of the plain image.
+                        _ci/.github/scripts/with-retry.sh trivy image --format json -o "cve-report-data/${TAG}.plain.json" "${PLAIN_IMAGE}" \
+                            || { echo "::warning::CVE report: plain scan failed for ${imageVariant}; omitting it from this run's report"; rm -f "cve-report-data/${TAG}.plain.json"; continue; }
+
+                        if [ -f ".docker-state/${imageVariant}/hardened_image.txt" ]; then
+                            HARDENED_IMAGE=$(< ".docker-state/${imageVariant}/hardened_image.txt")
+                            _ci/.github/scripts/with-retry.sh trivy image --format json -o "cve-report-data/${TAG}.hardened.json" "${HARDENED_IMAGE}" \
+                                || { echo "::warning::CVE report: hardened scan failed for ${imageVariant}; omitting it from this run's report"; rm -f "cve-report-data/${TAG}.plain.json" "cve-report-data/${TAG}.hardened.json"; continue; }
+                        fi
+
+                        PLAIN_DIGEST=$(cat ".docker-state/${imageVariant}/plain_digest.txt" 2>/dev/null || echo "unpublished")
+                        HARDENED_DIGEST=$(cat ".docker-state/${imageVariant}/hardened_digest.txt" 2>/dev/null || echo "unpublished")
+                        jq -n \
+                            --arg image "${BASE_TAG}-${VERSION}" \
+                            --arg variant "${imageVariant}" \
+                            --arg arch "${ARCH_TAG}" \
+                            --arg pd "${PLAIN_DIGEST}" \
+                            --arg hd "${HARDENED_DIGEST}" \
+                            '{image:$image, variant:$variant, arch:$arch, plain_digest:$pd, hardened_digest:$hd}' \
+                            > "cve-report-data/${TAG}.meta.json"
                     done
 
             -   name: Clean up images
@@ -366,6 +412,14 @@ jobs:
                 with:
                     name: sboms_${{ matrix.runner }}_${{ matrix.build.tag }}_${{ matrix.build.php }}_${{ matrix.build.distro }}_${{ matrix.build.version-override }}_${{ matrix.build.latest-tag }}
                     path: sboms/
+                    if-no-files-found: ignore
+
+            -   name: Upload CVE report data
+                if: always()
+                uses: actions/upload-artifact@v7
+                with:
+                    name: cve-report-data_${{ matrix.runner }}_${{ matrix.build.tag }}_${{ matrix.build.php }}_${{ matrix.build.distro }}_${{ matrix.build.version-override }}_${{ matrix.build.latest-tag }}
+                    path: cve-report-data/
                     if-no-files-found: ignore
 
             -   name: Upload aggregated tags
@@ -436,3 +490,51 @@ jobs:
                     set -uo pipefail
                     find artifacts -type f -name "aggregated_tags.txt" -exec cat {} + > all_aggregated_tags.txt
                     _ci/.github/scripts/merge-manifests.sh
+
+    publish-cve-report:
+        runs-on: ubuntu-22.04
+        needs: build-php
+        if: ${{ always() && github.repository == 'pimcore/docker' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
+        permissions:
+            contents: write
+        steps:
+            -   uses: actions/checkout@v5
+            -   name: Download CVE report data
+                # Best-effort: if no cve-report-data_* artifacts exist this run (or the
+                # download hiccups), don't fail the job -- the next step's no-data check
+                # then exits 0 and leaves docs/known-cves.md unchanged.
+                continue-on-error: true
+                uses: actions/download-artifact@v8
+                with:
+                    path: cve-artifacts
+                    pattern: cve-report-data_*
+            -   name: Generate and commit docs/known-cves.md
+                run: |
+                    set -euo pipefail
+                    # cve-artifacts may not exist if the download matched zero artifacts;
+                    # create it so the find below can't fail before the no-data skip fires.
+                    mkdir -p _cvedata docs cve-artifacts
+                    # Flatten all per-leg artifact dirs into one (filenames are unique per image+arch).
+                    find cve-artifacts -type f \( -name '*.meta.json' -o -name '*.plain.json' -o -name '*.hardened.json' \) \
+                        -exec cp -n {} _cvedata/ \;
+                    if [ -z "$(find _cvedata -name '*.meta.json' -print -quit)" ]; then
+                        echo "No CVE report data this run; leaving docs/known-cves.md unchanged."
+                        exit 0
+                    fi
+                    if [ "${GITHUB_REF_TYPE:-}" != "branch" ]; then
+                        echo "Not a branch run (ref_type=${GITHUB_REF_TYPE:-unknown}); skipping known-cves.md commit."
+                        exit 0
+                    fi
+                    TS="$(date -u '+%Y-%m-%d %H:%M UTC')"
+                    .github/scripts/generate-cve-report.sh _cvedata "$TS" > docs/known-cves.md
+
+                    git config user.name  "github-actions[bot]"
+                    git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                    git add docs/known-cves.md
+                    if git diff --cached --quiet; then
+                        echo "docs/known-cves.md unchanged."
+                        exit 0
+                    fi
+                    git commit -m "docs: update known-CVEs report [skip ci]"
+                    git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+                    git push origin "HEAD:${GITHUB_REF_NAME}"

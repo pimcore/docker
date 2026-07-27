@@ -1,0 +1,3 @@
+{"Results":[{"Vulnerabilities":[
+{"VulnerabilityID":"CVE-2024-7883","Severity":"MEDIUM","PkgName":"libxml2","InstalledVersion":"2.12.7+dfsg-3","FixedVersion":""}
+]}]}

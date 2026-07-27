@@ -1,0 +1,4 @@
+{"Results":[{"Vulnerabilities":[
+{"VulnerabilityID":"CVE-2025-9999","Severity":"HIGH","PkgName":"pkga","InstalledVersion":"1.0","FixedVersion":"1.1"},
+{"VulnerabilityID":"CVE-2025-9999","Severity":"HIGH","PkgName":"pkgb","InstalledVersion":"2.0","FixedVersion":""}
+]}]}

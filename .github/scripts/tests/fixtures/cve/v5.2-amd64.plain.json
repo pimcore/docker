@@ -1,0 +1,4 @@
+{"Results":[{"Vulnerabilities":[
+{"VulnerabilityID":"CVE-2024-45491","Severity":"HIGH","PkgName":"libexpat1","InstalledVersion":"2.6.2-1","FixedVersion":"2.6.2-2+deb13u1"},
+{"VulnerabilityID":"CVE-2025-6020","Severity":"HIGH","PkgName":"libpam0g","InstalledVersion":"1.5.3-7","FixedVersion":""}
+]}]}
