@@ -314,29 +314,359 @@ CF="$cf3" RETRY_DELAY=0 RETRY_MAX=2 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) 
 "$WR" >/dev/null 2>&1; rc=$?
 [ "$rc" = 2 ] && echo "  ok: no-args -> exit 2 (usage)" || { echo "  FAIL: no-args rc $rc (want 2)"; fail=1; }
 
-echo "== generate-cve-report.sh =="
+echo "== cve-aggregate.sh =="
 CVE_FIX="${ROOT}/.github/scripts/tests/fixtures/cve"
-CVE_OUT="$(bash "${ROOT}/.github/scripts/generate-cve-report.sh" "$CVE_FIX" "2026-07-16 02:41 UTC" 2>/tmp/cve-err)"; CVE_RC=$?
-assert_eq "$CVE_RC" "0" "generate-cve-report exits 0"
-# digests table: full digest for a published image
-assert_contains "$CVE_OUT" "sha256:1f3a9c4e2b7d05a8c1e6f4b9d3072a5e8c1b6f0d4a7e2c9b5083f1d6a4c7e2b90" "full plain digest in digests table"
-assert_contains "$CVE_OUT" "sha256:8ad4c17b93e0a5d2f4681c9b0e3a7d5c2b8f1069a4e7c3b05d9f28a1c6e4b0f37" "full hardened digest in digests table"
-assert_contains "$CVE_OUT" "not published this run" "unpublished hardened shown in digests table"
-# fixed row: short PLAIN digest pointer + old->new + fixed status
-assert_contains "$CVE_OUT" "| \`1f3a9c4e2b7d\` | CVE-2024-45491 | HIGH | libexpat1 | ✅ fixed · 2.6.2-1 → 2.6.2-2+deb13u1 |" "fixed row rendered with plain short digest and version bump"
-# residual row: short HARDENED digest pointer + no fix
-assert_contains "$CVE_OUT" "| \`8ad4c17b93e0\` | CVE-2025-6020 | HIGH | libpam0g | ⚠️ residual · no fix |" "residual row rendered with hardened short digest"
-# unpublished-hardened image: residual rows use 'unpublished' pointer + unpatched status
-# hardened not produced: plain IS still published, so the row points at the PLAIN short digest
-assert_contains "$CVE_OUT" "| \`44bec0a1d2e3\` | CVE-2024-7883 | MEDIUM | libxml2 | ⚠️ unpatched · hardened not produced |" "unpublished-hardened variant lists plain CVEs as unpatched (plain digest pointer)"
-assert_contains "$CVE_OUT" "Development / rolling tags" "header notes dev exclusion"
-# Regression: one CVE id affecting two packages, fixed on one (pkga) and residual on
-# the other (pkgb) -- the fixed-set query must key on id+package (exact), not id
-# alone, or the pkga row silently vanishes from BOTH tables (see fixture
-# v5.2-multipkg-amd64: CVE-2025-9999 present in plain for pkga+pkgb, hardened only
-# still has pkgb).
-assert_contains "$CVE_OUT" "| \`dd81d549a32e\` | CVE-2025-9999 | HIGH | pkga | ✅ fixed · 1.0 → 1.1 |" "same CVE id fixed on one package (id+package keying)"
-assert_contains "$CVE_OUT" "| \`d07739baf7cd\` | CVE-2025-9999 | HIGH | pkgb | ⚠️ residual · no fix |" "same CVE id residual on a different package (id+package keying)"
+AGG="$(mktemp)"; tmpdirs+=("$AGG")
+AGG_ERR="$(mktemp)"; tmpdirs+=("$AGG_ERR")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$CVE_FIX" "2026-07-29 12:00 UTC" > "$AGG" 2>"$AGG_ERR"; AGG_RC=$?
+assert_eq "$AGG_RC" "0" "cve-aggregate exits 0"
+assert_eq "$(jq -e 'type' "$AGG" 2>/dev/null | tr -d '"')" "object" "cve-aggregate emits a JSON object"
+assert_eq "$(jq -r '.generated' "$AGG")" "2026-07-29 12:00 UTC" "timestamp passed through"
+
+# hardened_state classification, all three branches
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-v5.2" and .arch=="amd64") | .hardened_state' "$AGG")" \
+    "patched" "differing digests -> patched"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-min-v5.2") | .hardened_state' "$AGG")" \
+    "identical" "equal plain/hardened digests -> identical"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-debug-v5.2") | .hardened_state' "$AGG")" \
+    "not-produced" "unpublished hardened digest -> not-produced"
+
+# affects collapsing: one CVE+pkg+status row spans both arches of php8.5-v5.2
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-6020" and .pkg=="libpam0g")] | length' "$AGG")" \
+    "1" "same CVE+pkg+status across two arches is ONE row"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-6020" and .pkg=="libpam0g") | .affects | length' "$AGG")" \
+    "2" "that row affects two image entries"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-6020") | .affects | (unique | length)' "$AGG")" \
+    "2" "affects has no duplicate indices"
+
+# every affects index is a valid images[] index
+assert_eq "$(jq -r '(.images|length) as $n | [.cves[].affects[] | select(. < 0 or . >= $n)] | length' "$AGG")" \
+    "0" "all affects indices are in range"
+
+# REGRESSION (moved from generate-cve-report.sh): one CVE id on two packages, fixed on
+# pkga and residual on pkgb. Keying on id alone merges these and loses a row.
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-9999" and .pkg=="pkga") | .status' "$AGG")" \
+    "fixed" "multipkg: CVE-2025-9999 fixed on pkga (id+pkg keying)"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-9999" and .pkg=="pkgb") | .status' "$AGG")" \
+    "residual" "multipkg: CVE-2025-9999 residual on pkgb (id+pkg keying)"
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-9999")] | length' "$AGG")" \
+    "2" "multipkg: both package rows survive"
+
+# REGRESSION (status must be part of the key): the SAME (CVE id, package) pair is
+# fixed in one image (statusmix-a: absent from that image's hardened scan) and
+# residual in another (statusmix-b: still present in that image's hardened scan).
+# Dropping `status` from the group_by key (i.e. grouping on [.id,.pkg] alone) would
+# silently collapse these into ONE row and lose a status -- unlike the multipkg
+# case above, .pkg alone cannot distinguish these two rows, only .status can.
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1")] | length' "$AGG")" \
+    "2" "status-mix: same (id,pkg) fixed in one image + residual in another stays TWO rows"
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1") | .status] | sort | join(",")' "$AGG")" \
+    "fixed,residual" "status-mix: both statuses present, not merged into one"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1" and .status=="fixed") | .affects | length' "$AGG")" \
+    "1" "status-mix: fixed row affects exactly the image where it was fixed"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1" and .status=="residual") | .affects | length' "$AGG")" \
+    "1" "status-mix: residual row affects exactly the image where it is residual"
+
+# fixed rows carry the version bump; residual rows carry the fix availability
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2024-45491") | .fix' "$AGG")" \
+    "2.6.2-1 → 2.6.2-2+deb13u1" "fixed row records old -> new version"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-6020") | .fix' "$AGG")" \
+    "no fix" "residual row with no upstream fix says so"
+
+# not-produced image yields unpatched rows
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2024-7883") | .status' "$AGG")" \
+    "unpatched" "image without hardened scan yields unpatched rows"
+
+# per-image severity counts and fixable_count
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-min-v5.2") | .counts.CRITICAL' "$AGG")" \
+    "1" "min image counts its CRITICAL row"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-min-v5.2") | .fixable_count' "$AGG")" \
+    "0" "min image has nothing fixable"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-v5.2" and .arch=="amd64") | .fixable_count' "$AGG")" \
+    "1" "amd64 default image has one fixable CVE"
+
+# kernel-header rows are PRESENT in the canonical data (renderers exclude them, not this)
+assert_eq "$(jq -r '[.cves[] | select(.pkg=="linux-libc-dev")] | length' "$AGG")" \
+    "1" "linux-libc-dev row retained in canonical JSON"
+
+# empty input is valid, not an error
+EMPTY_DIR="$(mktemp -d)"; tmpdirs+=("$EMPTY_DIR")
+EMPTY_OUT="$("${ROOT}/.github/scripts/cve-aggregate.sh" "$EMPTY_DIR" "2026-07-29 12:00 UTC")"; EMPTY_RC=$?
+assert_eq "$EMPTY_RC" "0" "empty data dir exits 0"
+assert_eq "$(printf '%s' "$EMPTY_OUT" | jq -r '.images | length')" "0" "empty data dir -> zero images"
+assert_eq "$(printf '%s' "$EMPTY_OUT" | jq -r '.cves | length')" "0" "empty data dir -> zero cves"
+
+# Malformed Trivy JSON must FAIL CLOSED -- abort non-zero with no output -- rather than
+# emit a partial report that silently under-reports CVEs. A truncated or half-written
+# scan file is the realistic failure here.
+BAD_DIR="$(mktemp -d)"; tmpdirs+=("$BAD_DIR")
+cp "${CVE_FIX}/v5.2-amd64.meta.json" "${CVE_FIX}/v5.2-amd64.hardened.json" "$BAD_DIR/"
+printf '{"Results":[ THIS IS NOT JSON' > "${BAD_DIR}/v5.2-amd64.plain.json"
+BAD_OUT="$(mktemp)"; tmpdirs+=("$BAD_OUT")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$BAD_DIR" "2026-07-29 12:00 UTC" > "$BAD_OUT" 2>/dev/null; BAD_RC=$?
+[ "$BAD_RC" != "0" ] && echo "  ok: malformed Trivy JSON exits non-zero ($BAD_RC)" \
+    || { echo "  FAIL: malformed Trivy JSON exited 0 -- would emit a partial report"; fail=1; }
+assert_eq "$(wc -c < "$BAD_OUT" | tr -d ' ')" "0" "malformed input produces no partial output"
+
+echo "== cve-render-summary.sh =="
+SUM="$("${ROOT}/.github/scripts/cve-render-summary.sh" "$AGG")"; SUM_RC=$?
+assert_eq "$SUM_RC" "0" "cve-render-summary exits 0"
+assert_contains "$SUM" "# Known CVEs & hardening report" "summary has the H1 title"
+assert_contains "$SUM" "_Generated 2026-07-29 12:00 UTC._" "summary states the generation time"
+assert_contains "$SUM" "## Hardening outcome" "summary leads with the hardening outcome"
+# fixtures DO have fixable CVEs, so the outcome must report them rather than the no-fix wording
+assert_contains "$SUM" "fix-available findings" "fixable CVEs present -> reports the count"
+assert_not_contains "$SUM" "No fixable CVE was available upstream" "does not claim zero fixable when there are some"
+# a not-produced image exists in the fixtures, so the caveat sentence must fire
+assert_contains "$SUM" "Some images have no" "not-produced images are called out"
+
+assert_contains "$SUM" "## Severity totals" "summary has severity totals"
+assert_contains "$SUM" "## Not tabulated" "summary discloses what is excluded"
+assert_contains "$SUM" "linux-libc-dev" "kernel-header exclusion named"
+assert_contains "$SUM" "not reachable inside these images" "exclusion is justified, not just stated"
+assert_contains "$SUM" "## CVEs by variant" "summary breaks CVEs down by variant"
+assert_contains "$SUM" "## Most-affected packages" "summary lists worst packages"
+assert_contains "$SUM" "## Images" "summary has the per-image table"
+# per-image row: min variant, 12-char short digest, identical hardening
+assert_contains "$SUM" "| \`php8.5-min-v5.2\` | amd64 " "per-image row present for the min variant"
+assert_contains "$SUM" "| identical | \`cc33dd44ee55\` |" "per-image row shows hardening state and short digest"
+
+# --- Fix round: pin computed values, not just headings ---
+# The four checks below target sections whose only prior coverage was a heading grep
+# (assert_contains on "## Severity totals" etc.), which a wrong select/group_by/sort_by/
+# aggregation could sail straight through. Expected numbers are hand-derived from the raw
+# fixture Trivy JSON (see task-2-report.md fix-round section for the full working), then
+# cross-checked against the aggregated JSON's .cves/.images arrays independently of this
+# script -- not copied from this script's own output.
+
+# Hardening outcome: exact fixable count. 5 = sum of fixable_count across all 7 images
+# (v5.2-amd64:1, v5.2-arm64:1, debug:0, min:0, multipkg:1, statusmix-a:1, statusmix-b:1).
+#
+# M1: the number is a SUM of per-image counts, not a count of CVEs, and it is measured on
+# the full plain scan (OS + library packages) while the scan that feeds Copa is restricted
+# to OS packages -- on these very fixtures it is 5 while the tables carry 3 `fixed` rows. So
+# the wording is pinned too, not just the digit: it must name what the number is
+# ("fix-available findings"), must NOT call it N CVEs, and must NOT point the reader at
+# `fixed` rows it cannot guarantee exist.
+assert_contains "$SUM" "**5 fix-available findings** were seen across all images" "hardening outcome pins the exact summed fix-available count (5) and describes it as a summed finding count, not a CVE count"
+assert_contains "$SUM" "not a count of \`fixed\` rows" "hardening outcome disclaims the fixed-row equivalence (5 summed findings vs 3 fixed rows in these fixtures)"
+assert_not_contains "$SUM" "fixable CVE(s)** were available upstream" "hardening outcome no longer presents the multiplied sum as a CVE count"
+assert_not_contains "$SUM" "see the \`fixed\` rows in the tables below" "hardening outcome no longer promises fixed rows that a MEDIUM/library-only fix would not produce"
+# Cross-check the contradiction this wording exists to prevent: the summed number (5) really
+# does differ from the number of `fixed` rows (3) on these fixtures, so any wording that
+# equates the two is provably wrong here.
+assert_eq "$(jq -r '[.cves[] | select(.status=="fixed")] | length' "$AGG")" "3" "fixtures really do have 3 fixed rows against a summed fix-available count of 5 (the M1 mismatch is live, not hypothetical)"
+
+# F4(a): WHY the summed count is only an upper bound. scan-patch-gate.sh scans Copa input
+# with `trivy image --pkg-types os --ignore-unfixed` and NO --severity filter, so Copa
+# receives fixable OS vulnerabilities at EVERY severity; the CRITICAL,HIGH threshold
+# (GATE_SEVERITY) applies only to the separate post-patch gate scan that decides whether the
+# -hardened tag ships. The one real difference is package scope: this report scans OS AND
+# library packages. The old wording blamed severity and was simply false, so the reason is
+# pinned here -- a plausible-sounding but wrong explanation in a security report is worse
+# than no explanation, and only an assertion stops it drifting back.
+assert_contains "$SUM" "measured on the full scan, which covers OS **and library** packages, while the scan that feeds Copa is restricted to OS packages" "hardening outcome gives the CORRECT reason the summed count is an upper bound (package scope: OS + library vs OS only)"
+assert_not_contains "$SUM" "Copa patches only CRITICAL/HIGH OS packages" "hardening outcome no longer claims Copa patches only CRITICAL/HIGH (the Copa input scan carries no --severity filter)"
+assert_not_contains "$SUM" "CRITICAL/HIGH OS" "no CRITICAL/HIGH Copa-scope claim survives anywhere in the summary"
+
+# I2(a): the exact CRITICAL severity-totals row. The ONLY CRITICAL in the fixtures is a
+# linux-libc-dev row, so a renderer that stops excluding kernel rows turns this into
+# "| CRITICAL | 1 | 1 |". Pinning the whole row (both cells) is what makes the exclusion
+# testable at all -- the prose assertions above only prove the disclosure text exists.
+assert_contains "$SUM" "| CRITICAL | 0 | 0 |" "severity totals: CRITICAL row is exactly 0 distinct / 0 rows (proves kernel-header rows are excluded from the tabulated totals, not merely described)"
+
+# I2(b): the exact Not-tabulated sentence, count and all -- pins that the kernel selection
+# matches ONLY linux-libc-dev (a selection that swept in every row would render 9/7 here),
+# and pins the singular wording for count == 1.
+assert_contains "$SUM" "**1 \`linux-libc-dev\` row (1 distinct CVE) is excluded from the tables.**" "not-tabulated sentence pins the exact kernel row/CVE counts and reads grammatically at count 1"
+assert_not_contains "$SUM" "rows (1 distinct CVEs)" "not-tabulated sentence is not the ungrammatical plural form at count 1"
+
+# F3: the excluded rows are recoverable, and the pointer must name the thing a reader can
+# actually download. release.yml uploads an artifact NAMED cve-report-json whose CONTENT is
+# cve-data.json; the old text called the artifact itself `cve-data.json`, which matches
+# nothing on the run page and disagrees with README.md. Both halves are pinned so neither
+# the file name nor the artifact name can drift out again.
+assert_contains "$SUM" "They remain in \`cve-data.json\`, uploaded as the \`cve-report-json\` artifact on the release run." "not-tabulated section names the artifact by its real name (cve-report-json) and the file inside it (cve-data.json), consistent with README.md"
+assert_not_contains "$SUM" "the machine-readable \`cve-data.json\` artifact" "no artifact called cve-data.json is claimed (no such artifact exists)"
+
+# I1: the Images table carries raw scan totals INCLUDING the un-tabulated kernel rows, so it
+# legitimately disagrees with every other count here. That must be stated under the table, or
+# the min row below (CRIT 1, with no CRITICAL anywhere in the three tables) reads as a
+# silently dropped finding.
+assert_contains "$SUM" "raw Trivy totals for the image as published" "Images table footnote declares the counts as raw scan totals"
+assert_contains "$SUM" "1 un-tabulated \`linux-libc-dev\` row" "Images table footnote names the un-tabulated kernel rows it includes (exact count, singular)"
+assert_contains "$SUM" "| \`php8.5-min-v5.2\` | amd64 | 1 | 0 | 0 | 1 | 0 | 0 | identical |" "Images row for min pins the raw CRIT=1 the footnote has to explain (the row the reviewer could not trace to any table)"
+
+# F4(b): the SECOND place the old Copa-scope claim appeared. Same correction as F4(a): the
+# Fixable column is wider than what Copa can act on because of package scope, not severity.
+assert_contains "$SUM" "wider than the OS-packages-only scope of the scan that feeds Copa -- severity plays no part in that difference" "Images footnote gives the CORRECT reason Fixable exceeds what Copa can patch, and explicitly rules out severity"
+assert_not_contains "$SUM" "measured across all severities and both OS and library packages, wider than" "Images footnote no longer presents all-severities as a reason Fixable is wider than Copa scope"
+
+# Severity totals: HIGH pins 4 distinct CVEs / 6 rows (libexpat1 fixed, libpam0g residual,
+# libfoo1 fixed+residual, pkga fixed, pkgb residual -- ids: CVE-2024-45491, CVE-2025-6020,
+# CVE-2025-7777, CVE-2025-9999). MEDIUM pins 1/1 (libxml2, CVE-2024-7883). Asserting a SECOND,
+# differently-valued severity row (not just HIGH) also catches a regression that hardcodes the
+# severity comparison to "HIGH" -- that would leave the HIGH row itself unchanged but corrupt
+# every other row, which a HIGH-only assertion would miss.
+assert_contains "$SUM" "| HIGH | 4 | 6 |" "severity totals: HIGH row pins distinct/row counts"
+assert_contains "$SUM" "| MEDIUM | 1 | 1 |" "severity totals: MEDIUM row pins distinct/row counts (catches a hardcoded-severity regression the HIGH row alone would miss)"
+
+# CVEs by variant: default pins 4 distinct CVEs / 5 images (the 5 default-variant images:
+# v5.2 amd64+arm64, multipkg, statusmix-a, statusmix-b). debug pins 1/1 (libxml2 image only).
+assert_contains "$SUM" "| \`default\` | 4 | 5 |" "CVEs by variant: default row pins distinct-CVE/image counts"
+assert_contains "$SUM" "| \`debug\` | 1 | 1 |" "CVEs by variant: debug row pins distinct-CVE/image counts"
+# Order matters here (descending by CVE count): assert_contains cannot verify adjacency/order
+# for a multi-line needle -- grep -F treats a newline in the pattern as an OR of separate
+# line-patterns, not a contiguous block match (confirmed empirically) -- so check line
+# position directly instead.
+variant_default_line="$(printf '%s\n' "$SUM" | grep -nF -- '| `default` | 4 | 5 |' | head -1 | cut -d: -f1)"
+variant_debug_line="$(printf '%s\n' "$SUM" | grep -nF -- '| `debug` | 1 | 1 |' | head -1 | cut -d: -f1)"
+if [ -n "$variant_default_line" ] && [ -n "$variant_debug_line" ] && [ "$variant_default_line" -lt "$variant_debug_line" ]; then
+    echo "  ok: CVEs by variant: default (4 CVEs) sorts before debug (1 CVE) -- descending order"
+else
+    echo "  FAIL: CVEs by variant: expected default row before debug row (default@${variant_default_line:-?}, debug@${variant_debug_line:-?})"
+    fail=1
+fi
+
+# Most-affected packages: libexpat1 pins one row whose OWN affects=[0,1] already spans two
+# images; libfoo1 pins the union of TWO SEPARATE rows (fixed row affects=[5], residual row
+# affects=[6], same CVE-2025-7777) into 2 images -- a regression that fails to union affects
+# across rows sharing a package, or mis-keys the grouping, would corrupt one or both of these.
+assert_contains "$SUM" "| \`libexpat1\` | 1 | 2 |" "most-affected packages: libexpat1 row pins distinct-CVE/image counts"
+assert_contains "$SUM" "| \`libfoo1\` | 1 | 2 |" "most-affected packages: libfoo1 row pins the union of two separate rows' affects into 2 images"
+
+# M2: these two columns count per-arch image BUILDS, while the detail tables' `Affects` column
+# collapses arch. libexpat1 above is the proof: 2 here (v5.2 amd64 + arm64), 1 image in the
+# CRITICAL,HIGH table. The headings must not both say "Images" or the same word carries two
+# answers in one document.
+assert_contains "$SUM" "| Package | Distinct CVEs | Image builds affected |" "most-affected packages heading names the per-arch scale (Image builds), not the ambiguous Images"
+assert_contains "$SUM" "| Variant | Distinct CVEs | Image builds |" "CVEs-by-variant heading names the per-arch scale (Image builds), not the ambiguous Images"
+assert_contains "$SUM" "counts each architecture separately" "summary explains why its build counts exceed the tables' arch-collapsed Affects column"
+
+# the summary must stay small enough to read
+SUM_BYTES=$(printf '%s' "$SUM" | wc -c)
+[ "$SUM_BYTES" -lt 10240 ] && echo "  ok: summary under 10 KB ($SUM_BYTES bytes)" \
+    || { echo "  FAIL: summary is $SUM_BYTES bytes, want < 10240"; fail=1; }
+
+# empty input must render a no-data summary, not crash
+EMPTY_AGG="$(mktemp)"; tmpdirs+=("$EMPTY_AGG")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$EMPTY_DIR" "2026-07-29 12:00 UTC" > "$EMPTY_AGG"
+ESUM="$("${ROOT}/.github/scripts/cve-render-summary.sh" "$EMPTY_AGG")"; ESUM_RC=$?
+assert_eq "$ESUM_RC" "0" "summary of empty data exits 0"
+assert_contains "$ESUM" "# Known CVEs & hardening report" "empty summary still has a title"
+
+echo "== cve-render-table.sh =="
+TBL="$("${ROOT}/.github/scripts/cve-render-table.sh" "$AGG" CRITICAL,HIGH "Critical & high severity")"; TBL_RC=$?
+assert_eq "$TBL_RC" "0" "cve-render-table exits 0"
+assert_contains "$TBL" "## Critical & high severity" "optional title rendered as H2"
+assert_contains "$TBL" "| CVE | Severity | Package | Status | Affects |" "table header present"
+# CVE cell is an NVD link
+assert_contains "$TBL" "[CVE-2025-6020](https://nvd.nist.gov/vuln/detail/CVE-2025-6020)" "CVE cell links to NVD"
+# affects cell: count of images plus the affected releases, arch collapsed. CVE-2025-6020
+# is in both arches of php8.5-v5.2, which is ONE logical image on release v5.2. Pin the
+# COMPLETE row (not just the "| 1 image · v5.2 |" substring): every other row in this
+# slice already maps to a single-arch image, so that substring appears elsewhere in the
+# table even if the amd64+arm64 collapse for THIS row breaks (a dropped `unique` on the
+# label list would turn this exact row into "2 images · v5.2" while the substring alone
+# still matched a different, unrelated row).
+assert_contains "$TBL" "| [CVE-2025-6020](https://nvd.nist.gov/vuln/detail/CVE-2025-6020) | HIGH | \`libpam0g\` | residual · no fix | 1 image · v5.2 |" "CVE-2025-6020 full row: arch-collapsed to one image on v5.2"
+# kernel-header rows never appear in a table, even at CRITICAL
+assert_not_contains "$TBL" "linux-libc-dev" "linux-libc-dev excluded from tables"
+assert_not_contains "$TBL" "CVE-2026-0001" "the CRITICAL kernel-header CVE is excluded"
+# severity filter is respected
+assert_not_contains "$TBL" "CVE-2024-7883" "MEDIUM CVE absent from a CRITICAL,HIGH table"
+
+TBL_MED="$("${ROOT}/.github/scripts/cve-render-table.sh" "$AGG" MEDIUM)"
+assert_contains "$TBL_MED" "CVE-2024-7883" "MEDIUM CVE present in a MEDIUM table"
+assert_not_contains "$TBL_MED" "CVE-2025-6020" "HIGH CVE absent from a MEDIUM table"
+assert_not_contains "$TBL_MED" "## " "title omitted when no third argument is given"
+
+# a severity with no rows renders a placeholder line, not an empty table
+TBL_NONE="$("${ROOT}/.github/scripts/cve-render-table.sh" "$AGG" UNKNOWN)"
+assert_contains "$TBL_NONE" "_No CVEs in this severity range._" "empty slice renders a placeholder"
+
+echo "== cve edge cases: divergent fix per base, non-CVE identifiers =="
+# A SEPARATE fixture set, deliberately. Both regressions below need image rows the main
+# fixture set does not have, and adding them there would move every hand-derived number
+# pinned above (the fixable sum, the severity totals, the per-variant counts) for reasons
+# unrelated to what is under test. Isolated, each fixture set stays independently derivable.
+#
+# cve-edge holds two images whose SAME (id, pkg, status, severity) finding carries a
+# DIFFERENT `fix` string -- exactly what the three Debian bases in one report run produce,
+# since the `fixed` branch renders InstalledVersion + " -> " + FixedVersion and Debian
+# versions differ per release. edge-a: libbar1 1.1.3-4.1 -> 1.1.3-4.1+deb12u1.
+# edge-b: libbar1 1.2.1-2 -> 1.2.1-2+deb13u1. edge-a also carries a TEMP-* Debian
+# security-tracker identifier, which has no NVD page.
+CVE_EDGE="${ROOT}/.github/scripts/tests/fixtures/cve-edge"
+EDGE="$(mktemp)"; tmpdirs+=("$EDGE")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$CVE_EDGE" "2026-07-29 12:00 UTC" > "$EDGE"; EDGE_RC=$?
+assert_eq "$EDGE_RC" "0" "edge-fixture aggregate exits 0"
+
+# F1: the group key must carry EVERY rendered attribute. A group is collapsed to one row
+# rendering .[0] of each field, so an attribute left out of the key gets ONE member of the
+# group attributed to all of them. Keying on [.id,.pkg,.status] alone merges the two rows
+# below and reports edge-a version pair for edge-b as well.
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-8888")] | length' "$EDGE")" "2" \
+    "divergent fix: one (id,pkg,status) with two different fix strings stays TWO rows"
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-8888") | .fix] | sort | join(" ; ")' "$EDGE")" \
+    "1.1.3-4.1 → 1.1.3-4.1+deb12u1 ; 1.2.1-2 → 1.2.1-2+deb13u1" \
+    "divergent fix: both version pairs survive verbatim, neither overwritten by the other"
+# Each row must point at exactly the ONE image its versions were measured on. Asserted
+# through the image NAME rather than the raw affects index, so a reordering of images[]
+# cannot let a wrong attribution pass.
+assert_eq "$(jq -r '.images as $i | .cves[] | select(.id=="CVE-2025-8888" and .fix=="1.1.3-4.1 → 1.1.3-4.1+deb12u1") | [.affects[] | $i[.].image] | join(",")' "$EDGE")" \
+    "php8.5-edge-a-v5.2" "divergent fix: the deb12u1 row affects edge-a and nothing else"
+assert_eq "$(jq -r '.images as $i | .cves[] | select(.id=="CVE-2025-8888" and .fix=="1.2.1-2 → 1.2.1-2+deb13u1") | [.affects[] | $i[.].image] | join(",")' "$EDGE")" \
+    "php8.5-edge-b-v5.2" "divergent fix: the deb13u1 row affects edge-b and nothing else"
+
+# The same property at the RENDERED level -- the merge only does harm because these version
+# strings reach a reader as fact about a specific image.
+EDGE_TBL="$("${ROOT}/.github/scripts/cve-render-table.sh" "$EDGE" CRITICAL,HIGH)"
+assert_contains "$EDGE_TBL" "| [CVE-2025-8888](https://nvd.nist.gov/vuln/detail/CVE-2025-8888) | HIGH | \`libbar1\` | fixed · 1.1.3-4.1 → 1.1.3-4.1+deb12u1 | 1 image · v5.2 |" \
+    "divergent fix: edge-a version pair renders as its own single-image row"
+assert_contains "$EDGE_TBL" "| [CVE-2025-8888](https://nvd.nist.gov/vuln/detail/CVE-2025-8888) | HIGH | \`libbar1\` | fixed · 1.2.1-2 → 1.2.1-2+deb13u1 | 1 image · v5.2 |" \
+    "divergent fix: edge-b version pair renders as its own single-image row"
+assert_not_contains "$EDGE_TBL" "2 images · v5.2" \
+    "divergent fix: no merged two-image row claiming one version pair for both bases"
+
+# F2: Trivy Debian data carries security-tracker placeholders (TEMP-*) for issues with no CVE
+# assigned yet. https://nvd.nist.gov/vuln/detail/TEMP-0000000-F7A20F is a guaranteed 404, so
+# only CVE-* identifiers may be linked.
+EDGE_LOW="$("${ROOT}/.github/scripts/cve-render-table.sh" "$EDGE" LOW,UNKNOWN)"
+assert_contains "$EDGE_LOW" "| \`TEMP-0000000-F7A20F\` | LOW | \`zlib1g\` | residual · no fix | 1 image · v5.2 |" \
+    "TEMP-* identifier renders as plain inline code (full row pinned), not as a link"
+assert_not_contains "$EDGE_LOW" "nvd.nist.gov/vuln/detail/TEMP" \
+    "TEMP-* identifier gets no NVD URL"
+assert_not_contains "$EDGE_LOW" "[TEMP-0000000-F7A20F]" \
+    "TEMP-* identifier is not wrapped in markdown link syntax at all"
+# ...while a real CVE in the SAME table still links. Without this, dropping the NVD link for
+# every identifier would satisfy the two assertions above.
+assert_contains "$EDGE_LOW" "| [CVE-2026-0002](https://nvd.nist.gov/vuln/detail/CVE-2026-0002) | LOW | \`zlib1g\` | residual · no fix | 1 image · v5.2 |" \
+    "a neighbouring CVE-* row in the same table still links to NVD"
+
+echo "== cve-size-guard.sh =="
+SG_SMALL="$(mktemp)"; tmpdirs+=("$SG_SMALL"); printf 'tiny' > "$SG_SMALL"
+sgOut="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_SMALL")"; sgRc=$?
+assert_eq "$sgRc" "0" "size guard exits 0 for a small file"
+assert_not_contains "$sgOut" "::warning::" "no warning for a small file"
+
+# Pin the exact 90% threshold AND the >= boundary, not just "some big file warns".
+# limit=1000 -> threshold = 1000*90/100 = 900 exactly (integer division has no
+# remainder here, so the boundary is unambiguous). A file of exactly 900 bytes must
+# warn -- this pins both the 90% figure and the >= operator (a >= -> > regression
+# would stop warning exactly at this boundary). A file of exactly 899 bytes must NOT
+# warn -- this pins the threshold from the other side (a lowered threshold, e.g. 50%,
+# would incorrectly warn at 899 too, since 899 is nowhere near 500).
+SG_AT="$(mktemp)"; tmpdirs+=("$SG_AT"); head -c 900 /dev/zero | tr '\0' 'x' > "$SG_AT"
+sgOutAt="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_AT" 1000)"; sgRcAt=$?
+assert_eq "$sgRcAt" "0" "size guard exits 0 even when warning (never fails a release)"
+assert_contains "$sgOutAt" "::warning::" "warns at exactly the 90% boundary (900 of 1000 bytes)"
+assert_contains "$sgOutAt" "900" "warning names the actual byte size"
+
+SG_BELOW="$(mktemp)"; tmpdirs+=("$SG_BELOW"); head -c 899 /dev/zero | tr '\0' 'x' > "$SG_BELOW"
+sgOutBelow="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_BELOW" 1000)"; sgRcBelow=$?
+assert_eq "$sgRcBelow" "0" "size guard exits 0 one byte below the threshold"
+assert_not_contains "$sgOutBelow" "::warning::" "does not warn one byte below the 90% boundary (899 of 1000 bytes)"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"

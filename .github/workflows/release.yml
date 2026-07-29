@@ -451,6 +451,15 @@ jobs:
         runs-on: ubuntu-22.04
         needs: build-php
         if: ${{ always() && github.repository == 'pimcore/docker' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
+        # Explicit and minimal. Nothing in this job authenticates with GITHUB_TOKEN except
+        # checkout (contents:read) and the two downloads below (actions:read) -- both
+        # registry logins use repository secrets, and merge-manifests.sh/attach-sbom.sh
+        # talk to Docker Hub and ghcr.io through the docker/oras credential store, not
+        # through GITHUB_TOKEN. So no packages: or contents: write is needed here.
+        permissions:
+            contents: read
+            # download-artifact needs actions:read to use the public REST API path.
+            actions: read
         steps:
 
             -   name: Check out CI scripts from the workflow ref
@@ -477,6 +486,12 @@ jobs:
                 with:
                     path: artifacts
                     pattern: aggregated_tags_*
+                    # Same actions/download-artifact#486 fix as publish-cve-report below:
+                    # without a token the internal artifact API 404s artifacts written by a
+                    # PREVIOUS attempt, so "Re-run failed jobs" can never see them. This
+                    # step is not continue-on-error, so today it fails loudly rather than
+                    # going green empty -- but it still cannot be re-run without the token.
+                    github-token: ${{ github.token }}
 
             -   name: Download SBOMs
                 uses: actions/download-artifact@v8
@@ -484,6 +499,7 @@ jobs:
                     path: sboms
                     pattern: sboms_*
                     merge-multiple: true
+                    github-token: ${{ github.token }}
 
             -   name: Process tags
                 run: |
@@ -497,18 +513,28 @@ jobs:
         if: ${{ always() && github.repository == 'pimcore/docker' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
         permissions:
             contents: write
+            # download-artifact needs actions:read to use the public REST API path.
+            actions: read
         steps:
             -   uses: actions/checkout@v5
             -   name: Download CVE report data
                 # Best-effort: if no cve-report-data_* artifacts exist this run (or the
                 # download hiccups), don't fail the job -- the next step's no-data check
-                # then exits 0 and leaves docs/known-cves.md unchanged.
+                # then exits 0 and leaves the committed report unchanged.
                 continue-on-error: true
                 uses: actions/download-artifact@v8
                 with:
                     path: cve-artifacts
                     pattern: cve-report-data_*
-            -   name: Generate and commit docs/known-cves.md
+                    # Without a token the action uses the internal artifact API, whose
+                    # GetSignedArtifactURL rejects artifacts from a PREVIOUS attempt with
+                    # "(404) workflow run not found" (actions/download-artifact#486). On a
+                    # "Re-run failed jobs" that 404s every download; combined with
+                    # continue-on-error above, the job then goes green having produced no
+                    # report at all -- exactly what happened in run 30265129837. The token
+                    # switches it to the public REST API, which handles cross-attempt reads.
+                    github-token: ${{ github.token }}
+            -   name: Generate and commit the known-CVE report
                 run: |
                     set -euo pipefail
                     # cve-artifacts may not exist if the download matched zero artifacts;
@@ -518,23 +544,72 @@ jobs:
                     find cve-artifacts -type f \( -name '*.meta.json' -o -name '*.plain.json' -o -name '*.hardened.json' \) \
                         -exec cp -n {} _cvedata/ \;
                     if [ -z "$(find _cvedata -name '*.meta.json' -print -quit)" ]; then
-                        echo "No CVE report data this run; leaving docs/known-cves.md unchanged."
+                        echo "No CVE report data this run; leaving the committed report unchanged."
                         exit 0
                     fi
-                    if [ "${GITHUB_REF_TYPE:-}" != "branch" ]; then
-                        echo "Not a branch run (ref_type=${GITHUB_REF_TYPE:-unknown}); skipping known-cves.md commit."
-                        exit 0
-                    fi
+
                     TS="$(date -u '+%Y-%m-%d %H:%M UTC')"
-                    .github/scripts/generate-cve-report.sh _cvedata "$TS" > docs/known-cves.md
+                    .github/scripts/cve-aggregate.sh _cvedata "$TS" > cve-data.json
+
+                    # Severity split. One flat table of every severity is ~608 KB, over the
+                    # 512 KB GitHub render limit; these three slices are ~226/232/376 KB.
+                    {
+                        .github/scripts/cve-render-summary.sh cve-data.json
+                        .github/scripts/cve-render-table.sh cve-data.json CRITICAL,HIGH "Critical & high severity"
+                        printf '\n\nFull detail for the remaining severities: '
+                        printf '[MEDIUM](known-cves-medium.md) · [LOW and UNKNOWN](known-cves-low.md).\n'
+                    } > docs/known-cves.md
+
+                    {
+                        printf '# Known CVEs — MEDIUM\n\n_Generated %s._ Back to the [summary](known-cves.md).\n\n' "$TS"
+                        .github/scripts/cve-render-table.sh cve-data.json MEDIUM
+                    } > docs/known-cves-medium.md
+
+                    {
+                        printf '# Known CVEs — LOW and UNKNOWN\n\n_Generated %s._ Back to the [summary](known-cves.md).\n\n' "$TS"
+                        .github/scripts/cve-render-table.sh cve-data.json LOW,UNKNOWN
+                    } > docs/known-cves-low.md
+
+                    for f in docs/known-cves.md docs/known-cves-medium.md docs/known-cves-low.md; do
+                        .github/scripts/cve-size-guard.sh "$f"
+                    done
+
+                    # Per-run visibility on the run page itself, whether or not the commit happens.
+                    .github/scripts/cve-render-summary.sh cve-data.json >> "$GITHUB_STEP_SUMMARY"
+
+                    if [ "${GITHUB_REF_TYPE:-}" != "branch" ]; then
+                        echo "Not a branch run (ref_type=${GITHUB_REF_TYPE:-unknown}); skipping the report commit."
+                        exit 0
+                    fi
+
+                    # The report covers EVERY published stable release (v2.3 … v5.2) regardless of
+                    # which branch dispatched the run, but it is committed to the dispatching
+                    # branch. GitHub Pages serves one branch, so a run dispatched from anywhere
+                    # other than REPORT_BRANCH updates a copy nobody reads and leaves the published
+                    # site silently stale. Warn loudly rather than fail -- the images are already
+                    # published and the report must never gate a release.
+                    REPORT_BRANCH=5.x
+                    if [ "${GITHUB_REF_NAME}" != "$REPORT_BRANCH" ]; then
+                        echo "::warning::Known-CVE report is being committed to '${GITHUB_REF_NAME}', not '${REPORT_BRANCH}'. If GitHub Pages publishes from ${REPORT_BRANCH}/docs, the published report will not reflect this run."
+                    fi
 
                     git config user.name  "github-actions[bot]"
                     git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                    git add docs/known-cves.md
+                    git add docs/known-cves.md docs/known-cves-medium.md docs/known-cves-low.md
                     if git diff --cached --quiet; then
-                        echo "docs/known-cves.md unchanged."
+                        echo "Known-CVE report unchanged."
                         exit 0
                     fi
                     git commit -m "docs: update known-CVEs report [skip ci]"
                     git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
                     git push origin "HEAD:${GITHUB_REF_NAME}"
+
+            -   name: Upload machine-readable CVE data
+                # The canonical JSON is ~2.8 MB and includes the kernel-header rows the
+                # committed tables omit. Uploaded, never committed: at ~2.8 MB per release
+                # it would grow the repository without bound.
+                if: ${{ always() && hashFiles('cve-data.json') != '' }}
+                uses: actions/upload-artifact@v7
+                with:
+                    name: cve-report-json
+                    path: cve-data.json
