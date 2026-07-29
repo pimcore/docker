@@ -487,5 +487,42 @@ ESUM="$("${ROOT}/.github/scripts/cve-render-summary.sh" "$EMPTY_AGG")"; ESUM_RC=
 assert_eq "$ESUM_RC" "0" "summary of empty data exits 0"
 assert_contains "$ESUM" "# Known CVEs & hardening report" "empty summary still has a title"
 
+echo "== cve-render-table.sh =="
+TBL="$("${ROOT}/.github/scripts/cve-render-table.sh" "$AGG" CRITICAL,HIGH "Critical & high severity")"; TBL_RC=$?
+assert_eq "$TBL_RC" "0" "cve-render-table exits 0"
+assert_contains "$TBL" "## Critical & high severity" "optional title rendered as H2"
+assert_contains "$TBL" "| CVE | Severity | Package | Status | Affects |" "table header present"
+# CVE cell is an NVD link
+assert_contains "$TBL" "[CVE-2025-6020](https://nvd.nist.gov/vuln/detail/CVE-2025-6020)" "CVE cell links to NVD"
+# affects cell: count of images plus the affected releases, arch collapsed. CVE-2025-6020
+# is in both arches of php8.5-v5.2, which is ONE logical image on release v5.2.
+assert_contains "$TBL" "| 1 image · v5.2 |" "affects cell collapses arch to one image and names the release"
+# kernel-header rows never appear in a table, even at CRITICAL
+assert_not_contains "$TBL" "linux-libc-dev" "linux-libc-dev excluded from tables"
+assert_not_contains "$TBL" "CVE-2026-0001" "the CRITICAL kernel-header CVE is excluded"
+# severity filter is respected
+assert_not_contains "$TBL" "CVE-2024-7883" "MEDIUM CVE absent from a CRITICAL,HIGH table"
+
+TBL_MED="$("${ROOT}/.github/scripts/cve-render-table.sh" "$AGG" MEDIUM)"
+assert_contains "$TBL_MED" "CVE-2024-7883" "MEDIUM CVE present in a MEDIUM table"
+assert_not_contains "$TBL_MED" "CVE-2025-6020" "HIGH CVE absent from a MEDIUM table"
+assert_not_contains "$TBL_MED" "## " "title omitted when no third argument is given"
+
+# a severity with no rows renders a placeholder line, not an empty table
+TBL_NONE="$("${ROOT}/.github/scripts/cve-render-table.sh" "$AGG" UNKNOWN)"
+assert_contains "$TBL_NONE" "_No CVEs in this severity range._" "empty slice renders a placeholder"
+
+echo "== cve-size-guard.sh =="
+SG_SMALL="$(mktemp)"; tmpdirs+=("$SG_SMALL"); printf 'tiny' > "$SG_SMALL"
+sgOut="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_SMALL")"; sgRc=$?
+assert_eq "$sgRc" "0" "size guard exits 0 for a small file"
+assert_not_contains "$sgOut" "::warning::" "no warning for a small file"
+
+SG_BIG="$(mktemp)"; tmpdirs+=("$SG_BIG"); head -c 950 /dev/zero | tr '\0' 'x' > "$SG_BIG"
+sgOut2="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_BIG" 1000)"; sgRc2=$?
+assert_eq "$sgRc2" "0" "size guard exits 0 even when warning (never fails a release)"
+assert_contains "$sgOut2" "::warning::" "warns at 95% of the limit"
+assert_contains "$sgOut2" "950" "warning names the actual byte size"
+
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
