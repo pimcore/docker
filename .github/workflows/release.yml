@@ -582,6 +582,17 @@ jobs:
                         exit 0
                     fi
 
+                    # The report covers EVERY published stable release (v2.3 … v5.2) regardless of
+                    # which branch dispatched the run, but it is committed to the dispatching
+                    # branch. GitHub Pages serves one branch, so a run dispatched from anywhere
+                    # other than REPORT_BRANCH updates a copy nobody reads and leaves the published
+                    # site silently stale. Warn loudly rather than fail -- the images are already
+                    # published and the report must never gate a release.
+                    REPORT_BRANCH=5.x
+                    if [ "${GITHUB_REF_NAME}" != "$REPORT_BRANCH" ]; then
+                        echo "::warning::Known-CVE report is being committed to '${GITHUB_REF_NAME}', not '${REPORT_BRANCH}'. If GitHub Pages publishes from ${REPORT_BRANCH}/docs, the published report will not reflect this run."
+                    fi
+
                     git config user.name  "github-actions[bot]"
                     git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                     git add docs/known-cves.md docs/known-cves-medium.md docs/known-cves-low.md
