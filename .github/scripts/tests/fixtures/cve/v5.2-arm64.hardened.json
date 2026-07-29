@@ -1,0 +1,3 @@
+{"ArtifactName":"pimcore/pimcore:php8.5-v5.2-hardened-arm64","Results":[{"Target":"debian","Class":"os-pkgs","Type":"debian","Vulnerabilities":[
+{"VulnerabilityID":"CVE-2025-6020","PkgName":"libpam0g","Severity":"HIGH","InstalledVersion":"1.5.3-7","FixedVersion":""}
+]}]}

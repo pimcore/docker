@@ -314,29 +314,83 @@ CF="$cf3" RETRY_DELAY=0 RETRY_MAX=2 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) 
 "$WR" >/dev/null 2>&1; rc=$?
 [ "$rc" = 2 ] && echo "  ok: no-args -> exit 2 (usage)" || { echo "  FAIL: no-args rc $rc (want 2)"; fail=1; }
 
-echo "== generate-cve-report.sh =="
+echo "== cve-aggregate.sh =="
 CVE_FIX="${ROOT}/.github/scripts/tests/fixtures/cve"
-CVE_OUT="$(bash "${ROOT}/.github/scripts/generate-cve-report.sh" "$CVE_FIX" "2026-07-16 02:41 UTC" 2>/tmp/cve-err)"; CVE_RC=$?
-assert_eq "$CVE_RC" "0" "generate-cve-report exits 0"
-# digests table: full digest for a published image
-assert_contains "$CVE_OUT" "sha256:1f3a9c4e2b7d05a8c1e6f4b9d3072a5e8c1b6f0d4a7e2c9b5083f1d6a4c7e2b90" "full plain digest in digests table"
-assert_contains "$CVE_OUT" "sha256:8ad4c17b93e0a5d2f4681c9b0e3a7d5c2b8f1069a4e7c3b05d9f28a1c6e4b0f37" "full hardened digest in digests table"
-assert_contains "$CVE_OUT" "not published this run" "unpublished hardened shown in digests table"
-# fixed row: short PLAIN digest pointer + old->new + fixed status
-assert_contains "$CVE_OUT" "| \`1f3a9c4e2b7d\` | CVE-2024-45491 | HIGH | libexpat1 | ✅ fixed · 2.6.2-1 → 2.6.2-2+deb13u1 |" "fixed row rendered with plain short digest and version bump"
-# residual row: short HARDENED digest pointer + no fix
-assert_contains "$CVE_OUT" "| \`8ad4c17b93e0\` | CVE-2025-6020 | HIGH | libpam0g | ⚠️ residual · no fix |" "residual row rendered with hardened short digest"
-# unpublished-hardened image: residual rows use 'unpublished' pointer + unpatched status
-# hardened not produced: plain IS still published, so the row points at the PLAIN short digest
-assert_contains "$CVE_OUT" "| \`44bec0a1d2e3\` | CVE-2024-7883 | MEDIUM | libxml2 | ⚠️ unpatched · hardened not produced |" "unpublished-hardened variant lists plain CVEs as unpatched (plain digest pointer)"
-assert_contains "$CVE_OUT" "Development / rolling tags" "header notes dev exclusion"
-# Regression: one CVE id affecting two packages, fixed on one (pkga) and residual on
-# the other (pkgb) -- the fixed-set query must key on id+package (exact), not id
-# alone, or the pkga row silently vanishes from BOTH tables (see fixture
-# v5.2-multipkg-amd64: CVE-2025-9999 present in plain for pkga+pkgb, hardened only
-# still has pkgb).
-assert_contains "$CVE_OUT" "| \`dd81d549a32e\` | CVE-2025-9999 | HIGH | pkga | ✅ fixed · 1.0 → 1.1 |" "same CVE id fixed on one package (id+package keying)"
-assert_contains "$CVE_OUT" "| \`d07739baf7cd\` | CVE-2025-9999 | HIGH | pkgb | ⚠️ residual · no fix |" "same CVE id residual on a different package (id+package keying)"
+AGG="$(mktemp)"; tmpdirs+=("$AGG")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$CVE_FIX" "2026-07-29 12:00 UTC" > "$AGG" 2>/tmp/agg-err; AGG_RC=$?
+assert_eq "$AGG_RC" "0" "cve-aggregate exits 0"
+assert_eq "$(jq -e 'type' "$AGG" 2>/dev/null | tr -d '"')" "object" "cve-aggregate emits a JSON object"
+assert_eq "$(jq -r '.generated' "$AGG")" "2026-07-29 12:00 UTC" "timestamp passed through"
+
+# hardened_state classification, all three branches
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-v5.2" and .arch=="amd64") | .hardened_state' "$AGG")" \
+    "patched" "differing digests -> patched"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-min-v5.2") | .hardened_state' "$AGG")" \
+    "identical" "equal plain/hardened digests -> identical"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-debug-v5.2") | .hardened_state' "$AGG")" \
+    "not-produced" "unpublished hardened digest -> not-produced"
+
+# affects collapsing: one CVE+pkg+status row spans both arches of php8.5-v5.2
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-6020" and .pkg=="libpam0g")] | length' "$AGG")" \
+    "1" "same CVE+pkg+status across two arches is ONE row"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-6020" and .pkg=="libpam0g") | .affects | length' "$AGG")" \
+    "2" "that row affects two image entries"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-6020") | .affects | (unique | length)' "$AGG")" \
+    "2" "affects has no duplicate indices"
+
+# every affects index is a valid images[] index
+assert_eq "$(jq -r '(.images|length) as $n | [.cves[].affects[] | select(. < 0 or . >= $n)] | length' "$AGG")" \
+    "0" "all affects indices are in range"
+
+# REGRESSION (moved from generate-cve-report.sh): one CVE id on two packages, fixed on
+# pkga and residual on pkgb. Keying on id alone merges these and loses a row.
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-9999" and .pkg=="pkga") | .status' "$AGG")" \
+    "fixed" "multipkg: CVE-2025-9999 fixed on pkga (id+pkg keying)"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-9999" and .pkg=="pkgb") | .status' "$AGG")" \
+    "residual" "multipkg: CVE-2025-9999 residual on pkgb (id+pkg keying)"
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-9999")] | length' "$AGG")" \
+    "2" "multipkg: both package rows survive"
+
+# fixed rows carry the version bump; residual rows carry the fix availability
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2024-45491") | .fix' "$AGG")" \
+    "2.6.2-1 → 2.6.2-2+deb13u1" "fixed row records old -> new version"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-6020") | .fix' "$AGG")" \
+    "no fix" "residual row with no upstream fix says so"
+
+# not-produced image yields unpatched rows
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2024-7883") | .status' "$AGG")" \
+    "unpatched" "image without hardened scan yields unpatched rows"
+
+# per-image severity counts and fixable_count
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-min-v5.2") | .counts.CRITICAL' "$AGG")" \
+    "1" "min image counts its CRITICAL row"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-min-v5.2") | .fixable_count' "$AGG")" \
+    "0" "min image has nothing fixable"
+assert_eq "$(jq -r '.images[] | select(.image=="php8.5-v5.2" and .arch=="amd64") | .fixable_count' "$AGG")" \
+    "1" "amd64 default image has one fixable CVE"
+
+# kernel-header rows are PRESENT in the canonical data (renderers exclude them, not this)
+assert_eq "$(jq -r '[.cves[] | select(.pkg=="linux-libc-dev")] | length' "$AGG")" \
+    "1" "linux-libc-dev row retained in canonical JSON"
+
+# empty input is valid, not an error
+EMPTY_DIR="$(mktemp -d)"; tmpdirs+=("$EMPTY_DIR")
+EMPTY_OUT="$("${ROOT}/.github/scripts/cve-aggregate.sh" "$EMPTY_DIR" "2026-07-29 12:00 UTC")"; EMPTY_RC=$?
+assert_eq "$EMPTY_RC" "0" "empty data dir exits 0"
+assert_eq "$(printf '%s' "$EMPTY_OUT" | jq -r '.images | length')" "0" "empty data dir -> zero images"
+assert_eq "$(printf '%s' "$EMPTY_OUT" | jq -r '.cves | length')" "0" "empty data dir -> zero cves"
+
+# Malformed Trivy JSON must FAIL CLOSED -- abort non-zero with no output -- rather than
+# emit a partial report that silently under-reports CVEs. A truncated or half-written
+# scan file is the realistic failure here.
+BAD_DIR="$(mktemp -d)"; tmpdirs+=("$BAD_DIR")
+cp "${CVE_FIX}/v5.2-amd64.meta.json" "${CVE_FIX}/v5.2-amd64.hardened.json" "$BAD_DIR/"
+printf '{"Results":[ THIS IS NOT JSON' > "${BAD_DIR}/v5.2-amd64.plain.json"
+BAD_OUT="$(mktemp)"; tmpdirs+=("$BAD_OUT")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$BAD_DIR" "2026-07-29 12:00 UTC" > "$BAD_OUT" 2>/dev/null; BAD_RC=$?
+[ "$BAD_RC" != "0" ] && echo "  ok: malformed Trivy JSON exits non-zero ($BAD_RC)" \
+    || { echo "  FAIL: malformed Trivy JSON exited 0 -- would emit a partial report"; fail=1; }
+assert_eq "$(wc -c < "$BAD_OUT" | tr -d ' ')" "0" "malformed input produces no partial output"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
