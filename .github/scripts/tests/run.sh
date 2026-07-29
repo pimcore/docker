@@ -407,5 +407,40 @@ BAD_OUT="$(mktemp)"; tmpdirs+=("$BAD_OUT")
     || { echo "  FAIL: malformed Trivy JSON exited 0 -- would emit a partial report"; fail=1; }
 assert_eq "$(wc -c < "$BAD_OUT" | tr -d ' ')" "0" "malformed input produces no partial output"
 
+echo "== cve-render-summary.sh =="
+SUM="$("${ROOT}/.github/scripts/cve-render-summary.sh" "$AGG")"; SUM_RC=$?
+assert_eq "$SUM_RC" "0" "cve-render-summary exits 0"
+assert_contains "$SUM" "# Known CVEs & hardening report" "summary has the H1 title"
+assert_contains "$SUM" "_Generated 2026-07-29 12:00 UTC._" "summary states the generation time"
+assert_contains "$SUM" "## Hardening outcome" "summary leads with the hardening outcome"
+# fixtures DO have fixable CVEs, so the outcome must report them rather than the no-fix wording
+assert_contains "$SUM" "fixable CVE(s)" "fixable CVEs present -> reports the count"
+assert_not_contains "$SUM" "No fixable CVE was available upstream" "does not claim zero fixable when there are some"
+# a not-produced image exists in the fixtures, so the caveat sentence must fire
+assert_contains "$SUM" "Some images have no" "not-produced images are called out"
+
+assert_contains "$SUM" "## Severity totals" "summary has severity totals"
+assert_contains "$SUM" "## Not tabulated" "summary discloses what is excluded"
+assert_contains "$SUM" "linux-libc-dev" "kernel-header exclusion named"
+assert_contains "$SUM" "not reachable inside these images" "exclusion is justified, not just stated"
+assert_contains "$SUM" "## CVEs by variant" "summary breaks CVEs down by variant"
+assert_contains "$SUM" "## Most-affected packages" "summary lists worst packages"
+assert_contains "$SUM" "## Images" "summary has the per-image table"
+# per-image row: min variant, 12-char short digest, identical hardening
+assert_contains "$SUM" "| \`php8.5-min-v5.2\` | amd64 " "per-image row present for the min variant"
+assert_contains "$SUM" "| identical | \`cc33dd44ee55\` |" "per-image row shows hardening state and short digest"
+
+# the summary must stay small enough to read
+SUM_BYTES=$(printf '%s' "$SUM" | wc -c)
+[ "$SUM_BYTES" -lt 10240 ] && echo "  ok: summary under 10 KB ($SUM_BYTES bytes)" \
+    || { echo "  FAIL: summary is $SUM_BYTES bytes, want < 10240"; fail=1; }
+
+# empty input must render a no-data summary, not crash
+EMPTY_AGG="$(mktemp)"; tmpdirs+=("$EMPTY_AGG")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$EMPTY_DIR" "2026-07-29 12:00 UTC" > "$EMPTY_AGG"
+ESUM="$("${ROOT}/.github/scripts/cve-render-summary.sh" "$EMPTY_AGG")"; ESUM_RC=$?
+assert_eq "$ESUM_RC" "0" "summary of empty data exits 0"
+assert_contains "$ESUM" "# Known CVEs & hardening report" "empty summary still has a title"
+
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
