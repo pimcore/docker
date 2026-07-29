@@ -430,6 +430,51 @@ assert_contains "$SUM" "## Images" "summary has the per-image table"
 assert_contains "$SUM" "| \`php8.5-min-v5.2\` | amd64 " "per-image row present for the min variant"
 assert_contains "$SUM" "| identical | \`cc33dd44ee55\` |" "per-image row shows hardening state and short digest"
 
+# --- Fix round: pin computed values, not just headings ---
+# The four checks below target sections whose only prior coverage was a heading grep
+# (assert_contains on "## Severity totals" etc.), which a wrong select/group_by/sort_by/
+# aggregation could sail straight through. Expected numbers are hand-derived from the raw
+# fixture Trivy JSON (see task-2-report.md fix-round section for the full working), then
+# cross-checked against the aggregated JSON's .cves/.images arrays independently of this
+# script -- not copied from this script's own output.
+
+# Hardening outcome: exact fixable count. 5 = sum of fixable_count across all 7 images
+# (v5.2-amd64:1, v5.2-arm64:1, debug:0, min:0, multipkg:1, statusmix-a:1, statusmix-b:1).
+assert_contains "$SUM" "**5 fixable CVE(s)**" "hardening outcome pins the exact fixable count (5)"
+
+# Severity totals: HIGH pins 4 distinct CVEs / 6 rows (libexpat1 fixed, libpam0g residual,
+# libfoo1 fixed+residual, pkga fixed, pkgb residual -- ids: CVE-2024-45491, CVE-2025-6020,
+# CVE-2025-7777, CVE-2025-9999). MEDIUM pins 1/1 (libxml2, CVE-2024-7883). Asserting a SECOND,
+# differently-valued severity row (not just HIGH) also catches a regression that hardcodes the
+# severity comparison to "HIGH" -- that would leave the HIGH row itself unchanged but corrupt
+# every other row, which a HIGH-only assertion would miss.
+assert_contains "$SUM" "| HIGH | 4 | 6 |" "severity totals: HIGH row pins distinct/row counts"
+assert_contains "$SUM" "| MEDIUM | 1 | 1 |" "severity totals: MEDIUM row pins distinct/row counts (catches a hardcoded-severity regression the HIGH row alone would miss)"
+
+# CVEs by variant: default pins 4 distinct CVEs / 5 images (the 5 default-variant images:
+# v5.2 amd64+arm64, multipkg, statusmix-a, statusmix-b). debug pins 1/1 (libxml2 image only).
+assert_contains "$SUM" "| \`default\` | 4 | 5 |" "CVEs by variant: default row pins distinct-CVE/image counts"
+assert_contains "$SUM" "| \`debug\` | 1 | 1 |" "CVEs by variant: debug row pins distinct-CVE/image counts"
+# Order matters here (descending by CVE count): assert_contains cannot verify adjacency/order
+# for a multi-line needle -- grep -F treats a newline in the pattern as an OR of separate
+# line-patterns, not a contiguous block match (confirmed empirically) -- so check line
+# position directly instead.
+variant_default_line="$(printf '%s\n' "$SUM" | grep -nF -- '| `default` | 4 | 5 |' | head -1 | cut -d: -f1)"
+variant_debug_line="$(printf '%s\n' "$SUM" | grep -nF -- '| `debug` | 1 | 1 |' | head -1 | cut -d: -f1)"
+if [ -n "$variant_default_line" ] && [ -n "$variant_debug_line" ] && [ "$variant_default_line" -lt "$variant_debug_line" ]; then
+    echo "  ok: CVEs by variant: default (4 CVEs) sorts before debug (1 CVE) -- descending order"
+else
+    echo "  FAIL: CVEs by variant: expected default row before debug row (default@${variant_default_line:-?}, debug@${variant_debug_line:-?})"
+    fail=1
+fi
+
+# Most-affected packages: libexpat1 pins one row whose OWN affects=[0,1] already spans two
+# images; libfoo1 pins the union of TWO SEPARATE rows (fixed row affects=[5], residual row
+# affects=[6], same CVE-2025-7777) into 2 images -- a regression that fails to union affects
+# across rows sharing a package, or mis-keys the grouping, would corrupt one or both of these.
+assert_contains "$SUM" "| \`libexpat1\` | 1 | 2 |" "most-affected packages: libexpat1 row pins distinct-CVE/image counts"
+assert_contains "$SUM" "| \`libfoo1\` | 1 | 2 |" "most-affected packages: libfoo1 row pins the union of two separate rows' affects into 2 images"
+
 # the summary must stay small enough to read
 SUM_BYTES=$(printf '%s' "$SUM" | wc -c)
 [ "$SUM_BYTES" -lt 10240 ] && echo "  ok: summary under 10 KB ($SUM_BYTES bytes)" \
