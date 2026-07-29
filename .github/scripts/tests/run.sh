@@ -495,8 +495,13 @@ assert_contains "$TBL" "| CVE | Severity | Package | Status | Affects |" "table 
 # CVE cell is an NVD link
 assert_contains "$TBL" "[CVE-2025-6020](https://nvd.nist.gov/vuln/detail/CVE-2025-6020)" "CVE cell links to NVD"
 # affects cell: count of images plus the affected releases, arch collapsed. CVE-2025-6020
-# is in both arches of php8.5-v5.2, which is ONE logical image on release v5.2.
-assert_contains "$TBL" "| 1 image · v5.2 |" "affects cell collapses arch to one image and names the release"
+# is in both arches of php8.5-v5.2, which is ONE logical image on release v5.2. Pin the
+# COMPLETE row (not just the "| 1 image · v5.2 |" substring): every other row in this
+# slice already maps to a single-arch image, so that substring appears elsewhere in the
+# table even if the amd64+arm64 collapse for THIS row breaks (a dropped `unique` on the
+# label list would turn this exact row into "2 images · v5.2" while the substring alone
+# still matched a different, unrelated row).
+assert_contains "$TBL" "| [CVE-2025-6020](https://nvd.nist.gov/vuln/detail/CVE-2025-6020) | HIGH | \`libpam0g\` | residual · no fix | 1 image · v5.2 |" "CVE-2025-6020 full row: arch-collapsed to one image on v5.2"
 # kernel-header rows never appear in a table, even at CRITICAL
 assert_not_contains "$TBL" "linux-libc-dev" "linux-libc-dev excluded from tables"
 assert_not_contains "$TBL" "CVE-2026-0001" "the CRITICAL kernel-header CVE is excluded"
@@ -518,11 +523,23 @@ sgOut="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_SMALL")"; sgRc=$?
 assert_eq "$sgRc" "0" "size guard exits 0 for a small file"
 assert_not_contains "$sgOut" "::warning::" "no warning for a small file"
 
-SG_BIG="$(mktemp)"; tmpdirs+=("$SG_BIG"); head -c 950 /dev/zero | tr '\0' 'x' > "$SG_BIG"
-sgOut2="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_BIG" 1000)"; sgRc2=$?
-assert_eq "$sgRc2" "0" "size guard exits 0 even when warning (never fails a release)"
-assert_contains "$sgOut2" "::warning::" "warns at 95% of the limit"
-assert_contains "$sgOut2" "950" "warning names the actual byte size"
+# Pin the exact 90% threshold AND the >= boundary, not just "some big file warns".
+# limit=1000 -> threshold = 1000*90/100 = 900 exactly (integer division has no
+# remainder here, so the boundary is unambiguous). A file of exactly 900 bytes must
+# warn -- this pins both the 90% figure and the >= operator (a >= -> > regression
+# would stop warning exactly at this boundary). A file of exactly 899 bytes must NOT
+# warn -- this pins the threshold from the other side (a lowered threshold, e.g. 50%,
+# would incorrectly warn at 899 too, since 899 is nowhere near 500).
+SG_AT="$(mktemp)"; tmpdirs+=("$SG_AT"); head -c 900 /dev/zero | tr '\0' 'x' > "$SG_AT"
+sgOutAt="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_AT" 1000)"; sgRcAt=$?
+assert_eq "$sgRcAt" "0" "size guard exits 0 even when warning (never fails a release)"
+assert_contains "$sgOutAt" "::warning::" "warns at exactly the 90% boundary (900 of 1000 bytes)"
+assert_contains "$sgOutAt" "900" "warning names the actual byte size"
+
+SG_BELOW="$(mktemp)"; tmpdirs+=("$SG_BELOW"); head -c 899 /dev/zero | tr '\0' 'x' > "$SG_BELOW"
+sgOutBelow="$("${ROOT}/.github/scripts/cve-size-guard.sh" "$SG_BELOW" 1000)"; sgRcBelow=$?
+assert_eq "$sgRcBelow" "0" "size guard exits 0 one byte below the threshold"
+assert_not_contains "$sgOutBelow" "::warning::" "does not warn one byte below the 90% boundary (899 of 1000 bytes)"
 
 echo; [ "$fail" = "0" ] && echo "ALL TESTS PASSED" || echo "TESTS FAILED"
 exit "$fail"
