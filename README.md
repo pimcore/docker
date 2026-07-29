@@ -71,12 +71,21 @@ Attaching is best-effort (it's skipped if the registry rejects OCI referrers), s
 
 ## Known CVEs
 
-For every **published stable release image** we publish a per-architecture CVE and patch
-report: [`docs/known-cves.md`](docs/known-cves.md). For each image it lists the plain and
-Copa-hardened image digests, the CVEs Copa **fixed** (with the library version bump), and
-the **residual** known CVEs still present in the hardened image (including CVEs with no
-upstream fix yet). It is regenerated on each publish. Development / rolling (`-dev`) tags are
-plain-only and are not covered.
+For every **published stable release image** we publish a CVE and hardening report,
+regenerated on each publish: [`docs/known-cves.md`](docs/known-cves.md). It opens with the
+hardening outcome, per-severity totals, a per-variant breakdown (variants differ by more
+than an order of magnitude), the worst-affected packages, and a per-image table of severity
+counts and digests. Critical and high severity CVEs are listed in full there; the remaining
+severities are split into [`docs/known-cves-medium.md`](docs/known-cves-medium.md) and
+[`docs/known-cves-low.md`](docs/known-cves-low.md) so every file stays within GitHub's
+rendering limit.
+
+Kernel-header (`linux-libc-dev`) CVEs are excluded from the tables — a container runs on the
+host kernel, so they are not reachable inside these images — and the summary states how many
+were excluded. The complete machine-readable data, including those rows, is the
+`cve-report-json` artifact on the corresponding release workflow run.
+
+Development / rolling (`-dev`) tags are plain-only and are not covered.
 
 ## Container registries
 Our images are available on both Docker Hub and the GitHub Container Registry, so you can choose the one that best fits your workflow.
