@@ -351,6 +351,21 @@ assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-9999" and .pkg=="pkgb") | .s
 assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-9999")] | length' "$AGG")" \
     "2" "multipkg: both package rows survive"
 
+# REGRESSION (status must be part of the key): the SAME (CVE id, package) pair is
+# fixed in one image (statusmix-a: absent from that image's hardened scan) and
+# residual in another (statusmix-b: still present in that image's hardened scan).
+# Dropping `status` from the group_by key (i.e. grouping on [.id,.pkg] alone) would
+# silently collapse these into ONE row and lose a status -- unlike the multipkg
+# case above, .pkg alone cannot distinguish these two rows, only .status can.
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1")] | length' "$AGG")" \
+    "2" "status-mix: same (id,pkg) fixed in one image + residual in another stays TWO rows"
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1") | .status] | sort | join(",")' "$AGG")" \
+    "fixed,residual" "status-mix: both statuses present, not merged into one"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1" and .status=="fixed") | .affects | length' "$AGG")" \
+    "1" "status-mix: fixed row affects exactly the image where it was fixed"
+assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2025-7777" and .pkg=="libfoo1" and .status=="residual") | .affects | length' "$AGG")" \
+    "1" "status-mix: residual row affects exactly the image where it is residual"
+
 # fixed rows carry the version bump; residual rows carry the fix availability
 assert_eq "$(jq -r '.cves[] | select(.id=="CVE-2024-45491") | .fix' "$AGG")" \
     "2.6.2-1 → 2.6.2-2+deb13u1" "fixed row records old -> new version"
