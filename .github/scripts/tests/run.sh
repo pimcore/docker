@@ -443,10 +443,11 @@ assert_contains "$SUM" "| identical | \`cc33dd44ee55\` |" "per-image row shows h
 # (v5.2-amd64:1, v5.2-arm64:1, debug:0, min:0, multipkg:1, statusmix-a:1, statusmix-b:1).
 #
 # M1: the number is a SUM of per-image counts, not a count of CVEs, and it is measured on
-# the full plain scan while Copa only patches CRITICAL/HIGH OS packages -- on these very
-# fixtures it is 5 while the tables carry 3 `fixed` rows. So the wording is pinned too, not
-# just the digit: it must name what the number is ("fix-available findings"), must NOT call
-# it N CVEs, and must NOT point the reader at `fixed` rows it cannot guarantee exist.
+# the full plain scan (OS + library packages) while the scan that feeds Copa is restricted
+# to OS packages -- on these very fixtures it is 5 while the tables carry 3 `fixed` rows. So
+# the wording is pinned too, not just the digit: it must name what the number is
+# ("fix-available findings"), must NOT call it N CVEs, and must NOT point the reader at
+# `fixed` rows it cannot guarantee exist.
 assert_contains "$SUM" "**5 fix-available findings** were seen across all images" "hardening outcome pins the exact summed fix-available count (5) and describes it as a summed finding count, not a CVE count"
 assert_contains "$SUM" "not a count of \`fixed\` rows" "hardening outcome disclaims the fixed-row equivalence (5 summed findings vs 3 fixed rows in these fixtures)"
 assert_not_contains "$SUM" "fixable CVE(s)** were available upstream" "hardening outcome no longer presents the multiplied sum as a CVE count"
@@ -455,6 +456,18 @@ assert_not_contains "$SUM" "see the \`fixed\` rows in the tables below" "hardeni
 # does differ from the number of `fixed` rows (3) on these fixtures, so any wording that
 # equates the two is provably wrong here.
 assert_eq "$(jq -r '[.cves[] | select(.status=="fixed")] | length' "$AGG")" "3" "fixtures really do have 3 fixed rows against a summed fix-available count of 5 (the M1 mismatch is live, not hypothetical)"
+
+# F4(a): WHY the summed count is only an upper bound. scan-patch-gate.sh scans Copa input
+# with `trivy image --pkg-types os --ignore-unfixed` and NO --severity filter, so Copa
+# receives fixable OS vulnerabilities at EVERY severity; the CRITICAL,HIGH threshold
+# (GATE_SEVERITY) applies only to the separate post-patch gate scan that decides whether the
+# -hardened tag ships. The one real difference is package scope: this report scans OS AND
+# library packages. The old wording blamed severity and was simply false, so the reason is
+# pinned here -- a plausible-sounding but wrong explanation in a security report is worse
+# than no explanation, and only an assertion stops it drifting back.
+assert_contains "$SUM" "measured on the full scan, which covers OS **and library** packages, while the scan that feeds Copa is restricted to OS packages" "hardening outcome gives the CORRECT reason the summed count is an upper bound (package scope: OS + library vs OS only)"
+assert_not_contains "$SUM" "Copa patches only CRITICAL/HIGH OS packages" "hardening outcome no longer claims Copa patches only CRITICAL/HIGH (the Copa input scan carries no --severity filter)"
+assert_not_contains "$SUM" "CRITICAL/HIGH OS" "no CRITICAL/HIGH Copa-scope claim survives anywhere in the summary"
 
 # I2(a): the exact CRITICAL severity-totals row. The ONLY CRITICAL in the fixtures is a
 # linux-libc-dev row, so a renderer that stops excluding kernel rows turns this into
@@ -468,6 +481,14 @@ assert_contains "$SUM" "| CRITICAL | 0 | 0 |" "severity totals: CRITICAL row is 
 assert_contains "$SUM" "**1 \`linux-libc-dev\` row (1 distinct CVE) is excluded from the tables.**" "not-tabulated sentence pins the exact kernel row/CVE counts and reads grammatically at count 1"
 assert_not_contains "$SUM" "rows (1 distinct CVEs)" "not-tabulated sentence is not the ungrammatical plural form at count 1"
 
+# F3: the excluded rows are recoverable, and the pointer must name the thing a reader can
+# actually download. release.yml uploads an artifact NAMED cve-report-json whose CONTENT is
+# cve-data.json; the old text called the artifact itself `cve-data.json`, which matches
+# nothing on the run page and disagrees with README.md. Both halves are pinned so neither
+# the file name nor the artifact name can drift out again.
+assert_contains "$SUM" "They remain in \`cve-data.json\`, uploaded as the \`cve-report-json\` artifact on the release run." "not-tabulated section names the artifact by its real name (cve-report-json) and the file inside it (cve-data.json), consistent with README.md"
+assert_not_contains "$SUM" "the machine-readable \`cve-data.json\` artifact" "no artifact called cve-data.json is claimed (no such artifact exists)"
+
 # I1: the Images table carries raw scan totals INCLUDING the un-tabulated kernel rows, so it
 # legitimately disagrees with every other count here. That must be stated under the table, or
 # the min row below (CRIT 1, with no CRITICAL anywhere in the three tables) reads as a
@@ -475,6 +496,11 @@ assert_not_contains "$SUM" "rows (1 distinct CVEs)" "not-tabulated sentence is n
 assert_contains "$SUM" "raw Trivy totals for the image as published" "Images table footnote declares the counts as raw scan totals"
 assert_contains "$SUM" "1 un-tabulated \`linux-libc-dev\` row" "Images table footnote names the un-tabulated kernel rows it includes (exact count, singular)"
 assert_contains "$SUM" "| \`php8.5-min-v5.2\` | amd64 | 1 | 0 | 0 | 1 | 0 | 0 | identical |" "Images row for min pins the raw CRIT=1 the footnote has to explain (the row the reviewer could not trace to any table)"
+
+# F4(b): the SECOND place the old Copa-scope claim appeared. Same correction as F4(a): the
+# Fixable column is wider than what Copa can act on because of package scope, not severity.
+assert_contains "$SUM" "wider than the OS-packages-only scope of the scan that feeds Copa -- severity plays no part in that difference" "Images footnote gives the CORRECT reason Fixable exceeds what Copa can patch, and explicitly rules out severity"
+assert_not_contains "$SUM" "measured across all severities and both OS and library packages, wider than" "Images footnote no longer presents all-severities as a reason Fixable is wider than Copa scope"
 
 # Severity totals: HIGH pins 4 distinct CVEs / 6 rows (libexpat1 fixed, libpam0g residual,
 # libfoo1 fixed+residual, pkga fixed, pkgb residual -- ids: CVE-2024-45491, CVE-2025-6020,
@@ -558,6 +584,65 @@ assert_not_contains "$TBL_MED" "## " "title omitted when no third argument is gi
 # a severity with no rows renders a placeholder line, not an empty table
 TBL_NONE="$("${ROOT}/.github/scripts/cve-render-table.sh" "$AGG" UNKNOWN)"
 assert_contains "$TBL_NONE" "_No CVEs in this severity range._" "empty slice renders a placeholder"
+
+echo "== cve edge cases: divergent fix per base, non-CVE identifiers =="
+# A SEPARATE fixture set, deliberately. Both regressions below need image rows the main
+# fixture set does not have, and adding them there would move every hand-derived number
+# pinned above (the fixable sum, the severity totals, the per-variant counts) for reasons
+# unrelated to what is under test. Isolated, each fixture set stays independently derivable.
+#
+# cve-edge holds two images whose SAME (id, pkg, status, severity) finding carries a
+# DIFFERENT `fix` string -- exactly what the three Debian bases in one report run produce,
+# since the `fixed` branch renders InstalledVersion + " -> " + FixedVersion and Debian
+# versions differ per release. edge-a: libbar1 1.1.3-4.1 -> 1.1.3-4.1+deb12u1.
+# edge-b: libbar1 1.2.1-2 -> 1.2.1-2+deb13u1. edge-a also carries a TEMP-* Debian
+# security-tracker identifier, which has no NVD page.
+CVE_EDGE="${ROOT}/.github/scripts/tests/fixtures/cve-edge"
+EDGE="$(mktemp)"; tmpdirs+=("$EDGE")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$CVE_EDGE" "2026-07-29 12:00 UTC" > "$EDGE"; EDGE_RC=$?
+assert_eq "$EDGE_RC" "0" "edge-fixture aggregate exits 0"
+
+# F1: the group key must carry EVERY rendered attribute. A group is collapsed to one row
+# rendering .[0] of each field, so an attribute left out of the key gets ONE member of the
+# group attributed to all of them. Keying on [.id,.pkg,.status] alone merges the two rows
+# below and reports edge-a version pair for edge-b as well.
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-8888")] | length' "$EDGE")" "2" \
+    "divergent fix: one (id,pkg,status) with two different fix strings stays TWO rows"
+assert_eq "$(jq -r '[.cves[] | select(.id=="CVE-2025-8888") | .fix] | sort | join(" ; ")' "$EDGE")" \
+    "1.1.3-4.1 → 1.1.3-4.1+deb12u1 ; 1.2.1-2 → 1.2.1-2+deb13u1" \
+    "divergent fix: both version pairs survive verbatim, neither overwritten by the other"
+# Each row must point at exactly the ONE image its versions were measured on. Asserted
+# through the image NAME rather than the raw affects index, so a reordering of images[]
+# cannot let a wrong attribution pass.
+assert_eq "$(jq -r '.images as $i | .cves[] | select(.id=="CVE-2025-8888" and .fix=="1.1.3-4.1 → 1.1.3-4.1+deb12u1") | [.affects[] | $i[.].image] | join(",")' "$EDGE")" \
+    "php8.5-edge-a-v5.2" "divergent fix: the deb12u1 row affects edge-a and nothing else"
+assert_eq "$(jq -r '.images as $i | .cves[] | select(.id=="CVE-2025-8888" and .fix=="1.2.1-2 → 1.2.1-2+deb13u1") | [.affects[] | $i[.].image] | join(",")' "$EDGE")" \
+    "php8.5-edge-b-v5.2" "divergent fix: the deb13u1 row affects edge-b and nothing else"
+
+# The same property at the RENDERED level -- the merge only does harm because these version
+# strings reach a reader as fact about a specific image.
+EDGE_TBL="$("${ROOT}/.github/scripts/cve-render-table.sh" "$EDGE" CRITICAL,HIGH)"
+assert_contains "$EDGE_TBL" "| [CVE-2025-8888](https://nvd.nist.gov/vuln/detail/CVE-2025-8888) | HIGH | \`libbar1\` | fixed · 1.1.3-4.1 → 1.1.3-4.1+deb12u1 | 1 image · v5.2 |" \
+    "divergent fix: edge-a version pair renders as its own single-image row"
+assert_contains "$EDGE_TBL" "| [CVE-2025-8888](https://nvd.nist.gov/vuln/detail/CVE-2025-8888) | HIGH | \`libbar1\` | fixed · 1.2.1-2 → 1.2.1-2+deb13u1 | 1 image · v5.2 |" \
+    "divergent fix: edge-b version pair renders as its own single-image row"
+assert_not_contains "$EDGE_TBL" "2 images · v5.2" \
+    "divergent fix: no merged two-image row claiming one version pair for both bases"
+
+# F2: Trivy Debian data carries security-tracker placeholders (TEMP-*) for issues with no CVE
+# assigned yet. https://nvd.nist.gov/vuln/detail/TEMP-0000000-F7A20F is a guaranteed 404, so
+# only CVE-* identifiers may be linked.
+EDGE_LOW="$("${ROOT}/.github/scripts/cve-render-table.sh" "$EDGE" LOW,UNKNOWN)"
+assert_contains "$EDGE_LOW" "| \`TEMP-0000000-F7A20F\` | LOW | \`zlib1g\` | residual · no fix | 1 image · v5.2 |" \
+    "TEMP-* identifier renders as plain inline code (full row pinned), not as a link"
+assert_not_contains "$EDGE_LOW" "nvd.nist.gov/vuln/detail/TEMP" \
+    "TEMP-* identifier gets no NVD URL"
+assert_not_contains "$EDGE_LOW" "[TEMP-0000000-F7A20F]" \
+    "TEMP-* identifier is not wrapped in markdown link syntax at all"
+# ...while a real CVE in the SAME table still links. Without this, dropping the NVD link for
+# every identifier would satisfy the two assertions above.
+assert_contains "$EDGE_LOW" "| [CVE-2026-0002](https://nvd.nist.gov/vuln/detail/CVE-2026-0002) | LOW | \`zlib1g\` | residual · no fix | 1 image · v5.2 |" \
+    "a neighbouring CVE-* row in the same table still links to NVD"
 
 echo "== cve-size-guard.sh =="
 SG_SMALL="$(mktemp)"; tmpdirs+=("$SG_SMALL"); printf 'tiny' > "$SG_SMALL"
