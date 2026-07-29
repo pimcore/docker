@@ -451,6 +451,15 @@ jobs:
         runs-on: ubuntu-22.04
         needs: build-php
         if: ${{ always() && github.repository == 'pimcore/docker' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
+        # Explicit and minimal. Nothing in this job authenticates with GITHUB_TOKEN except
+        # checkout (contents:read) and the two downloads below (actions:read) -- both
+        # registry logins use repository secrets, and merge-manifests.sh/attach-sbom.sh
+        # talk to Docker Hub and ghcr.io through the docker/oras credential store, not
+        # through GITHUB_TOKEN. So no packages: or contents: write is needed here.
+        permissions:
+            contents: read
+            # download-artifact needs actions:read to use the public REST API path.
+            actions: read
         steps:
 
             -   name: Check out CI scripts from the workflow ref
@@ -477,6 +486,12 @@ jobs:
                 with:
                     path: artifacts
                     pattern: aggregated_tags_*
+                    # Same actions/download-artifact#486 fix as publish-cve-report below:
+                    # without a token the internal artifact API 404s artifacts written by a
+                    # PREVIOUS attempt, so "Re-run failed jobs" can never see them. This
+                    # step is not continue-on-error, so today it fails loudly rather than
+                    # going green empty -- but it still cannot be re-run without the token.
+                    github-token: ${{ github.token }}
 
             -   name: Download SBOMs
                 uses: actions/download-artifact@v8
@@ -484,6 +499,7 @@ jobs:
                     path: sboms
                     pattern: sboms_*
                     merge-multiple: true
+                    github-token: ${{ github.token }}
 
             -   name: Process tags
                 run: |

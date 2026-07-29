@@ -317,7 +317,8 @@ CF="$cf3" RETRY_DELAY=0 RETRY_MAX=2 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) 
 echo "== cve-aggregate.sh =="
 CVE_FIX="${ROOT}/.github/scripts/tests/fixtures/cve"
 AGG="$(mktemp)"; tmpdirs+=("$AGG")
-"${ROOT}/.github/scripts/cve-aggregate.sh" "$CVE_FIX" "2026-07-29 12:00 UTC" > "$AGG" 2>/tmp/agg-err; AGG_RC=$?
+AGG_ERR="$(mktemp)"; tmpdirs+=("$AGG_ERR")
+"${ROOT}/.github/scripts/cve-aggregate.sh" "$CVE_FIX" "2026-07-29 12:00 UTC" > "$AGG" 2>"$AGG_ERR"; AGG_RC=$?
 assert_eq "$AGG_RC" "0" "cve-aggregate exits 0"
 assert_eq "$(jq -e 'type' "$AGG" 2>/dev/null | tr -d '"')" "object" "cve-aggregate emits a JSON object"
 assert_eq "$(jq -r '.generated' "$AGG")" "2026-07-29 12:00 UTC" "timestamp passed through"
@@ -414,7 +415,7 @@ assert_contains "$SUM" "# Known CVEs & hardening report" "summary has the H1 tit
 assert_contains "$SUM" "_Generated 2026-07-29 12:00 UTC._" "summary states the generation time"
 assert_contains "$SUM" "## Hardening outcome" "summary leads with the hardening outcome"
 # fixtures DO have fixable CVEs, so the outcome must report them rather than the no-fix wording
-assert_contains "$SUM" "fixable CVE(s)" "fixable CVEs present -> reports the count"
+assert_contains "$SUM" "fix-available findings" "fixable CVEs present -> reports the count"
 assert_not_contains "$SUM" "No fixable CVE was available upstream" "does not claim zero fixable when there are some"
 # a not-produced image exists in the fixtures, so the caveat sentence must fire
 assert_contains "$SUM" "Some images have no" "not-produced images are called out"
@@ -440,7 +441,40 @@ assert_contains "$SUM" "| identical | \`cc33dd44ee55\` |" "per-image row shows h
 
 # Hardening outcome: exact fixable count. 5 = sum of fixable_count across all 7 images
 # (v5.2-amd64:1, v5.2-arm64:1, debug:0, min:0, multipkg:1, statusmix-a:1, statusmix-b:1).
-assert_contains "$SUM" "**5 fixable CVE(s)**" "hardening outcome pins the exact fixable count (5)"
+#
+# M1: the number is a SUM of per-image counts, not a count of CVEs, and it is measured on
+# the full plain scan while Copa only patches CRITICAL/HIGH OS packages -- on these very
+# fixtures it is 5 while the tables carry 3 `fixed` rows. So the wording is pinned too, not
+# just the digit: it must name what the number is ("fix-available findings"), must NOT call
+# it N CVEs, and must NOT point the reader at `fixed` rows it cannot guarantee exist.
+assert_contains "$SUM" "**5 fix-available findings** were seen across all images" "hardening outcome pins the exact summed fix-available count (5) and describes it as a summed finding count, not a CVE count"
+assert_contains "$SUM" "not a count of \`fixed\` rows" "hardening outcome disclaims the fixed-row equivalence (5 summed findings vs 3 fixed rows in these fixtures)"
+assert_not_contains "$SUM" "fixable CVE(s)** were available upstream" "hardening outcome no longer presents the multiplied sum as a CVE count"
+assert_not_contains "$SUM" "see the \`fixed\` rows in the tables below" "hardening outcome no longer promises fixed rows that a MEDIUM/library-only fix would not produce"
+# Cross-check the contradiction this wording exists to prevent: the summed number (5) really
+# does differ from the number of `fixed` rows (3) on these fixtures, so any wording that
+# equates the two is provably wrong here.
+assert_eq "$(jq -r '[.cves[] | select(.status=="fixed")] | length' "$AGG")" "3" "fixtures really do have 3 fixed rows against a summed fix-available count of 5 (the M1 mismatch is live, not hypothetical)"
+
+# I2(a): the exact CRITICAL severity-totals row. The ONLY CRITICAL in the fixtures is a
+# linux-libc-dev row, so a renderer that stops excluding kernel rows turns this into
+# "| CRITICAL | 1 | 1 |". Pinning the whole row (both cells) is what makes the exclusion
+# testable at all -- the prose assertions above only prove the disclosure text exists.
+assert_contains "$SUM" "| CRITICAL | 0 | 0 |" "severity totals: CRITICAL row is exactly 0 distinct / 0 rows (proves kernel-header rows are excluded from the tabulated totals, not merely described)"
+
+# I2(b): the exact Not-tabulated sentence, count and all -- pins that the kernel selection
+# matches ONLY linux-libc-dev (a selection that swept in every row would render 9/7 here),
+# and pins the singular wording for count == 1.
+assert_contains "$SUM" "**1 \`linux-libc-dev\` row (1 distinct CVE) is excluded from the tables.**" "not-tabulated sentence pins the exact kernel row/CVE counts and reads grammatically at count 1"
+assert_not_contains "$SUM" "rows (1 distinct CVEs)" "not-tabulated sentence is not the ungrammatical plural form at count 1"
+
+# I1: the Images table carries raw scan totals INCLUDING the un-tabulated kernel rows, so it
+# legitimately disagrees with every other count here. That must be stated under the table, or
+# the min row below (CRIT 1, with no CRITICAL anywhere in the three tables) reads as a
+# silently dropped finding.
+assert_contains "$SUM" "raw Trivy totals for the image as published" "Images table footnote declares the counts as raw scan totals"
+assert_contains "$SUM" "1 un-tabulated \`linux-libc-dev\` row" "Images table footnote names the un-tabulated kernel rows it includes (exact count, singular)"
+assert_contains "$SUM" "| \`php8.5-min-v5.2\` | amd64 | 1 | 0 | 0 | 1 | 0 | 0 | identical |" "Images row for min pins the raw CRIT=1 the footnote has to explain (the row the reviewer could not trace to any table)"
 
 # Severity totals: HIGH pins 4 distinct CVEs / 6 rows (libexpat1 fixed, libpam0g residual,
 # libfoo1 fixed+residual, pkga fixed, pkgb residual -- ids: CVE-2024-45491, CVE-2025-6020,
@@ -474,6 +508,14 @@ fi
 # across rows sharing a package, or mis-keys the grouping, would corrupt one or both of these.
 assert_contains "$SUM" "| \`libexpat1\` | 1 | 2 |" "most-affected packages: libexpat1 row pins distinct-CVE/image counts"
 assert_contains "$SUM" "| \`libfoo1\` | 1 | 2 |" "most-affected packages: libfoo1 row pins the union of two separate rows' affects into 2 images"
+
+# M2: these two columns count per-arch image BUILDS, while the detail tables' `Affects` column
+# collapses arch. libexpat1 above is the proof: 2 here (v5.2 amd64 + arm64), 1 image in the
+# CRITICAL,HIGH table. The headings must not both say "Images" or the same word carries two
+# answers in one document.
+assert_contains "$SUM" "| Package | Distinct CVEs | Image builds affected |" "most-affected packages heading names the per-arch scale (Image builds), not the ambiguous Images"
+assert_contains "$SUM" "| Variant | Distinct CVEs | Image builds |" "CVEs-by-variant heading names the per-arch scale (Image builds), not the ambiguous Images"
+assert_contains "$SUM" "counts each architecture separately" "summary explains why its build counts exceed the tables' arch-collapsed Affects column"
 
 # the summary must stay small enough to read
 SUM_BYTES=$(printf '%s' "$SUM" | wc -c)
