@@ -72,7 +72,9 @@ Attaching is best-effort (it's skipped if the registry rejects OCI referrers), s
 ## Known CVEs
 
 For every **published stable release image** we publish a CVE and hardening report,
-regenerated on each publish: [`docs/known-cves.md`](docs/known-cves.md). It opens with the
+regenerated on each publish: [`docs/known-cves.md`](docs/known-cves.md). 
+It has a dedicated [Docker report page](https://pimcore.github.io/docker/)
+It opens with the
 hardening outcome, per-severity totals, a per-variant breakdown (variants differ by more
 than an order of magnitude), the worst-affected packages, and a per-image table of severity
 counts and digests. Critical and high severity CVEs are listed in full there; the remaining
