@@ -1,12 +1,13 @@
 # Known CVEs — MEDIUM
 
-_Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
+_Generated 2026-09-02 03:10 UTC._ Back to the [summary](known-cves.md).
 
 | CVE | Severity | Package | Status | Affects |
 |-----|----------|---------|--------|---------|
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `bsdutils` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `bsdutils` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `bsdutils` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `bsdutils` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-42250](https://nvd.nist.gov/vuln/detail/CVE-2026-42250) | MEDIUM | `bzip2` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2024-0805](https://nvd.nist.gov/vuln/detail/CVE-2024-0805) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2024-0809](https://nvd.nist.gov/vuln/detail/CVE-2024-0809) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 1 image · v2.3 |
@@ -740,6 +741,7 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-7340](https://nvd.nist.gov/vuln/detail/CVE-2026-7340) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-7355](https://nvd.nist.gov/vuln/detail/CVE-2026-7355) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-76042](https://nvd.nist.gov/vuln/detail/CVE-2026-76042) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 1 image · v2.3 |
+| [CVE-2026-79088](https://nvd.nist.gov/vuln/detail/CVE-2026-79088) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 5 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-79293](https://nvd.nist.gov/vuln/detail/CVE-2026-79293) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 5 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-7931](https://nvd.nist.gov/vuln/detail/CVE-2026-7931) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-7932](https://nvd.nist.gov/vuln/detail/CVE-2026-7932) | MEDIUM | `chromium-sandbox` | unpatched · no fix | 1 image · v2.3 |
@@ -860,8 +862,9 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-40686](https://nvd.nist.gov/vuln/detail/CVE-2026-40686) | MEDIUM | `exim4-config` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-40686](https://nvd.nist.gov/vuln/detail/CVE-2026-40686) | MEDIUM | `exim4-daemon-light` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
@@ -872,10 +875,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `ffmpeg` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-28214](https://nvd.nist.gov/vuln/detail/CVE-2026-28214) | MEDIUM | `firebird-utils` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2026-28214](https://nvd.nist.gov/vuln/detail/CVE-2026-28214) | MEDIUM | `firebird3.0-common` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-28214](https://nvd.nist.gov/vuln/detail/CVE-2026-28214) | MEDIUM | `firebird3.0-common-doc` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
@@ -955,7 +954,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-64685](https://nvd.nist.gov/vuln/detail/CVE-2026-64685) | MEDIUM | `imagemagick-7.q16` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-54370](https://nvd.nist.gov/vuln/detail/CVE-2026-54370) | MEDIUM | `libacl1` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2025-31672](https://nvd.nist.gov/vuln/detail/CVE-2025-31672) | MEDIUM | `libapache-poi-java` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14164](https://nvd.nist.gov/vuln/detail/CVE-2026-14164) | MEDIUM | `libarchive13` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-25068](https://nvd.nist.gov/vuln/detail/CVE-2026-25068) | MEDIUM | `libasound2` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-25068](https://nvd.nist.gov/vuln/detail/CVE-2026-25068) | MEDIUM | `libasound2-data` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-25068](https://nvd.nist.gov/vuln/detail/CVE-2026-25068) | MEDIUM | `libasound2t64` | unpatched · no fix | 4 images · v5.2 |
@@ -986,8 +984,9 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-24401](https://nvd.nist.gov/vuln/detail/CVE-2026-24401) | MEDIUM | `libavahi-common3` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-34933](https://nvd.nist.gov/vuln/detail/CVE-2026-34933) | MEDIUM | `libavahi-common3` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
@@ -998,13 +997,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
@@ -1015,13 +1011,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libavdevice61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
@@ -1032,13 +1025,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libavfilter10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
@@ -1049,13 +1039,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libavformat61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
@@ -1066,10 +1053,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libavutil59` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2023-33201](https://nvd.nist.gov/vuln/detail/CVE-2023-33201) | MEDIUM | `libbcmail-java` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
 | [CVE-2023-33202](https://nvd.nist.gov/vuln/detail/CVE-2023-33202) | MEDIUM | `libbcmail-java` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
 | [CVE-2024-14041](https://nvd.nist.gov/vuln/detail/CVE-2024-14041) | MEDIUM | `libbcmail-java` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
@@ -1141,11 +1124,13 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `libblkid1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `libblkid1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `libblkid1` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `libblkid1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2021-45940](https://nvd.nist.gov/vuln/detail/CVE-2021-45940) | MEDIUM | `libbpf0` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2021-45941](https://nvd.nist.gov/vuln/detail/CVE-2021-45941) | MEDIUM | `libbpf0` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2026-42250](https://nvd.nist.gov/vuln/detail/CVE-2026-42250) | MEDIUM | `libbz2-1.0` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2023-4806](https://nvd.nist.gov/vuln/detail/CVE-2023-4806) | MEDIUM | `libc-bin` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2023-4813](https://nvd.nist.gov/vuln/detail/CVE-2023-4813) | MEDIUM | `libc-bin` | unpatched · no fix | 5 images · v2.3 |
+| [CVE-2026-18374](https://nvd.nist.gov/vuln/detail/CVE-2026-18374) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19499](https://nvd.nist.gov/vuln/detail/CVE-2026-19499) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19542](https://nvd.nist.gov/vuln/detail/CVE-2026-19542) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-5435](https://nvd.nist.gov/vuln/detail/CVE-2026-5435) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
@@ -1155,8 +1140,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6368](https://nvd.nist.gov/vuln/detail/CVE-2026-6368) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-6791](https://nvd.nist.gov/vuln/detail/CVE-2026-6791) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-77117](https://nvd.nist.gov/vuln/detail/CVE-2026-77117) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-80489](https://nvd.nist.gov/vuln/detail/CVE-2026-80489) | MEDIUM | `libc-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2023-4806](https://nvd.nist.gov/vuln/detail/CVE-2023-4806) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2023-4813](https://nvd.nist.gov/vuln/detail/CVE-2023-4813) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 5 images · v2.3 |
+| [CVE-2026-18374](https://nvd.nist.gov/vuln/detail/CVE-2026-18374) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19499](https://nvd.nist.gov/vuln/detail/CVE-2026-19499) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19542](https://nvd.nist.gov/vuln/detail/CVE-2026-19542) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-5435](https://nvd.nist.gov/vuln/detail/CVE-2026-5435) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
@@ -1166,8 +1153,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6368](https://nvd.nist.gov/vuln/detail/CVE-2026-6368) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-6791](https://nvd.nist.gov/vuln/detail/CVE-2026-6791) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-77117](https://nvd.nist.gov/vuln/detail/CVE-2026-77117) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-80489](https://nvd.nist.gov/vuln/detail/CVE-2026-80489) | MEDIUM | `libc-dev-bin` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2023-4806](https://nvd.nist.gov/vuln/detail/CVE-2023-4806) | MEDIUM | `libc-l10n` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2023-4813](https://nvd.nist.gov/vuln/detail/CVE-2023-4813) | MEDIUM | `libc-l10n` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-18374](https://nvd.nist.gov/vuln/detail/CVE-2026-18374) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19499](https://nvd.nist.gov/vuln/detail/CVE-2026-19499) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19542](https://nvd.nist.gov/vuln/detail/CVE-2026-19542) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-5435](https://nvd.nist.gov/vuln/detail/CVE-2026-5435) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
@@ -1177,8 +1166,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6368](https://nvd.nist.gov/vuln/detail/CVE-2026-6368) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-6791](https://nvd.nist.gov/vuln/detail/CVE-2026-6791) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-77117](https://nvd.nist.gov/vuln/detail/CVE-2026-77117) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-80489](https://nvd.nist.gov/vuln/detail/CVE-2026-80489) | MEDIUM | `libc-l10n` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2023-4806](https://nvd.nist.gov/vuln/detail/CVE-2023-4806) | MEDIUM | `libc6` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2023-4813](https://nvd.nist.gov/vuln/detail/CVE-2023-4813) | MEDIUM | `libc6` | unpatched · no fix | 5 images · v2.3 |
+| [CVE-2026-18374](https://nvd.nist.gov/vuln/detail/CVE-2026-18374) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19499](https://nvd.nist.gov/vuln/detail/CVE-2026-19499) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19542](https://nvd.nist.gov/vuln/detail/CVE-2026-19542) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-5435](https://nvd.nist.gov/vuln/detail/CVE-2026-5435) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
@@ -1188,8 +1179,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6368](https://nvd.nist.gov/vuln/detail/CVE-2026-6368) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-6791](https://nvd.nist.gov/vuln/detail/CVE-2026-6791) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-77117](https://nvd.nist.gov/vuln/detail/CVE-2026-77117) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-80489](https://nvd.nist.gov/vuln/detail/CVE-2026-80489) | MEDIUM | `libc6` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2023-4806](https://nvd.nist.gov/vuln/detail/CVE-2023-4806) | MEDIUM | `libc6-dev` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2023-4813](https://nvd.nist.gov/vuln/detail/CVE-2023-4813) | MEDIUM | `libc6-dev` | unpatched · no fix | 5 images · v2.3 |
+| [CVE-2026-18374](https://nvd.nist.gov/vuln/detail/CVE-2026-18374) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19499](https://nvd.nist.gov/vuln/detail/CVE-2026-19499) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19542](https://nvd.nist.gov/vuln/detail/CVE-2026-19542) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-5435](https://nvd.nist.gov/vuln/detail/CVE-2026-5435) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
@@ -1199,6 +1192,7 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6368](https://nvd.nist.gov/vuln/detail/CVE-2026-6368) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-6791](https://nvd.nist.gov/vuln/detail/CVE-2026-6791) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-77117](https://nvd.nist.gov/vuln/detail/CVE-2026-77117) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-80489](https://nvd.nist.gov/vuln/detail/CVE-2026-80489) | MEDIUM | `libc6-dev` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-42046](https://nvd.nist.gov/vuln/detail/CVE-2026-42046) | MEDIUM | `libcaca0` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-67217](https://nvd.nist.gov/vuln/detail/CVE-2026-67217) | MEDIUM | `libcjson1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2024-25710](https://nvd.nist.gov/vuln/detail/CVE-2024-25710) | MEDIUM | `libcommons-compress-java` | unpatched · no fix | 1 image · v2.3 |
@@ -1280,33 +1274,41 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-54240](https://nvd.nist.gov/vuln/detail/CVE-2026-54240) | MEDIUM | `libde265-0` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-54241](https://nvd.nist.gov/vuln/detail/CVE-2026-54241) | MEDIUM | `libde265-0` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-12216](https://nvd.nist.gov/vuln/detail/CVE-2026-12216) | MEDIUM | `libduktape207` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-63379](https://nvd.nist.gov/vuln/detail/CVE-2026-63379) | MEDIUM | `libevent-2.1-7` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
+| [CVE-2026-63381](https://nvd.nist.gov/vuln/detail/CVE-2026-63381) | MEDIUM | `libevent-2.1-7` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
+| [CVE-2026-63379](https://nvd.nist.gov/vuln/detail/CVE-2026-63379) | MEDIUM | `libevent-2.1-7t64` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-63381](https://nvd.nist.gov/vuln/detail/CVE-2026-63381) | MEDIUM | `libevent-2.1-7t64` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2024-8176](https://nvd.nist.gov/vuln/detail/CVE-2024-8176) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2025-66382](https://nvd.nist.gov/vuln/detail/CVE-2025-66382) | MEDIUM | `libexpat1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-32776](https://nvd.nist.gov/vuln/detail/CVE-2026-32776) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-32777](https://nvd.nist.gov/vuln/detail/CVE-2026-32777) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-32778](https://nvd.nist.gov/vuln/detail/CVE-2026-32778) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-50219](https://nvd.nist.gov/vuln/detail/CVE-2026-50219) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56131](https://nvd.nist.gov/vuln/detail/CVE-2026-56131) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
+| [CVE-2026-50219](https://nvd.nist.gov/vuln/detail/CVE-2026-50219) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56131](https://nvd.nist.gov/vuln/detail/CVE-2026-56131) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-56132](https://nvd.nist.gov/vuln/detail/CVE-2026-56132) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56403](https://nvd.nist.gov/vuln/detail/CVE-2026-56403) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56404](https://nvd.nist.gov/vuln/detail/CVE-2026-56404) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56405](https://nvd.nist.gov/vuln/detail/CVE-2026-56405) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56406](https://nvd.nist.gov/vuln/detail/CVE-2026-56406) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56407](https://nvd.nist.gov/vuln/detail/CVE-2026-56407) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56409](https://nvd.nist.gov/vuln/detail/CVE-2026-56409) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56410](https://nvd.nist.gov/vuln/detail/CVE-2026-56410) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56411](https://nvd.nist.gov/vuln/detail/CVE-2026-56411) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-56412](https://nvd.nist.gov/vuln/detail/CVE-2026-56412) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-72522](https://nvd.nist.gov/vuln/detail/CVE-2026-72522) | MEDIUM | `libexpat1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-76956](https://nvd.nist.gov/vuln/detail/CVE-2026-76956) | MEDIUM | `libexpat1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
-| [CVE-2026-76957](https://nvd.nist.gov/vuln/detail/CVE-2026-76957) | MEDIUM | `libexpat1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-56403](https://nvd.nist.gov/vuln/detail/CVE-2026-56403) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56404](https://nvd.nist.gov/vuln/detail/CVE-2026-56404) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56405](https://nvd.nist.gov/vuln/detail/CVE-2026-56405) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56406](https://nvd.nist.gov/vuln/detail/CVE-2026-56406) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56407](https://nvd.nist.gov/vuln/detail/CVE-2026-56407) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56409](https://nvd.nist.gov/vuln/detail/CVE-2026-56409) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56410](https://nvd.nist.gov/vuln/detail/CVE-2026-56410) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56411](https://nvd.nist.gov/vuln/detail/CVE-2026-56411) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-56412](https://nvd.nist.gov/vuln/detail/CVE-2026-56412) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-72522](https://nvd.nist.gov/vuln/detail/CVE-2026-72522) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-76956](https://nvd.nist.gov/vuln/detail/CVE-2026-76956) | MEDIUM | `libexpat1` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-76957](https://nvd.nist.gov/vuln/detail/CVE-2026-76957) | MEDIUM | `libexpat1` | unpatched · no fix | 8 images · v2.3, v5.2 |
 | [CVE-2026-28214](https://nvd.nist.gov/vuln/detail/CVE-2026-28214) | MEDIUM | `libfbclient2` | unpatched · no fix | 5 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `libfdisk1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `libfdisk1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `libfdisk1` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `libfdisk1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-16768](https://nvd.nist.gov/vuln/detail/CVE-2026-16768) | MEDIUM | `libgdk-pixbuf-2.0-0` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-81893](https://nvd.nist.gov/vuln/detail/CVE-2026-81893) | MEDIUM | `libgdk-pixbuf-2.0-0` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-16768](https://nvd.nist.gov/vuln/detail/CVE-2026-16768) | MEDIUM | `libgdk-pixbuf2.0-bin` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-81893](https://nvd.nist.gov/vuln/detail/CVE-2026-81893) | MEDIUM | `libgdk-pixbuf2.0-bin` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-16768](https://nvd.nist.gov/vuln/detail/CVE-2026-16768) | MEDIUM | `libgdk-pixbuf2.0-common` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-81893](https://nvd.nist.gov/vuln/detail/CVE-2026-81893) | MEDIUM | `libgdk-pixbuf2.0-common` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-15588](https://nvd.nist.gov/vuln/detail/CVE-2026-15588) | MEDIUM | `libglib2.0-0` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-16118](https://nvd.nist.gov/vuln/detail/CVE-2026-16118) | MEDIUM | `libglib2.0-0` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-15588](https://nvd.nist.gov/vuln/detail/CVE-2026-15588) | MEDIUM | `libglib2.0-0t64` | unpatched · no fix | 4 images · v5.2 |
@@ -1319,10 +1321,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-22693](https://nvd.nist.gov/vuln/detail/CVE-2026-22693) | MEDIUM | `libharfbuzz-icu0` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
 | [CVE-2022-33068](https://nvd.nist.gov/vuln/detail/CVE-2022-33068) | MEDIUM | `libharfbuzz0b` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-22693](https://nvd.nist.gov/vuln/detail/CVE-2026-22693) | MEDIUM | `libharfbuzz0b` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-62291](https://nvd.nist.gov/vuln/detail/CVE-2026-62291) | MEDIUM | `libheif-plugin-aomenc` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-62291](https://nvd.nist.gov/vuln/detail/CVE-2026-62291) | MEDIUM | `libheif-plugin-dav1d` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-62291](https://nvd.nist.gov/vuln/detail/CVE-2026-62291) | MEDIUM | `libheif-plugin-libde265` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-62291](https://nvd.nist.gov/vuln/detail/CVE-2026-62291) | MEDIUM | `libheif-plugin-x265` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-32738](https://nvd.nist.gov/vuln/detail/CVE-2026-32738) | MEDIUM | `libheif1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-32739](https://nvd.nist.gov/vuln/detail/CVE-2026-32739) | MEDIUM | `libheif1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-32814](https://nvd.nist.gov/vuln/detail/CVE-2026-32814) | MEDIUM | `libheif1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
@@ -1335,7 +1333,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-49271](https://nvd.nist.gov/vuln/detail/CVE-2026-49271) | MEDIUM | `libheif1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-50142](https://nvd.nist.gov/vuln/detail/CVE-2026-50142) | MEDIUM | `libheif1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-62289](https://nvd.nist.gov/vuln/detail/CVE-2026-62289) | MEDIUM | `libheif1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-62291](https://nvd.nist.gov/vuln/detail/CVE-2026-62291) | MEDIUM | `libheif1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-62292](https://nvd.nist.gov/vuln/detail/CVE-2026-62292) | MEDIUM | `libheif1` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-14741](https://nvd.nist.gov/vuln/detail/CVE-2026-14741) | MEDIUM | `libhttp-date-perl` | unpatched · no fix | 5 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-28214](https://nvd.nist.gov/vuln/detail/CVE-2026-28214) | MEDIUM | `libib-util` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
@@ -1344,7 +1341,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2021-46822](https://nvd.nist.gov/vuln/detail/CVE-2021-46822) | MEDIUM | `libjpeg62-turbo` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2021-46822](https://nvd.nist.gov/vuln/detail/CVE-2021-46822) | MEDIUM | `libjpeg62-turbo-dev` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2022-36033](https://nvd.nist.gov/vuln/detail/CVE-2022-36033) | MEDIUM | `libjsoup-java` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-71497](https://nvd.nist.gov/vuln/detail/CVE-2026-71497) | MEDIUM | `libjsoup-java` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-6039](https://nvd.nist.gov/vuln/detail/CVE-2026-6039) | MEDIUM | `libjuh-java` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-6045](https://nvd.nist.gov/vuln/detail/CVE-2026-6045) | MEDIUM | `libjuh-java` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-6047](https://nvd.nist.gov/vuln/detail/CVE-2026-6047) | MEDIUM | `libjuh-java` | unpatched · no fix | 1 image · v2.3 |
@@ -1410,6 +1406,11 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-64685](https://nvd.nist.gov/vuln/detail/CVE-2026-64685) | MEDIUM | `libmagickwand-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-44169](https://nvd.nist.gov/vuln/detail/CVE-2026-44169) | MEDIUM | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-44173](https://nvd.nist.gov/vuln/detail/CVE-2026-44173) | MEDIUM | `libmariadb3` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-47023](https://nvd.nist.gov/vuln/detail/CVE-2026-47023) | MEDIUM | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60184](https://nvd.nist.gov/vuln/detail/CVE-2026-60184) | MEDIUM | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60331](https://nvd.nist.gov/vuln/detail/CVE-2026-60331) | MEDIUM | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60585](https://nvd.nist.gov/vuln/detail/CVE-2026-60585) | MEDIUM | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60747](https://nvd.nist.gov/vuln/detail/CVE-2026-60747) | MEDIUM | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-25834](https://nvd.nist.gov/vuln/detail/CVE-2026-25834) | MEDIUM | `libmbedcrypto16` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2024-23170](https://nvd.nist.gov/vuln/detail/CVE-2024-23170) | MEDIUM | `libmbedcrypto3` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2024-28960](https://nvd.nist.gov/vuln/detail/CVE-2024-28960) | MEDIUM | `libmbedcrypto3` | unpatched · no fix | 4 images · v2.3 |
@@ -1430,6 +1431,7 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `libmount1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `libmount1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `libmount1` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `libmount1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2023-50495](https://nvd.nist.gov/vuln/detail/CVE-2023-50495) | MEDIUM | `libncurses6` | unpatched · no fix | 5 images · v2.3, v3.8, v4.2 |
 | [CVE-2023-50495](https://nvd.nist.gov/vuln/detail/CVE-2023-50495) | MEDIUM | `libncursesw6` | unpatched · no fix | 16 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-58055](https://nvd.nist.gov/vuln/detail/CVE-2026-58055) | MEDIUM | `libnghttp2-14` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
@@ -1484,18 +1486,21 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-54411](https://nvd.nist.gov/vuln/detail/CVE-2026-54411) | MEDIUM | `libpam0g-dev` | unpatched · no fix | 4 images · v2.3, v3.8, v4.2 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `libperl5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `libperl5.32` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `libperl5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `libperl5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `libperl5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `libperl5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-7017](https://nvd.nist.gov/vuln/detail/CVE-2026-7017) | MEDIUM | `libperl5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-7017](https://nvd.nist.gov/vuln/detail/CVE-2026-7017) | MEDIUM | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `libperl5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `libperl5.40` | unpatched · no fix | 5 images · v5.2 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `libperl5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `libperl5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `libperl5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `libperl5.40` | unpatched · no fix | 5 images · v5.2 |
@@ -1506,8 +1511,9 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-40930](https://nvd.nist.gov/vuln/detail/CVE-2026-40930) | MEDIUM | `libpng-tools` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2026-40930](https://nvd.nist.gov/vuln/detail/CVE-2026-40930) | MEDIUM | `libpng16-16` | unpatched · no fix | 5 images · v2.3 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
@@ -1518,32 +1524,14 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libpostproc58` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-14663](https://nvd.nist.gov/vuln/detail/CVE-2026-14663) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14664](https://nvd.nist.gov/vuln/detail/CVE-2026-14664) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-14666](https://nvd.nist.gov/vuln/detail/CVE-2026-14666) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14668](https://nvd.nist.gov/vuln/detail/CVE-2026-14668) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14670](https://nvd.nist.gov/vuln/detail/CVE-2026-14670) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14671](https://nvd.nist.gov/vuln/detail/CVE-2026-14671) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-14673](https://nvd.nist.gov/vuln/detail/CVE-2026-14673) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14677](https://nvd.nist.gov/vuln/detail/CVE-2026-14677) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-14678](https://nvd.nist.gov/vuln/detail/CVE-2026-14678) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14679](https://nvd.nist.gov/vuln/detail/CVE-2026-14679) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-14680](https://nvd.nist.gov/vuln/detail/CVE-2026-14680) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-15741](https://nvd.nist.gov/vuln/detail/CVE-2026-15741) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-15742](https://nvd.nist.gov/vuln/detail/CVE-2026-15742) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-16239](https://nvd.nist.gov/vuln/detail/CVE-2026-16239) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-16241](https://nvd.nist.gov/vuln/detail/CVE-2026-16241) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-18024](https://nvd.nist.gov/vuln/detail/CVE-2026-18024) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-18408](https://nvd.nist.gov/vuln/detail/CVE-2026-18408) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-19385](https://nvd.nist.gov/vuln/detail/CVE-2026-19385) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-6464](https://nvd.nist.gov/vuln/detail/CVE-2026-6464) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-6469](https://nvd.nist.gov/vuln/detail/CVE-2026-6469) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-6470](https://nvd.nist.gov/vuln/detail/CVE-2026-6470) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
-| [CVE-2026-6471](https://nvd.nist.gov/vuln/detail/CVE-2026-6471) | MEDIUM | `libpq5` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-14330](https://nvd.nist.gov/vuln/detail/CVE-2026-14330) | MEDIUM | `libpulse0` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2025-12781](https://nvd.nist.gov/vuln/detail/CVE-2025-12781) | MEDIUM | `libpython3.11` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2025-15366](https://nvd.nist.gov/vuln/detail/CVE-2025-15366) | MEDIUM | `libpython3.11` | unpatched · no fix | 3 images · v3.8, v4.2 |
@@ -1656,10 +1644,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6019](https://nvd.nist.gov/vuln/detail/CVE-2026-6019) | MEDIUM | `libpython3.9-stdlib` | unpatched · no fix | 2 images · v2.3 |
 | [CVE-2026-8328](https://nvd.nist.gov/vuln/detail/CVE-2026-8328) | MEDIUM | `libpython3.9-stdlib` | unpatched · no fix | 2 images · v2.3 |
 | [CVE-2026-9669](https://nvd.nist.gov/vuln/detail/CVE-2026-9669) | MEDIUM | `libpython3.9-stdlib` | unpatched · no fix | 2 images · v2.3 |
-| [CVE-2026-59986](https://nvd.nist.gov/vuln/detail/CVE-2026-59986) | MEDIUM | `librabbitmq-dev` | unpatched · no fix | 15 images · v3.8, v4.2 |
-| [CVE-2026-61547](https://nvd.nist.gov/vuln/detail/CVE-2026-61547) | MEDIUM | `librabbitmq-dev` | unpatched · no fix | 15 images · v3.8, v4.2 |
-| [CVE-2026-59986](https://nvd.nist.gov/vuln/detail/CVE-2026-59986) | MEDIUM | `librabbitmq4` | unpatched · no fix | 19 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-61547](https://nvd.nist.gov/vuln/detail/CVE-2026-61547) | MEDIUM | `librabbitmq4` | unpatched · no fix | 19 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-5342](https://nvd.nist.gov/vuln/detail/CVE-2026-5342) | MEDIUM | `libraw23t64` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6039](https://nvd.nist.gov/vuln/detail/CVE-2026-6039) | MEDIUM | `libreoffice` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2026-6045](https://nvd.nist.gov/vuln/detail/CVE-2026-6045) | MEDIUM | `libreoffice` | unpatched · no fix | 1 image · v2.3 |
@@ -1790,6 +1774,7 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `libsmartcols1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `libsmartcols1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `libsmartcols1` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `libsmartcols1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-15779](https://nvd.nist.gov/vuln/detail/CVE-2026-15779) | MEDIUM | `libsmbclient` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-58216](https://nvd.nist.gov/vuln/detail/CVE-2026-58216) | MEDIUM | `libsmbclient` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-58218](https://nvd.nist.gov/vuln/detail/CVE-2026-58218) | MEDIUM | `libsmbclient` | unpatched · no fix | 12 images · v3.8, v4.2 |
@@ -1969,8 +1954,9 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-63072](https://nvd.nist.gov/vuln/detail/CVE-2026-63072) | MEDIUM | `libssl3` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-63076](https://nvd.nist.gov/vuln/detail/CVE-2026-63076) | MEDIUM | `libssl3` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
@@ -1981,13 +1967,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libswresample5` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-13858](https://nvd.nist.gov/vuln/detail/CVE-2026-13858) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-18393](https://nvd.nist.gov/vuln/detail/CVE-2026-18393) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-38350](https://nvd.nist.gov/vuln/detail/CVE-2026-38350) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-6385](https://nvd.nist.gov/vuln/detail/CVE-2026-6385) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-64833](https://nvd.nist.gov/vuln/detail/CVE-2026-64833) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65703](https://nvd.nist.gov/vuln/detail/CVE-2026-65703) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65704](https://nvd.nist.gov/vuln/detail/CVE-2026-65704) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-65705](https://nvd.nist.gov/vuln/detail/CVE-2026-65705) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
@@ -1998,10 +1981,6 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-70630](https://nvd.nist.gov/vuln/detail/CVE-2026-70630) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-70631](https://nvd.nist.gov/vuln/detail/CVE-2026-70631) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-75141](https://nvd.nist.gov/vuln/detail/CVE-2026-75141) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75142](https://nvd.nist.gov/vuln/detail/CVE-2026-75142) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75143](https://nvd.nist.gov/vuln/detail/CVE-2026-75143) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75144](https://nvd.nist.gov/vuln/detail/CVE-2026-75144) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-75146](https://nvd.nist.gov/vuln/detail/CVE-2026-75146) | MEDIUM | `libswscale8` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-15059](https://nvd.nist.gov/vuln/detail/CVE-2026-15059) | MEDIUM | `libsystemd-shared` | unpatched · no fix | 7 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-16742](https://nvd.nist.gov/vuln/detail/CVE-2026-16742) | MEDIUM | `libsystemd-shared` | unpatched · no fix | 7 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-15059](https://nvd.nist.gov/vuln/detail/CVE-2026-15059) | MEDIUM | `libsystemd0` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
@@ -2069,6 +2048,7 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `libuuid1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `libuuid1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `libuuid1` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `libuuid1` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2022-2476](https://nvd.nist.gov/vuln/detail/CVE-2022-2476) | MEDIUM | `libwavpack1` | unpatched · no fix | 1 image · v2.3 |
 | [CVE-2021-3782](https://nvd.nist.gov/vuln/detail/CVE-2021-3782) | MEDIUM | `libwayland-client0` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2021-3782](https://nvd.nist.gov/vuln/detail/CVE-2021-3782) | MEDIUM | `libwayland-cursor0` | unpatched · no fix | 4 images · v2.3 |
@@ -2084,6 +2064,7 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2025-10911](https://nvd.nist.gov/vuln/detail/CVE-2025-10911) | MEDIUM | `libxslt1.1` | unpatched · no fix | 5 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2023-4806](https://nvd.nist.gov/vuln/detail/CVE-2023-4806) | MEDIUM | `locales` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2023-4813](https://nvd.nist.gov/vuln/detail/CVE-2023-4813) | MEDIUM | `locales` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-18374](https://nvd.nist.gov/vuln/detail/CVE-2026-18374) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19499](https://nvd.nist.gov/vuln/detail/CVE-2026-19499) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19542](https://nvd.nist.gov/vuln/detail/CVE-2026-19542) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-5435](https://nvd.nist.gov/vuln/detail/CVE-2026-5435) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
@@ -2093,8 +2074,10 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6368](https://nvd.nist.gov/vuln/detail/CVE-2026-6368) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-6791](https://nvd.nist.gov/vuln/detail/CVE-2026-6791) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-77117](https://nvd.nist.gov/vuln/detail/CVE-2026-77117) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-80489](https://nvd.nist.gov/vuln/detail/CVE-2026-80489) | MEDIUM | `locales` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2023-4806](https://nvd.nist.gov/vuln/detail/CVE-2023-4806) | MEDIUM | `locales-all` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2023-4813](https://nvd.nist.gov/vuln/detail/CVE-2023-4813) | MEDIUM | `locales-all` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-18374](https://nvd.nist.gov/vuln/detail/CVE-2026-18374) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19499](https://nvd.nist.gov/vuln/detail/CVE-2026-19499) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-19542](https://nvd.nist.gov/vuln/detail/CVE-2026-19542) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-5435](https://nvd.nist.gov/vuln/detail/CVE-2026-5435) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
@@ -2104,15 +2087,21 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-6368](https://nvd.nist.gov/vuln/detail/CVE-2026-6368) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-6791](https://nvd.nist.gov/vuln/detail/CVE-2026-6791) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-77117](https://nvd.nist.gov/vuln/detail/CVE-2026-77117) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-80489](https://nvd.nist.gov/vuln/detail/CVE-2026-80489) | MEDIUM | `locales-all` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `login` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-44169](https://nvd.nist.gov/vuln/detail/CVE-2026-44169) | MEDIUM | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-44173](https://nvd.nist.gov/vuln/detail/CVE-2026-44173) | MEDIUM | `mariadb-common` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-47023](https://nvd.nist.gov/vuln/detail/CVE-2026-47023) | MEDIUM | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60184](https://nvd.nist.gov/vuln/detail/CVE-2026-60184) | MEDIUM | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60331](https://nvd.nist.gov/vuln/detail/CVE-2026-60331) | MEDIUM | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60585](https://nvd.nist.gov/vuln/detail/CVE-2026-60585) | MEDIUM | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-60747](https://nvd.nist.gov/vuln/detail/CVE-2026-60747) | MEDIUM | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `mount` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `mount` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `mount` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `mount` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2023-50495](https://nvd.nist.gov/vuln/detail/CVE-2023-50495) | MEDIUM | `ncurses-base` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2023-50495](https://nvd.nist.gov/vuln/detail/CVE-2023-50495) | MEDIUM | `ncurses-bin` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
-| [CVE-2026-55655](https://nvd.nist.gov/vuln/detail/CVE-2026-55655) | MEDIUM | `openssh-client` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-59995](https://nvd.nist.gov/vuln/detail/CVE-2026-59995) | MEDIUM | `openssh-client` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-59996](https://nvd.nist.gov/vuln/detail/CVE-2026-59996) | MEDIUM | `openssh-client` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-59997](https://nvd.nist.gov/vuln/detail/CVE-2026-59997) | MEDIUM | `openssh-client` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2, v5.2 |
@@ -2124,30 +2113,35 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-63076](https://nvd.nist.gov/vuln/detail/CVE-2026-63076) | MEDIUM | `openssl` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `perl` | unpatched · no fix | 21 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `perl` | unpatched · no fix | 21 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `perl` | unpatched · no fix | 21 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `perl` | unpatched · no fix | 21 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `perl` | unpatched · no fix | 21 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `perl` | unpatched · no fix | 21 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-7017](https://nvd.nist.gov/vuln/detail/CVE-2026-7017) | MEDIUM | `perl` | unpatched · no fix | 21 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `perl-base` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `perl-base` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `perl-base` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `perl-base` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `perl-base` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `perl-base` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-7017](https://nvd.nist.gov/vuln/detail/CVE-2026-7017) | MEDIUM | `perl-base` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `perl-modules-5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `perl-modules-5.32` | unpatched · no fix | 4 images · v2.3 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `perl-modules-5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `perl-modules-5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `perl-modules-5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `perl-modules-5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2026-7017](https://nvd.nist.gov/vuln/detail/CVE-2026-7017) | MEDIUM | `perl-modules-5.32` | unpatched · no fix | 4 images · v2.3 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-7017](https://nvd.nist.gov/vuln/detail/CVE-2026-7017) | MEDIUM | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2025-15649](https://nvd.nist.gov/vuln/detail/CVE-2025-15649) | MEDIUM | `perl-modules-5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-12087](https://nvd.nist.gov/vuln/detail/CVE-2026-12087) | MEDIUM | `perl-modules-5.40` | unpatched · no fix | 5 images · v5.2 |
+| [CVE-2026-15534](https://nvd.nist.gov/vuln/detail/CVE-2026-15534) | MEDIUM | `perl-modules-5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-48959](https://nvd.nist.gov/vuln/detail/CVE-2026-48959) | MEDIUM | `perl-modules-5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-48961](https://nvd.nist.gov/vuln/detail/CVE-2026-48961) | MEDIUM | `perl-modules-5.40` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-7010](https://nvd.nist.gov/vuln/detail/CVE-2026-7010) | MEDIUM | `perl-modules-5.40` | unpatched · no fix | 5 images · v5.2 |
@@ -2260,9 +2254,11 @@ _Generated 2026-08-31 02:55 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `util-linux` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `util-linux` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `util-linux` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `util-linux` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
 | [CVE-2026-13595](https://nvd.nist.gov/vuln/detail/CVE-2026-13595) | MEDIUM | `util-linux-extra` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-27456](https://nvd.nist.gov/vuln/detail/CVE-2026-27456) | MEDIUM | `util-linux-extra` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-3184](https://nvd.nist.gov/vuln/detail/CVE-2026-3184) | MEDIUM | `util-linux-extra` | unpatched · no fix | 15 images · v3.8, v4.2 |
+| [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | MEDIUM | `util-linux-extra` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2020-27748](https://nvd.nist.gov/vuln/detail/CVE-2020-27748) | MEDIUM | `xdg-utils` | unpatched · no fix | 5 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-27171](https://nvd.nist.gov/vuln/detail/CVE-2026-27171) | MEDIUM | `zlib1g` | unpatched · no fix | 25 images · v2.3, v3.8, v4.2, v5.2 |
 | [CVE-2026-27171](https://nvd.nist.gov/vuln/detail/CVE-2026-27171) | MEDIUM | `zlib1g-dev` | unpatched · no fix | 20 images · v2.3, v3.8, v4.2 |
