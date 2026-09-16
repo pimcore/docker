@@ -110,7 +110,7 @@ Use either of the following commands:
 | Image | Supported |
 |-------|-----------|
 | v1    | ❌        |
-| v2    | ✅        |
+| v2    | ❌        |
 | v3    | ✅        |
 | v4    | ✅        |
 | v5    | ✅        |
@@ -122,9 +122,9 @@ We are basing our images on top of the official PHP and Debian images and provid
 ### PHP images
 ```text
 php8.2-latest # always use the latest PHP 8.2 image
-php8.2-v2 # always point to the latest minor version of v2
-php8.2-v2.0 # pin to specific image version, always using the latest bugfixes from PHP 8.2
-php8.2.5-v2.0 # pin to a specific PHP version & image version 
+php8.3-v3 # always point to the latest minor version of v3
+php8.3-v3.8 # pin to specific image version, always using the latest bugfixes from PHP 8.3
+php8.3.5-v3.8 # pin to a specific PHP version & image version 
 php8.2-dev # development image (build from the default branch) 
 ```
 
