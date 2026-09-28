@@ -43,8 +43,6 @@ jobs:
                     - ubuntu-22.04
                     - ubuntu-22.04-arm
                 build:
-                    - { tag: 'v2.3', php: '8.2', distro: bullseye, version-override: "", latest-tag: false, hardened: true }
-                    - { tag: '2.x', php: '8.2', distro: bullseye, version-override: "v2-dev", latest-tag: false, hardened: false }
                     - { tag: 'v3.8', php: '8.2', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
                     - { tag: 'v3.8', php: '8.3', distro: bookworm, version-override: "", latest-tag: true, hardened: true }
                     - { tag: '3.x', php: '8.2', distro: bookworm, version-override: "v3-dev", latest-tag: false, hardened: false }
@@ -582,7 +580,7 @@ jobs:
                         exit 0
                     fi
 
-                    # The report covers EVERY published stable release (v2.3 … v5.2) regardless of
+                    # The report covers EVERY published stable release (v3.8 … v5.2) regardless of
                     # which branch dispatched the run, but it is committed to the dispatching
                     # branch. GitHub Pages serves one branch, so a run dispatched from anywhere
                     # other than REPORT_BRANCH updates a copy nobody reads and leaves the published
