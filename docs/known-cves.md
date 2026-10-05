@@ -1,6 +1,6 @@
 # Known CVEs & hardening report
 
-_Generated 2026-10-02 02:59 UTC._
+_Generated 2026-10-05 03:12 UTC._
 
 Per published **stable release image**: known CVEs from a full Trivy scan (all
 severities, OS + library packages, unfixable CVEs included). **Development / rolling
@@ -8,7 +8,7 @@ tags (`*-dev`) are not covered** -- they are plain-only and never Copa-patched.
 
 ## Hardening outcome
 
-**No fixable CVE was available upstream for any image in this run.** Debian ships no fix for any of the 1017 distinct CVEs found, so Copa had nothing to patch.
+**No fixable CVE was available upstream for any image in this run.** Debian ships no fix for any of the 1044 distinct CVEs found, so Copa had nothing to patch.
  Some images have no `-hardened` tag this run (the severity gate failed or hardening was disabled); their rows are marked `unpatched`.
 
 **Status legend:** `fixed` = Copa patched it (old → new version) · `residual` = still
@@ -19,10 +19,10 @@ present in the hardened image · `unpatched` = no hardened image was produced.
 | Severity | Distinct CVEs | Tabulated rows |
 |----------|---------------|----------------|
 | CRITICAL | 29 | 54 |
-| HIGH | 211 | 682 |
-| MEDIUM | 355 | 1402 |
-| LOW | 367 | 1630 |
-| UNKNOWN | 56 | 178 |
+| HIGH | 210 | 681 |
+| MEDIUM | 357 | 1432 |
+| LOW | 369 | 1642 |
+| UNKNOWN | 80 | 244 |
 
 ## Not tabulated
 
@@ -35,11 +35,11 @@ carries the CVE surface, and therefore which one to pick if you do not need its 
 
 | Variant | Distinct CVEs | Image builds |
 |---------|---------------|--------------|
-| `max` | 966 | 8 |
-| `supervisord` | 801 | 8 |
-| `debug` | 721 | 8 |
-| `default` | 721 | 8 |
-| `min` | 277 | 8 |
+| `max` | 993 | 8 |
+| `supervisord` | 803 | 8 |
+| `debug` | 723 | 8 |
+| `default` | 723 | 8 |
+| `min` | 278 | 8 |
 
 ## Most-affected packages
 
@@ -54,7 +54,7 @@ carries the CVE surface, and therefore which one to pick if you do not need its 
 | `libctf0` | 69 | 10 |
 | `libgprofng0` | 69 | 10 |
 | `libsframe1` | 69 | 10 |
-| `libsoup2.4-1` | 59 | 6 |
+| `libbcmail-java` | 60 | 8 |
 
 _"Image builds" counts each architecture separately (amd64 and arm64 of one tag are
 two builds), so these figures are larger than the arch-collapsed `Affects` column in
@@ -64,46 +64,46 @@ the detail tables. Both describe the same rows._
 
 | Image | Arch | CRIT | HIGH | MED | LOW | UNK | Fixable | Hardening | Plain digest |
 |-------|------|------|------|-----|-----|-----|---------|-----------|--------------|
-| `php8.2-debug-v3.8` | amd64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `3e8f389db9b1` |
-| `php8.2-debug-v3.8` | arm64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `2e1cd5fdf53a` |
-| `php8.2-max-v3.8` | amd64 | 45 | 603 | 2925 | 997 | 97 | 0 | not-produced | `c2379cff77ed` |
-| `php8.2-max-v3.8` | arm64 | 45 | 602 | 2922 | 993 | 93 | 0 | not-produced | `c7aa3d91b209` |
-| `php8.2-min-v3.8` | amd64 | 8 | 251 | 2043 | 434 | 5 | 0 | not-produced | `dabbaac1a745` |
-| `php8.2-min-v3.8` | arm64 | 8 | 251 | 2043 | 434 | 5 | 0 | not-produced | `045dc4501586` |
-| `php8.2-supervisord-v3.8` | amd64 | 34 | 410 | 2396 | 745 | 53 | 0 | not-produced | `2f32ed4fa37a` |
-| `php8.2-supervisord-v3.8` | arm64 | 34 | 410 | 2396 | 745 | 53 | 0 | not-produced | `97f8a0baece2` |
-| `php8.2-v3.8` | amd64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `341a6a8069d8` |
-| `php8.2-v3.8` | arm64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `943502ff2dbc` |
-| `php8.3-debug-v3.8` | amd64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `ec2dba40b552` |
-| `php8.3-debug-v3.8` | arm64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `590bbc2b8d21` |
-| `php8.3-max-v3.8` | amd64 | 45 | 603 | 2925 | 997 | 97 | 0 | not-produced | `e700563e5d77` |
-| `php8.3-max-v3.8` | arm64 | 45 | 602 | 2922 | 993 | 93 | 0 | not-produced | `539a0e4198f5` |
-| `php8.3-min-v3.8` | amd64 | 8 | 251 | 2043 | 434 | 5 | 0 | not-produced | `6a2c3dd97f3f` |
-| `php8.3-min-v3.8` | arm64 | 8 | 251 | 2043 | 434 | 5 | 0 | not-produced | `99d3f673376a` |
-| `php8.3-supervisord-v3.8` | amd64 | 34 | 410 | 2396 | 745 | 53 | 0 | not-produced | `9199fc303d2b` |
-| `php8.3-supervisord-v3.8` | arm64 | 34 | 410 | 2396 | 745 | 53 | 0 | not-produced | `82cdaad04fa9` |
-| `php8.3-v3.8` | amd64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `bea88cfcdb19` |
-| `php8.3-v3.8` | arm64 | 29 | 362 | 2321 | 712 | 49 | 0 | not-produced | `515600a12c28` |
-| `php8.4-debug-v4.2` | amd64 | 29 | 374 | 2363 | 806 | 49 | 0 | not-produced | `b713e030ab07` |
-| `php8.4-debug-v4.2` | arm64 | 29 | 374 | 2363 | 806 | 49 | 0 | not-produced | `045076679fb2` |
-| `php8.4-max-v4.2` | amd64 | 45 | 607 | 2939 | 1027 | 97 | 0 | not-produced | `60c588c0b94b` |
-| `php8.4-max-v4.2` | arm64 | 45 | 606 | 2936 | 1023 | 93 | 0 | not-produced | `7bd17f66b46e` |
-| `php8.4-min-v4.2` | amd64 | 8 | 251 | 2043 | 434 | 5 | 0 | not-produced | `25224101b77b` |
-| `php8.4-min-v4.2` | arm64 | 8 | 251 | 2043 | 434 | 5 | 0 | not-produced | `ef57723a0d37` |
-| `php8.4-supervisord-v4.2` | amd64 | 34 | 422 | 2438 | 839 | 53 | 0 | not-produced | `2d6f2da162ad` |
-| `php8.4-supervisord-v4.2` | arm64 | 34 | 422 | 2438 | 839 | 53 | 0 | not-produced | `f71b30a0f3b3` |
-| `php8.4-v4.2` | amd64 | 29 | 374 | 2363 | 806 | 49 | 0 | not-produced | `5ffdc69404d2` |
-| `php8.4-v4.2` | arm64 | 29 | 374 | 2363 | 806 | 49 | 0 | not-produced | `0760121e2dc0` |
-| `php8.5-debug-v5.2` | amd64 | 5 | 338 | 1102 | 1191 | 58 | 0 | not-produced | `d414c9f6f136` |
-| `php8.5-debug-v5.2` | arm64 | 5 | 338 | 1101 | 1191 | 58 | 0 | not-produced | `10ac24a3aeaa` |
-| `php8.5-max-v5.2` | amd64 | 24 | 514 | 1292 | 1342 | 101 | 0 | not-produced | `e06cbbe3d380` |
-| `php8.5-max-v5.2` | arm64 | 24 | 514 | 1291 | 1342 | 101 | 0 | not-produced | `f0cf7de9f42f` |
-| `php8.5-min-v5.2` | amd64 | 2 | 116 | 762 | 834 | 6 | 0 | not-produced | `bc19769509d7` |
-| `php8.5-min-v5.2` | arm64 | 2 | 116 | 761 | 834 | 6 | 0 | not-produced | `27f9ac7a39f2` |
-| `php8.5-supervisord-v5.2` | amd64 | 5 | 355 | 1134 | 1209 | 62 | 0 | not-produced | `623ba5d40377` |
-| `php8.5-supervisord-v5.2` | arm64 | 5 | 355 | 1133 | 1209 | 62 | 0 | not-produced | `63198d67ce1b` |
-| `php8.5-v5.2` | amd64 | 5 | 338 | 1102 | 1191 | 58 | 0 | not-produced | `9d4afd0521c1` |
-| `php8.5-v5.2` | arm64 | 5 | 338 | 1101 | 1191 | 58 | 0 | not-produced | `c96d1ee20ca7` |
+| `php8.2-debug-v3.8` | amd64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `a48ad5bddee4` |
+| `php8.2-debug-v3.8` | arm64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `cad4923d480e` |
+| `php8.2-max-v3.8` | amd64 | 45 | 601 | 2934 | 1000 | 161 | 0 | not-produced | `943cada5ca5a` |
+| `php8.2-max-v3.8` | arm64 | 45 | 600 | 2930 | 996 | 157 | 0 | not-produced | `06b80f0727b6` |
+| `php8.2-min-v3.8` | amd64 | 8 | 249 | 2044 | 434 | 5 | 0 | not-produced | `59779d4270cb` |
+| `php8.2-min-v3.8` | arm64 | 8 | 249 | 2044 | 434 | 5 | 0 | not-produced | `ac43894b0f86` |
+| `php8.2-supervisord-v3.8` | amd64 | 34 | 408 | 2401 | 744 | 51 | 0 | not-produced | `71fc5b9d6380` |
+| `php8.2-supervisord-v3.8` | arm64 | 34 | 408 | 2401 | 744 | 51 | 0 | not-produced | `fa3ffeb9532e` |
+| `php8.2-v3.8` | amd64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `08daf53d6746` |
+| `php8.2-v3.8` | arm64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `545029279fe9` |
+| `php8.3-debug-v3.8` | amd64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `0513989385d7` |
+| `php8.3-debug-v3.8` | arm64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `47ae2bcb6961` |
+| `php8.3-max-v3.8` | amd64 | 45 | 601 | 2934 | 1000 | 161 | 0 | not-produced | `64e92f12f810` |
+| `php8.3-max-v3.8` | arm64 | 45 | 600 | 2930 | 996 | 157 | 0 | not-produced | `87c7947b2365` |
+| `php8.3-min-v3.8` | amd64 | 8 | 249 | 2044 | 434 | 5 | 0 | not-produced | `df1ac01cf322` |
+| `php8.3-min-v3.8` | arm64 | 8 | 249 | 2044 | 434 | 5 | 0 | not-produced | `8c467fce6057` |
+| `php8.3-supervisord-v3.8` | amd64 | 34 | 408 | 2401 | 744 | 51 | 0 | not-produced | `5596f684125b` |
+| `php8.3-supervisord-v3.8` | arm64 | 34 | 408 | 2401 | 744 | 51 | 0 | not-produced | `c863a212870e` |
+| `php8.3-v3.8` | amd64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `52976b24a108` |
+| `php8.3-v3.8` | arm64 | 29 | 360 | 2326 | 711 | 47 | 0 | not-produced | `3971a2cf5e10` |
+| `php8.4-debug-v4.2` | amd64 | 29 | 372 | 2368 | 811 | 47 | 0 | not-produced | `7febffc30a0e` |
+| `php8.4-debug-v4.2` | arm64 | 29 | 372 | 2368 | 811 | 47 | 0 | not-produced | `f42bea6999e6` |
+| `php8.4-max-v4.2` | amd64 | 45 | 605 | 2948 | 1032 | 161 | 0 | not-produced | `42385c160a34` |
+| `php8.4-max-v4.2` | arm64 | 45 | 604 | 2944 | 1028 | 157 | 0 | not-produced | `aff6ae1ebc7a` |
+| `php8.4-min-v4.2` | amd64 | 8 | 249 | 2044 | 434 | 5 | 0 | not-produced | `0248707cdf30` |
+| `php8.4-min-v4.2` | arm64 | 8 | 249 | 2044 | 434 | 5 | 0 | not-produced | `6b7090f382ca` |
+| `php8.4-supervisord-v4.2` | amd64 | 34 | 420 | 2443 | 844 | 51 | 0 | not-produced | `eab3991e7a6c` |
+| `php8.4-supervisord-v4.2` | arm64 | 34 | 420 | 2443 | 844 | 51 | 0 | not-produced | `aaf5c158f346` |
+| `php8.4-v4.2` | amd64 | 29 | 372 | 2368 | 811 | 47 | 0 | not-produced | `4d2c8e02fbe3` |
+| `php8.4-v4.2` | arm64 | 29 | 372 | 2368 | 811 | 47 | 0 | not-produced | `49a2a8afdbc7` |
+| `php8.5-debug-v5.2` | amd64 | 5 | 335 | 1128 | 1197 | 58 | 0 | not-produced | `da93da69f9cb` |
+| `php8.5-debug-v5.2` | arm64 | 5 | 335 | 1126 | 1197 | 58 | 0 | not-produced | `3b019f51e888` |
+| `php8.5-max-v5.2` | amd64 | 24 | 511 | 1319 | 1348 | 167 | 0 | not-produced | `ce06fd65c6e2` |
+| `php8.5-max-v5.2` | arm64 | 24 | 511 | 1317 | 1348 | 167 | 0 | not-produced | `b2de04b89c2d` |
+| `php8.5-min-v5.2` | amd64 | 2 | 113 | 787 | 834 | 6 | 0 | not-produced | `3cd7a99fde64` |
+| `php8.5-min-v5.2` | arm64 | 2 | 113 | 785 | 834 | 6 | 0 | not-produced | `677e650b5383` |
+| `php8.5-supervisord-v5.2` | amd64 | 5 | 352 | 1160 | 1215 | 62 | 0 | not-produced | `65c2db9a223f` |
+| `php8.5-supervisord-v5.2` | arm64 | 5 | 352 | 1158 | 1215 | 62 | 0 | not-produced | `7c36c27fc185` |
+| `php8.5-v5.2` | amd64 | 5 | 335 | 1128 | 1197 | 58 | 0 | not-produced | `1b8b7cdae63d` |
+| `php8.5-v5.2` | arm64 | 5 | 335 | 1126 | 1197 | 58 | 0 | not-produced | `af74aa49f9a7` |
 
 _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as published**: unlike the tabulated counts earlier in this report they still include the 2574 un-tabulated `linux-libc-dev` rows, so they intentionally exceed every tabulated count above. A `CRIT`/`HIGH` here with no matching row in any detail table is a kernel-header CVE -- see **Not tabulated** above. `Fixable` is also measured across both OS and library packages, wider than the OS-packages-only scope of the scan that feeds Copa -- severity plays no part in that difference._
 
@@ -547,7 +547,6 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-59982](https://nvd.nist.gov/vuln/detail/CVE-2026-59982) | HIGH | `libopenexr-3-1-30` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-68515](https://nvd.nist.gov/vuln/detail/CVE-2026-68515) | HIGH | `libopenexr-3-1-30` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-16742](https://nvd.nist.gov/vuln/detail/CVE-2026-16742) | HIGH | `libpam-systemd` | unpatched · no fix | 7 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-103111](https://nvd.nist.gov/vuln/detail/CVE-2026-103111) | HIGH | `libpcre2-8-0` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-42497](https://nvd.nist.gov/vuln/detail/CVE-2026-42497) | HIGH | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-48962](https://nvd.nist.gov/vuln/detail/CVE-2026-48962) | HIGH | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-57432](https://nvd.nist.gov/vuln/detail/CVE-2026-57432) | HIGH | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
@@ -765,7 +764,7 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-88806](https://nvd.nist.gov/vuln/detail/CVE-2026-88806) | HIGH | `libx11-xcb1` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-74860](https://nvd.nist.gov/vuln/detail/CVE-2026-74860) | HIGH | `libxml2` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-86138](https://nvd.nist.gov/vuln/detail/CVE-2026-86138) | HIGH | `libxml2` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-86139](https://nvd.nist.gov/vuln/detail/CVE-2026-86139) | HIGH | `libxml2` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-86139](https://nvd.nist.gov/vuln/detail/CVE-2026-86139) | HIGH | `libxml2` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-86140](https://nvd.nist.gov/vuln/detail/CVE-2026-86140) | HIGH | `libxml2` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-86142](https://nvd.nist.gov/vuln/detail/CVE-2026-86142) | HIGH | `libxml2` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-86143](https://nvd.nist.gov/vuln/detail/CVE-2026-86143) | HIGH | `libxml2` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
