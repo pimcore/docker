@@ -1,6 +1,6 @@
 # Known CVEs & hardening report
 
-_Generated 2026-10-16 02:55 UTC._
+_Generated 2026-10-19 03:00 UTC._
 
 Per published **stable release image**: known CVEs from a full Trivy scan (all
 severities, OS + library packages, unfixable CVEs included). **Development / rolling
@@ -8,7 +8,7 @@ tags (`*-dev`) are not covered** -- they are plain-only and never Copa-patched.
 
 ## Hardening outcome
 
-**No fixable CVE was available upstream for any image in this run.** Debian ships no fix for any of the 1183 distinct CVEs found, so Copa had nothing to patch.
+**No fixable CVE was available upstream for any image in this run.** Debian ships no fix for any of the 1164 distinct CVEs found, so Copa had nothing to patch.
  Some images have no `-hardened` tag this run (the severity gate failed or hardening was disabled); their rows are marked `unpatched`.
 
 **Status legend:** `fixed` = Copa patched it (old → new version) · `residual` = still
@@ -18,15 +18,15 @@ present in the hardened image · `unpatched` = no hardened image was produced.
 
 | Severity | Distinct CVEs | Tabulated rows |
 |----------|---------------|----------------|
-| CRITICAL | 26 | 42 |
-| HIGH | 254 | 753 |
-| MEDIUM | 406 | 1979 |
-| LOW | 417 | 1873 |
-| UNKNOWN | 81 | 281 |
+| CRITICAL | 27 | 46 |
+| HIGH | 225 | 744 |
+| MEDIUM | 416 | 2010 |
+| LOW | 417 | 1920 |
+| UNKNOWN | 80 | 277 |
 
 ## Not tabulated
 
-**2798 `linux-libc-dev` rows (2798 distinct CVEs) are excluded from the tables.** These are Linux kernel *header* CVEs. A container runs on the host kernel, so they are not reachable inside these images. They remain in `cve-data.json`, uploaded as the `cve-report-json` artifact on the release run.
+**2015 `linux-libc-dev` rows (2015 distinct CVEs) are excluded from the tables.** These are Linux kernel *header* CVEs. A container runs on the host kernel, so they are not reachable inside these images. They remain in `cve-data.json`, uploaded as the `cve-report-json` artifact on the release run.
 
 ## CVEs by variant
 
@@ -35,26 +35,26 @@ carries the CVE surface, and therefore which one to pick if you do not need its 
 
 | Variant | Distinct CVEs | Image builds |
 |---------|---------------|--------------|
-| `max` | 1132 | 6 |
-| `supervisord` | 903 | 6 |
-| `debug` | 830 | 6 |
-| `default` | 830 | 6 |
-| `min` | 290 | 6 |
+| `max` | 1113 | 8 |
+| `supervisord` | 902 | 8 |
+| `debug` | 829 | 8 |
+| `default` | 829 | 8 |
+| `min` | 292 | 8 |
 
 ## Most-affected packages
 
 | Package | Distinct CVEs | Image builds affected |
 |---------|---------------|-----------------------|
-| `imagemagick` | 73 | 8 |
-| `imagemagick-6-common` | 73 | 8 |
-| `imagemagick-6.q16` | 73 | 4 |
-| `imagemagick-7-common` | 73 | 4 |
-| `imagemagick-7.q16` | 73 | 4 |
-| `libmagickcore-6.q16-6` | 73 | 8 |
-| `libmagickcore-6.q16-6-extra` | 73 | 8 |
-| `libmagickcore-7.q16-10` | 73 | 4 |
-| `libmagickcore-7.q16-10-extra` | 73 | 4 |
-| `libmagickwand-6.q16-6` | 73 | 8 |
+| `imagemagick` | 73 | 16 |
+| `imagemagick-6-common` | 73 | 12 |
+| `imagemagick-6.q16` | 73 | 8 |
+| `imagemagick-7-common` | 73 | 8 |
+| `imagemagick-7.q16` | 73 | 8 |
+| `libmagickcore-6.q16-6` | 73 | 12 |
+| `libmagickcore-6.q16-6-extra` | 73 | 12 |
+| `libmagickcore-7.q16-10` | 73 | 8 |
+| `libmagickcore-7.q16-10-extra` | 73 | 8 |
+| `libmagickwand-6.q16-6` | 73 | 12 |
 
 _"Image builds" counts each architecture separately (amd64 and arm64 of one tag are
 two builds), so these figures are larger than the arch-collapsed `Affects` column in
@@ -64,38 +64,48 @@ the detail tables. Both describe the same rows._
 
 | Image | Arch | CRIT | HIGH | MED | LOW | UNK | Fixable | Hardening | Plain digest |
 |-------|------|------|------|-----|-----|-----|---------|-----------|--------------|
-| `php8.2-debug-v3.8` | amd64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `92582df0fdcb` |
-| `php8.2-debug-v3.8` | arm64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `6995b1579c72` |
-| `php8.2-max-v3.8` | amd64 | 33 | 689 | 3274 | 1213 | 143 | 0 | not-produced | `687abb1ef5b8` |
-| `php8.2-max-v3.8` | arm64 | 33 | 688 | 3270 | 1209 | 139 | 0 | not-produced | `c7759d031a7b` |
-| `php8.2-min-v3.8` | amd64 | 5 | 275 | 2104 | 567 | 4 | 0 | not-produced | `71d38bd55c6c` |
-| `php8.2-min-v3.8` | arm64 | 5 | 275 | 2104 | 567 | 4 | 0 | not-produced | `9abcdf070069` |
-| `php8.2-supervisord-v3.8` | amd64 | 22 | 410 | 2429 | 903 | 65 | 0 | not-produced | `c4de415cedea` |
-| `php8.2-supervisord-v3.8` | arm64 | 22 | 410 | 2429 | 903 | 65 | 0 | not-produced | `3be4c4cc6b8d` |
-| `php8.2-v3.8` | amd64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `0194e68fa7dd` |
-| `php8.2-v3.8` | arm64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `473f1f7b52c1` |
-| `php8.3-debug-v3.8` | amd64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `cd31ff967c9a` |
-| `php8.3-debug-v3.8` | arm64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `8bbf4280cfff` |
-| `php8.3-max-v3.8` | amd64 | 33 | 689 | 3274 | 1213 | 143 | 0 | not-produced | `bf53c80d1db0` |
-| `php8.3-max-v3.8` | arm64 | 33 | 688 | 3270 | 1209 | 139 | 0 | not-produced | `c8f24de53f14` |
-| `php8.3-min-v3.8` | amd64 | 5 | 275 | 2104 | 567 | 4 | 0 | not-produced | `6ca599518a7b` |
-| `php8.3-min-v3.8` | arm64 | 5 | 275 | 2104 | 567 | 4 | 0 | not-produced | `86e0e86edf88` |
-| `php8.3-supervisord-v3.8` | amd64 | 22 | 410 | 2429 | 903 | 65 | 0 | not-produced | `4a9f96ae78df` |
-| `php8.3-supervisord-v3.8` | arm64 | 22 | 410 | 2429 | 903 | 65 | 0 | not-produced | `978d5f45d9ae` |
-| `php8.3-v3.8` | amd64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `e8cabc4d6549` |
-| `php8.3-v3.8` | arm64 | 17 | 382 | 2378 | 872 | 65 | 0 | not-produced | `10b2e9a019e7` |
-| `php8.4-debug-v4.2` | amd64 | 17 | 394 | 2600 | 1068 | 71 | 0 | not-produced | `bd8529c79af6` |
-| `php8.4-max-v4.2` | amd64 | 33 | 693 | 3348 | 1277 | 145 | 0 | not-produced | `b49d68c9a7e0` |
-| `php8.4-min-v4.2` | amd64 | 5 | 275 | 2104 | 567 | 4 | 0 | not-produced | `514767b3367e` |
-| `php8.4-supervisord-v4.2` | amd64 | 22 | 422 | 2651 | 1099 | 71 | 0 | not-produced | `5d19638cdebd` |
-| `php8.4-v4.2` | amd64 | 17 | 394 | 2600 | 1068 | 71 | 0 | not-produced | `7cc4efb64885` |
-| `php8.5-debug-v5.2` | amd64 | 5 | 338 | 1519 | 1443 | 132 | 0 | not-produced | `0e9bf2822e4e` |
-| `php8.5-max-v5.2` | amd64 | 24 | 542 | 1726 | 1594 | 201 | 0 | not-produced | `d474f956cf10` |
-| `php8.5-min-v5.2` | amd64 | 2 | 120 | 935 | 933 | 6 | 0 | not-produced | `16716241fe33` |
-| `php8.5-supervisord-v5.2` | amd64 | 5 | 359 | 1551 | 1467 | 132 | 0 | not-produced | `82a47073c174` |
-| `php8.5-v5.2` | amd64 | 5 | 338 | 1519 | 1443 | 132 | 0 | not-produced | `c2c7e653dfc3` |
+| `php8.2-debug-v3.8` | amd64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `018af6e05f7a` |
+| `php8.2-debug-v3.8` | arm64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `7175a7f225a7` |
+| `php8.2-max-v3.8` | amd64 | 38 | 639 | 2522 | 1082 | 324 | 0 | not-produced | `399f63e0e067` |
+| `php8.2-max-v3.8` | arm64 | 38 | 638 | 2518 | 1078 | 320 | 0 | not-produced | `45c33a7edef4` |
+| `php8.2-min-v3.8` | amd64 | 6 | 245 | 1342 | 442 | 187 | 0 | not-produced | `04d58a95f23c` |
+| `php8.2-min-v3.8` | arm64 | 6 | 245 | 1342 | 442 | 187 | 0 | not-produced | `4b8427192506` |
+| `php8.2-supervisord-v3.8` | amd64 | 23 | 381 | 1667 | 780 | 246 | 0 | not-produced | `b2ffa105dc1e` |
+| `php8.2-supervisord-v3.8` | arm64 | 23 | 381 | 1667 | 780 | 246 | 0 | not-produced | `6356597072b0` |
+| `php8.2-v3.8` | amd64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `3341e67c6746` |
+| `php8.2-v3.8` | arm64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `0e075db43003` |
+| `php8.3-debug-v3.8` | amd64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `cf14de848dfe` |
+| `php8.3-debug-v3.8` | arm64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `360b1fa5c9a8` |
+| `php8.3-max-v3.8` | amd64 | 38 | 639 | 2522 | 1082 | 324 | 0 | not-produced | `77d098446382` |
+| `php8.3-max-v3.8` | arm64 | 38 | 638 | 2518 | 1078 | 320 | 0 | not-produced | `f659d59a406b` |
+| `php8.3-min-v3.8` | amd64 | 6 | 245 | 1342 | 442 | 187 | 0 | not-produced | `6cf671807a9c` |
+| `php8.3-min-v3.8` | arm64 | 6 | 245 | 1342 | 442 | 187 | 0 | not-produced | `47cbff5577dc` |
+| `php8.3-supervisord-v3.8` | amd64 | 23 | 381 | 1667 | 780 | 246 | 0 | not-produced | `254fcc590d21` |
+| `php8.3-supervisord-v3.8` | arm64 | 23 | 381 | 1667 | 780 | 246 | 0 | not-produced | `2a666964f230` |
+| `php8.3-v3.8` | amd64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `9d2ab3440856` |
+| `php8.3-v3.8` | arm64 | 18 | 353 | 1616 | 749 | 246 | 0 | not-produced | `d147fd28f8e4` |
+| `php8.4-debug-v4.2` | amd64 | 18 | 377 | 1838 | 933 | 252 | 0 | not-produced | `360eba690aa6` |
+| `php8.4-debug-v4.2` | arm64 | 18 | 377 | 1838 | 933 | 252 | 0 | not-produced | `0c9a41f1852e` |
+| `php8.4-max-v4.2` | amd64 | 38 | 647 | 2596 | 1142 | 326 | 0 | not-produced | `de731146d0db` |
+| `php8.4-max-v4.2` | arm64 | 38 | 646 | 2592 | 1138 | 322 | 0 | not-produced | `3b066c3a0142` |
+| `php8.4-min-v4.2` | amd64 | 6 | 245 | 1342 | 442 | 187 | 0 | not-produced | `dfc4f9666c20` |
+| `php8.4-min-v4.2` | arm64 | 6 | 245 | 1342 | 442 | 187 | 0 | not-produced | `680fb8a338b7` |
+| `php8.4-supervisord-v4.2` | amd64 | 23 | 405 | 1889 | 964 | 252 | 0 | not-produced | `0ba0b327a9b8` |
+| `php8.4-supervisord-v4.2` | arm64 | 23 | 405 | 1889 | 964 | 252 | 0 | not-produced | `9da350ebef7a` |
+| `php8.4-v4.2` | amd64 | 18 | 377 | 1838 | 933 | 252 | 0 | not-produced | `c7cbd9a76f27` |
+| `php8.4-v4.2` | arm64 | 18 | 377 | 1838 | 933 | 252 | 0 | not-produced | `89f0121021af` |
+| `php8.5-debug-v5.2` | amd64 | 6 | 339 | 1287 | 1401 | 173 | 0 | not-produced | `5dbf00d834d5` |
+| `php8.5-debug-v5.2` | arm64 | 6 | 339 | 1285 | 1401 | 173 | 0 | not-produced | `b02c4739fcba` |
+| `php8.5-max-v5.2` | amd64 | 27 | 552 | 1513 | 1549 | 242 | 0 | not-produced | `4024fa5b3d62` |
+| `php8.5-max-v5.2` | arm64 | 27 | 552 | 1511 | 1549 | 242 | 0 | not-produced | `268c3e579b95` |
+| `php8.5-min-v5.2` | amd64 | 3 | 113 | 705 | 902 | 49 | 0 | not-produced | `beb37bb1f7eb` |
+| `php8.5-min-v5.2` | arm64 | 3 | 113 | 703 | 902 | 49 | 0 | not-produced | `6dda67229298` |
+| `php8.5-supervisord-v5.2` | amd64 | 6 | 360 | 1323 | 1421 | 173 | 0 | not-produced | `f8a0d2d4f2cd` |
+| `php8.5-supervisord-v5.2` | arm64 | 6 | 360 | 1321 | 1421 | 173 | 0 | not-produced | `222cbf4488d7` |
+| `php8.5-v5.2` | amd64 | 6 | 339 | 1287 | 1401 | 173 | 0 | not-produced | `5036a452e18f` |
+| `php8.5-v5.2` | arm64 | 6 | 339 | 1285 | 1401 | 173 | 0 | not-produced | `dc345243ceed` |
 
-_`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as published**: unlike the tabulated counts earlier in this report they still include the 2798 un-tabulated `linux-libc-dev` rows, so they intentionally exceed every tabulated count above. A `CRIT`/`HIGH` here with no matching row in any detail table is a kernel-header CVE -- see **Not tabulated** above. `Fixable` is also measured across both OS and library packages, wider than the OS-packages-only scope of the scan that feeds Copa -- severity plays no part in that difference._
+_`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as published**: unlike the tabulated counts earlier in this report they still include the 2015 un-tabulated `linux-libc-dev` rows, so they intentionally exceed every tabulated count above. A `CRIT`/`HIGH` here with no matching row in any detail table is a kernel-header CVE -- see **Not tabulated** above. `Fixable` is also measured across both OS and library packages, wider than the OS-packages-only scope of the scan that feeds Copa -- severity plays no part in that difference._
 
 ## Critical & high severity
 
@@ -127,9 +137,13 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2023-5841](https://nvd.nist.gov/vuln/detail/CVE-2023-5841) | CRITICAL | `libopenexr-3-1-30` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-42216](https://nvd.nist.gov/vuln/detail/CVE-2026-42216) | CRITICAL | `libopenexr-3-1-30` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-42217](https://nvd.nist.gov/vuln/detail/CVE-2026-42217) | CRITICAL | `libopenexr-3-1-30` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | CRITICAL | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-2369](https://nvd.nist.gov/vuln/detail/CVE-2026-2369) | CRITICAL | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | CRITICAL | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-2369](https://nvd.nist.gov/vuln/detail/CVE-2026-2369) | CRITICAL | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | CRITICAL | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-2369](https://nvd.nist.gov/vuln/detail/CVE-2026-2369) | CRITICAL | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | CRITICAL | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-2369](https://nvd.nist.gov/vuln/detail/CVE-2026-2369) | CRITICAL | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2025-7458](https://nvd.nist.gov/vuln/detail/CVE-2025-7458) | CRITICAL | `libsqlite3-0` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-33278](https://nvd.nist.gov/vuln/detail/CVE-2026-33278) | CRITICAL | `libunbound8` | unpatched · no fix | 3 images · v3.8, v4.2 |
@@ -149,42 +163,13 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-78408](https://nvd.nist.gov/vuln/detail/CVE-2026-78408) | HIGH | `bsdutils` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-78409](https://nvd.nist.gov/vuln/detail/CVE-2026-78409) | HIGH | `bsdutils` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-78410](https://nvd.nist.gov/vuln/detail/CVE-2026-78410) | HIGH | `bsdutils` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-110136](https://nvd.nist.gov/vuln/detail/CVE-2026-110136) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110137](https://nvd.nist.gov/vuln/detail/CVE-2026-110137) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110138](https://nvd.nist.gov/vuln/detail/CVE-2026-110138) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110139](https://nvd.nist.gov/vuln/detail/CVE-2026-110139) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110140](https://nvd.nist.gov/vuln/detail/CVE-2026-110140) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110141](https://nvd.nist.gov/vuln/detail/CVE-2026-110141) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110143](https://nvd.nist.gov/vuln/detail/CVE-2026-110143) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110144](https://nvd.nist.gov/vuln/detail/CVE-2026-110144) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110145](https://nvd.nist.gov/vuln/detail/CVE-2026-110145) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110146](https://nvd.nist.gov/vuln/detail/CVE-2026-110146) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110147](https://nvd.nist.gov/vuln/detail/CVE-2026-110147) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110148](https://nvd.nist.gov/vuln/detail/CVE-2026-110148) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110149](https://nvd.nist.gov/vuln/detail/CVE-2026-110149) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110150](https://nvd.nist.gov/vuln/detail/CVE-2026-110150) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110151](https://nvd.nist.gov/vuln/detail/CVE-2026-110151) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110152](https://nvd.nist.gov/vuln/detail/CVE-2026-110152) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110153](https://nvd.nist.gov/vuln/detail/CVE-2026-110153) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110154](https://nvd.nist.gov/vuln/detail/CVE-2026-110154) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110155](https://nvd.nist.gov/vuln/detail/CVE-2026-110155) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110156](https://nvd.nist.gov/vuln/detail/CVE-2026-110156) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110157](https://nvd.nist.gov/vuln/detail/CVE-2026-110157) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110158](https://nvd.nist.gov/vuln/detail/CVE-2026-110158) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110159](https://nvd.nist.gov/vuln/detail/CVE-2026-110159) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110160](https://nvd.nist.gov/vuln/detail/CVE-2026-110160) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110161](https://nvd.nist.gov/vuln/detail/CVE-2026-110161) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110162](https://nvd.nist.gov/vuln/detail/CVE-2026-110162) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110163](https://nvd.nist.gov/vuln/detail/CVE-2026-110163) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110164](https://nvd.nist.gov/vuln/detail/CVE-2026-110164) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110165](https://nvd.nist.gov/vuln/detail/CVE-2026-110165) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110166](https://nvd.nist.gov/vuln/detail/CVE-2026-110166) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110167](https://nvd.nist.gov/vuln/detail/CVE-2026-110167) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110168](https://nvd.nist.gov/vuln/detail/CVE-2026-110168) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110169](https://nvd.nist.gov/vuln/detail/CVE-2026-110169) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110170](https://nvd.nist.gov/vuln/detail/CVE-2026-110170) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110171](https://nvd.nist.gov/vuln/detail/CVE-2026-110171) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-110172](https://nvd.nist.gov/vuln/detail/CVE-2026-110172) | HIGH | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-110913](https://nvd.nist.gov/vuln/detail/CVE-2026-110913) | HIGH | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-110917](https://nvd.nist.gov/vuln/detail/CVE-2026-110917) | HIGH | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-110918](https://nvd.nist.gov/vuln/detail/CVE-2026-110918) | HIGH | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-110919](https://nvd.nist.gov/vuln/detail/CVE-2026-110919) | HIGH | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-110920](https://nvd.nist.gov/vuln/detail/CVE-2026-110920) | HIGH | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-110921](https://nvd.nist.gov/vuln/detail/CVE-2026-110921) | HIGH | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-110922](https://nvd.nist.gov/vuln/detail/CVE-2026-110922) | HIGH | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-12064](https://nvd.nist.gov/vuln/detail/CVE-2026-12064) | HIGH | `curl` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-6276](https://nvd.nist.gov/vuln/detail/CVE-2026-6276) | HIGH | `curl` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-8286](https://nvd.nist.gov/vuln/detail/CVE-2026-8286) | HIGH | `curl` | unpatched · no fix | 15 images · v3.8, v4.2 |
@@ -244,14 +229,24 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-41992](https://nvd.nist.gov/vuln/detail/CVE-2026-41992) | HIGH | `gzip` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `imagemagick` | unpatched · no fix | 8 images · v4.2, v5.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `imagemagick` | unpatched · no fix | 8 images · v4.2, v5.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `imagemagick` | unpatched · no fix | 8 images · v4.2, v5.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `imagemagick` | unpatched · no fix | 8 images · v4.2, v5.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `imagemagick-6-common` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `imagemagick-6-common` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `imagemagick-6-common` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `imagemagick-6-common` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `imagemagick-6.q16` | unpatched · no fix | 4 images · v4.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `imagemagick-6.q16` | unpatched · no fix | 4 images · v4.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `imagemagick-6.q16` | unpatched · no fix | 4 images · v4.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `imagemagick-6.q16` | unpatched · no fix | 4 images · v4.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `imagemagick-7-common` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `imagemagick-7-common` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `imagemagick-7-common` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `imagemagick-7-common` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `imagemagick-7.q16` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `imagemagick-7.q16` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `imagemagick-7.q16` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `imagemagick-7.q16` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-54369](https://nvd.nist.gov/vuln/detail/CVE-2026-54369) | HIGH | `libacl1` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-58049](https://nvd.nist.gov/vuln/detail/CVE-2026-58049) | HIGH | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-64830](https://nvd.nist.gov/vuln/detail/CVE-2026-64830) | HIGH | `libavcodec61` | unpatched · no fix | 4 images · v5.2 |
@@ -457,7 +452,9 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-67216](https://nvd.nist.gov/vuln/detail/CVE-2026-67216) | HIGH | `libcjson1` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-87933](https://nvd.nist.gov/vuln/detail/CVE-2026-87933) | HIGH | `libcjson1` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-34980](https://nvd.nist.gov/vuln/detail/CVE-2026-34980) | HIGH | `libcups2` | unpatched · no fix | 12 images · v3.8, v4.2 |
+| [CVE-2026-55453](https://nvd.nist.gov/vuln/detail/CVE-2026-55453) | HIGH | `libcups2` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-34980](https://nvd.nist.gov/vuln/detail/CVE-2026-34980) | HIGH | `libcups2t64` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-55453](https://nvd.nist.gov/vuln/detail/CVE-2026-55453) | HIGH | `libcups2t64` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-12064](https://nvd.nist.gov/vuln/detail/CVE-2026-12064) | HIGH | `libcurl3-gnutls` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-6276](https://nvd.nist.gov/vuln/detail/CVE-2026-6276) | HIGH | `libcurl3-gnutls` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-8286](https://nvd.nist.gov/vuln/detail/CVE-2026-8286) | HIGH | `libcurl3-gnutls` | unpatched · no fix | 12 images · v3.8, v4.2 |
@@ -472,11 +469,7 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-8927](https://nvd.nist.gov/vuln/detail/CVE-2026-8927) | HIGH | `libcurl4` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-12064](https://nvd.nist.gov/vuln/detail/CVE-2026-12064) | HIGH | `libcurl4t64` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2026-8458](https://nvd.nist.gov/vuln/detail/CVE-2026-8458) | HIGH | `libcurl4t64` | unpatched · no fix | 5 images · v5.2 |
-| [CVE-2026-66046](https://nvd.nist.gov/vuln/detail/CVE-2026-66046) | HIGH | `libexpat1` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-76956](https://nvd.nist.gov/vuln/detail/CVE-2026-76956) | HIGH | `libexpat1` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-76957](https://nvd.nist.gov/vuln/detail/CVE-2026-76957) | HIGH | `libexpat1` | unpatched · no fix | 4 images · v5.2 |
-| [CVE-2026-77214](https://nvd.nist.gov/vuln/detail/CVE-2026-77214) | HIGH | `libexpat1` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-93990](https://nvd.nist.gov/vuln/detail/CVE-2026-93990) | HIGH | `libexpat1` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-77214](https://nvd.nist.gov/vuln/detail/CVE-2026-77214) | HIGH | `libexpat1` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2025-65104](https://nvd.nist.gov/vuln/detail/CVE-2025-65104) | HIGH | `libfbclient2` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-53613](https://nvd.nist.gov/vuln/detail/CVE-2026-53613) | HIGH | `libfdisk1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | HIGH | `libfdisk1` | unpatched · no fix | 3 images · v3.8, v4.2 |
@@ -532,16 +525,28 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2019-16228](https://nvd.nist.gov/vuln/detail/CVE-2019-16228) | HIGH | `liblmdb0` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `libmagickcore-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `libmagickcore-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `libmagickcore-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `libmagickcore-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `libmagickcore-6.q16-6-extra` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `libmagickcore-6.q16-6-extra` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `libmagickcore-6.q16-6-extra` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `libmagickcore-6.q16-6-extra` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `libmagickcore-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `libmagickcore-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `libmagickcore-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `libmagickcore-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `libmagickcore-7.q16-10-extra` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `libmagickcore-7.q16-10-extra` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `libmagickcore-7.q16-10-extra` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `libmagickcore-7.q16-10-extra` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `libmagickwand-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `libmagickwand-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `libmagickwand-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `libmagickwand-6.q16-6` | unpatched · no fix | 6 images · v3.8, v4.2 |
 | [CVE-2026-86420](https://nvd.nist.gov/vuln/detail/CVE-2026-86420) | HIGH | `libmagickwand-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2026-86421](https://nvd.nist.gov/vuln/detail/CVE-2026-86421) | HIGH | `libmagickwand-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93589](https://nvd.nist.gov/vuln/detail/CVE-2026-93589) | HIGH | `libmagickwand-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
+| [CVE-2026-93590](https://nvd.nist.gov/vuln/detail/CVE-2026-93590) | HIGH | `libmagickwand-7.q16-10` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2025-7962](https://nvd.nist.gov/vuln/detail/CVE-2025-7962) | HIGH | `libmail-java` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-107815](https://nvd.nist.gov/vuln/detail/CVE-2026-107815) | HIGH | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-107818](https://nvd.nist.gov/vuln/detail/CVE-2026-107818) | HIGH | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
@@ -550,6 +555,8 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-44171](https://nvd.nist.gov/vuln/detail/CVE-2026-44171) | HIGH | `libmariadb3` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2026-48163](https://nvd.nist.gov/vuln/detail/CVE-2026-48163) | HIGH | `libmariadb3` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2026-48165](https://nvd.nist.gov/vuln/detail/CVE-2026-48165) | HIGH | `libmariadb3` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-86047](https://nvd.nist.gov/vuln/detail/CVE-2026-86047) | HIGH | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-97380](https://nvd.nist.gov/vuln/detail/CVE-2026-97380) | HIGH | `libmariadb3` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2024-23775](https://nvd.nist.gov/vuln/detail/CVE-2024-23775) | HIGH | `libmbedcrypto7` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2025-48965](https://nvd.nist.gov/vuln/detail/CVE-2025-48965) | HIGH | `libmbedcrypto7` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2025-52496](https://nvd.nist.gov/vuln/detail/CVE-2025-52496) | HIGH | `libmbedcrypto7` | unpatched · no fix | 12 images · v3.8, v4.2 |
@@ -676,7 +683,6 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-102557](https://nvd.nist.gov/vuln/detail/CVE-2026-102557) | HIGH | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-102558](https://nvd.nist.gov/vuln/detail/CVE-2026-102558) | HIGH | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-102559](https://nvd.nist.gov/vuln/detail/CVE-2026-102559) | HIGH | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | HIGH | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-1761](https://nvd.nist.gov/vuln/detail/CVE-2026-1761) | HIGH | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-2436](https://nvd.nist.gov/vuln/detail/CVE-2026-2436) | HIGH | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-3099](https://nvd.nist.gov/vuln/detail/CVE-2026-3099) | HIGH | `libsoup-3.0-0` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
@@ -695,7 +701,6 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-102557](https://nvd.nist.gov/vuln/detail/CVE-2026-102557) | HIGH | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-102558](https://nvd.nist.gov/vuln/detail/CVE-2026-102558) | HIGH | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-102559](https://nvd.nist.gov/vuln/detail/CVE-2026-102559) | HIGH | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | HIGH | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-1761](https://nvd.nist.gov/vuln/detail/CVE-2026-1761) | HIGH | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-2436](https://nvd.nist.gov/vuln/detail/CVE-2026-2436) | HIGH | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-3099](https://nvd.nist.gov/vuln/detail/CVE-2026-3099) | HIGH | `libsoup-3.0-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
@@ -714,7 +719,6 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-102557](https://nvd.nist.gov/vuln/detail/CVE-2026-102557) | HIGH | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-102558](https://nvd.nist.gov/vuln/detail/CVE-2026-102558) | HIGH | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-102559](https://nvd.nist.gov/vuln/detail/CVE-2026-102559) | HIGH | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | HIGH | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-1761](https://nvd.nist.gov/vuln/detail/CVE-2026-1761) | HIGH | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-2436](https://nvd.nist.gov/vuln/detail/CVE-2026-2436) | HIGH | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-3099](https://nvd.nist.gov/vuln/detail/CVE-2026-3099) | HIGH | `libsoup2.4-1` | unpatched · no fix | 3 images · v3.8, v4.2 |
@@ -732,7 +736,6 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-102557](https://nvd.nist.gov/vuln/detail/CVE-2026-102557) | HIGH | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-102558](https://nvd.nist.gov/vuln/detail/CVE-2026-102558) | HIGH | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-102559](https://nvd.nist.gov/vuln/detail/CVE-2026-102559) | HIGH | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
-| [CVE-2026-102560](https://nvd.nist.gov/vuln/detail/CVE-2026-102560) | HIGH | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-1761](https://nvd.nist.gov/vuln/detail/CVE-2026-1761) | HIGH | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-2436](https://nvd.nist.gov/vuln/detail/CVE-2026-2436) | HIGH | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-3099](https://nvd.nist.gov/vuln/detail/CVE-2026-3099) | HIGH | `libsoup2.4-common` | unpatched · no fix | 3 images · v3.8, v4.2 |
@@ -839,6 +842,8 @@ _`CRIT`-`UNK` and `Fixable` above are **raw Trivy totals for the image as publis
 | [CVE-2026-44171](https://nvd.nist.gov/vuln/detail/CVE-2026-44171) | HIGH | `mariadb-common` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2026-48163](https://nvd.nist.gov/vuln/detail/CVE-2026-48163) | HIGH | `mariadb-common` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2026-48165](https://nvd.nist.gov/vuln/detail/CVE-2026-48165) | HIGH | `mariadb-common` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-86047](https://nvd.nist.gov/vuln/detail/CVE-2026-86047) | HIGH | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-97380](https://nvd.nist.gov/vuln/detail/CVE-2026-97380) | HIGH | `mariadb-common` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-53613](https://nvd.nist.gov/vuln/detail/CVE-2026-53613) | HIGH | `mount` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-53615](https://nvd.nist.gov/vuln/detail/CVE-2026-53615) | HIGH | `mount` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2026-76642](https://nvd.nist.gov/vuln/detail/CVE-2026-76642) | HIGH | `mount` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
