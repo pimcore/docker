@@ -1,6 +1,6 @@
 # Known CVEs — LOW and UNKNOWN
 
-_Generated 2026-10-21 17:53 UTC._ Back to the [summary](known-cves.md).
+_Generated 2026-10-23 02:58 UTC._ Back to the [summary](known-cves.md).
 
 | CVE | Severity | Package | Status | Affects |
 |-----|----------|---------|--------|---------|
@@ -285,6 +285,8 @@ _Generated 2026-10-21 17:53 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-91782](https://nvd.nist.gov/vuln/detail/CVE-2026-91782) | LOW | `binutils-x86-64-linux-gnu` | unpatched · no fix | 5 images · v5.2 |
 | [CVE-2022-0563](https://nvd.nist.gov/vuln/detail/CVE-2022-0563) | LOW | `bsdutils` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2025-14104](https://nvd.nist.gov/vuln/detail/CVE-2025-14104) | LOW | `bsdutils` | unpatched · no fix | 15 images · v3.8, v4.2 |
+| [CVE-2026-113029](https://nvd.nist.gov/vuln/detail/CVE-2026-113029) | LOW | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113140](https://nvd.nist.gov/vuln/detail/CVE-2026-113140) | LOW | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2016-2781](https://nvd.nist.gov/vuln/detail/CVE-2016-2781) | LOW | `coreutils` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2017-18018](https://nvd.nist.gov/vuln/detail/CVE-2017-18018) | LOW | `coreutils` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2025-5278](https://nvd.nist.gov/vuln/detail/CVE-2025-5278) | LOW | `coreutils` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
@@ -1781,6 +1783,9 @@ _Generated 2026-10-21 17:53 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2012-2663](https://nvd.nist.gov/vuln/detail/CVE-2012-2663) | LOW | `libxtables12` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-88371](https://nvd.nist.gov/vuln/detail/CVE-2026-88371) | LOW | `libzbar0` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-88371](https://nvd.nist.gov/vuln/detail/CVE-2026-88371) | LOW | `libzbar0t64` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-110654](https://nvd.nist.gov/vuln/detail/CVE-2026-110654) | LOW | `libzvbi-common` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-110654](https://nvd.nist.gov/vuln/detail/CVE-2026-110654) | LOW | `libzvbi0` | unpatched · no fix | 12 images · v3.8, v4.2 |
+| [CVE-2026-110654](https://nvd.nist.gov/vuln/detail/CVE-2026-110654) | LOW | `libzvbi0t64` | unpatched · no fix | 4 images · v5.2 |
 | [CVE-2010-4756](https://nvd.nist.gov/vuln/detail/CVE-2010-4756) | LOW | `locales` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2018-20796](https://nvd.nist.gov/vuln/detail/CVE-2018-20796) | LOW | `locales` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2019-1010022](https://nvd.nist.gov/vuln/detail/CVE-2019-1010022) | LOW | `locales` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
@@ -1827,6 +1832,40 @@ _Generated 2026-10-21 17:53 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2025-14104](https://nvd.nist.gov/vuln/detail/CVE-2025-14104) | LOW | `mount` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2025-6141](https://nvd.nist.gov/vuln/detail/CVE-2025-6141) | LOW | `ncurses-base` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2025-6141](https://nvd.nist.gov/vuln/detail/CVE-2025-6141) | LOW | `ncurses-bin` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-83376](https://nvd.nist.gov/vuln/detail/CVE-2026-83376) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-87292](https://nvd.nist.gov/vuln/detail/CVE-2026-87292) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-87367](https://nvd.nist.gov/vuln/detail/CVE-2026-87367) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91334](https://nvd.nist.gov/vuln/detail/CVE-2026-91334) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91335](https://nvd.nist.gov/vuln/detail/CVE-2026-91335) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91397](https://nvd.nist.gov/vuln/detail/CVE-2026-91397) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91400](https://nvd.nist.gov/vuln/detail/CVE-2026-91400) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91461](https://nvd.nist.gov/vuln/detail/CVE-2026-91461) | LOW | `openjdk-17-jre` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-83376](https://nvd.nist.gov/vuln/detail/CVE-2026-83376) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-87292](https://nvd.nist.gov/vuln/detail/CVE-2026-87292) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-87367](https://nvd.nist.gov/vuln/detail/CVE-2026-87367) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91334](https://nvd.nist.gov/vuln/detail/CVE-2026-91334) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91335](https://nvd.nist.gov/vuln/detail/CVE-2026-91335) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91397](https://nvd.nist.gov/vuln/detail/CVE-2026-91397) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91400](https://nvd.nist.gov/vuln/detail/CVE-2026-91400) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-91461](https://nvd.nist.gov/vuln/detail/CVE-2026-91461) | LOW | `openjdk-17-jre-headless` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-83376](https://nvd.nist.gov/vuln/detail/CVE-2026-83376) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-87292](https://nvd.nist.gov/vuln/detail/CVE-2026-87292) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-87367](https://nvd.nist.gov/vuln/detail/CVE-2026-87367) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91333](https://nvd.nist.gov/vuln/detail/CVE-2026-91333) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91334](https://nvd.nist.gov/vuln/detail/CVE-2026-91334) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91335](https://nvd.nist.gov/vuln/detail/CVE-2026-91335) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91397](https://nvd.nist.gov/vuln/detail/CVE-2026-91397) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91400](https://nvd.nist.gov/vuln/detail/CVE-2026-91400) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91461](https://nvd.nist.gov/vuln/detail/CVE-2026-91461) | LOW | `openjdk-21-jre` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-83376](https://nvd.nist.gov/vuln/detail/CVE-2026-83376) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-87292](https://nvd.nist.gov/vuln/detail/CVE-2026-87292) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-87367](https://nvd.nist.gov/vuln/detail/CVE-2026-87367) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91333](https://nvd.nist.gov/vuln/detail/CVE-2026-91333) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91334](https://nvd.nist.gov/vuln/detail/CVE-2026-91334) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91335](https://nvd.nist.gov/vuln/detail/CVE-2026-91335) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91397](https://nvd.nist.gov/vuln/detail/CVE-2026-91397) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91400](https://nvd.nist.gov/vuln/detail/CVE-2026-91400) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
+| [CVE-2026-91461](https://nvd.nist.gov/vuln/detail/CVE-2026-91461) | LOW | `openjdk-21-jre-headless` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2007-2243](https://nvd.nist.gov/vuln/detail/CVE-2007-2243) | LOW | `openssh-client` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2007-2768](https://nvd.nist.gov/vuln/detail/CVE-2007-2768) | LOW | `openssh-client` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2008-3234](https://nvd.nist.gov/vuln/detail/CVE-2008-3234) | LOW | `openssh-client` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
@@ -1922,350 +1961,293 @@ _Generated 2026-10-21 17:53 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2025-14104](https://nvd.nist.gov/vuln/detail/CVE-2025-14104) | LOW | `util-linux-extra` | unpatched · no fix | 15 images · v3.8, v4.2 |
 | [CVE-2017-15131](https://nvd.nist.gov/vuln/detail/CVE-2017-15131) | LOW | `xdg-user-dirs` | unpatched · no fix | 16 images · v3.8, v4.2, v5.2 |
 | [CVE-2025-52968](https://nvd.nist.gov/vuln/detail/CVE-2025-52968) | LOW | `xdg-utils` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112992](https://nvd.nist.gov/vuln/detail/CVE-2026-112992) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112993](https://nvd.nist.gov/vuln/detail/CVE-2026-112993) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112994](https://nvd.nist.gov/vuln/detail/CVE-2026-112994) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112995](https://nvd.nist.gov/vuln/detail/CVE-2026-112995) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112996](https://nvd.nist.gov/vuln/detail/CVE-2026-112996) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112997](https://nvd.nist.gov/vuln/detail/CVE-2026-112997) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112998](https://nvd.nist.gov/vuln/detail/CVE-2026-112998) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-112999](https://nvd.nist.gov/vuln/detail/CVE-2026-112999) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113000](https://nvd.nist.gov/vuln/detail/CVE-2026-113000) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113001](https://nvd.nist.gov/vuln/detail/CVE-2026-113001) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113002](https://nvd.nist.gov/vuln/detail/CVE-2026-113002) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113003](https://nvd.nist.gov/vuln/detail/CVE-2026-113003) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113004](https://nvd.nist.gov/vuln/detail/CVE-2026-113004) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113005](https://nvd.nist.gov/vuln/detail/CVE-2026-113005) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113006](https://nvd.nist.gov/vuln/detail/CVE-2026-113006) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113007](https://nvd.nist.gov/vuln/detail/CVE-2026-113007) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113008](https://nvd.nist.gov/vuln/detail/CVE-2026-113008) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113009](https://nvd.nist.gov/vuln/detail/CVE-2026-113009) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113010](https://nvd.nist.gov/vuln/detail/CVE-2026-113010) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113011](https://nvd.nist.gov/vuln/detail/CVE-2026-113011) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113012](https://nvd.nist.gov/vuln/detail/CVE-2026-113012) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113013](https://nvd.nist.gov/vuln/detail/CVE-2026-113013) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113014](https://nvd.nist.gov/vuln/detail/CVE-2026-113014) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113015](https://nvd.nist.gov/vuln/detail/CVE-2026-113015) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113016](https://nvd.nist.gov/vuln/detail/CVE-2026-113016) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113017](https://nvd.nist.gov/vuln/detail/CVE-2026-113017) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113018](https://nvd.nist.gov/vuln/detail/CVE-2026-113018) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113019](https://nvd.nist.gov/vuln/detail/CVE-2026-113019) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113020](https://nvd.nist.gov/vuln/detail/CVE-2026-113020) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113021](https://nvd.nist.gov/vuln/detail/CVE-2026-113021) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113022](https://nvd.nist.gov/vuln/detail/CVE-2026-113022) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113023](https://nvd.nist.gov/vuln/detail/CVE-2026-113023) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113024](https://nvd.nist.gov/vuln/detail/CVE-2026-113024) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113025](https://nvd.nist.gov/vuln/detail/CVE-2026-113025) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113026](https://nvd.nist.gov/vuln/detail/CVE-2026-113026) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113027](https://nvd.nist.gov/vuln/detail/CVE-2026-113027) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113028](https://nvd.nist.gov/vuln/detail/CVE-2026-113028) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113029](https://nvd.nist.gov/vuln/detail/CVE-2026-113029) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113030](https://nvd.nist.gov/vuln/detail/CVE-2026-113030) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113031](https://nvd.nist.gov/vuln/detail/CVE-2026-113031) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113032](https://nvd.nist.gov/vuln/detail/CVE-2026-113032) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113033](https://nvd.nist.gov/vuln/detail/CVE-2026-113033) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113034](https://nvd.nist.gov/vuln/detail/CVE-2026-113034) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113035](https://nvd.nist.gov/vuln/detail/CVE-2026-113035) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113036](https://nvd.nist.gov/vuln/detail/CVE-2026-113036) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113037](https://nvd.nist.gov/vuln/detail/CVE-2026-113037) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113038](https://nvd.nist.gov/vuln/detail/CVE-2026-113038) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113039](https://nvd.nist.gov/vuln/detail/CVE-2026-113039) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113040](https://nvd.nist.gov/vuln/detail/CVE-2026-113040) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113042](https://nvd.nist.gov/vuln/detail/CVE-2026-113042) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113043](https://nvd.nist.gov/vuln/detail/CVE-2026-113043) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113044](https://nvd.nist.gov/vuln/detail/CVE-2026-113044) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113045](https://nvd.nist.gov/vuln/detail/CVE-2026-113045) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113046](https://nvd.nist.gov/vuln/detail/CVE-2026-113046) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113047](https://nvd.nist.gov/vuln/detail/CVE-2026-113047) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113048](https://nvd.nist.gov/vuln/detail/CVE-2026-113048) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113049](https://nvd.nist.gov/vuln/detail/CVE-2026-113049) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113051](https://nvd.nist.gov/vuln/detail/CVE-2026-113051) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113052](https://nvd.nist.gov/vuln/detail/CVE-2026-113052) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113053](https://nvd.nist.gov/vuln/detail/CVE-2026-113053) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113054](https://nvd.nist.gov/vuln/detail/CVE-2026-113054) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113055](https://nvd.nist.gov/vuln/detail/CVE-2026-113055) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113056](https://nvd.nist.gov/vuln/detail/CVE-2026-113056) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113057](https://nvd.nist.gov/vuln/detail/CVE-2026-113057) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113058](https://nvd.nist.gov/vuln/detail/CVE-2026-113058) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113059](https://nvd.nist.gov/vuln/detail/CVE-2026-113059) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113060](https://nvd.nist.gov/vuln/detail/CVE-2026-113060) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113061](https://nvd.nist.gov/vuln/detail/CVE-2026-113061) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113062](https://nvd.nist.gov/vuln/detail/CVE-2026-113062) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113063](https://nvd.nist.gov/vuln/detail/CVE-2026-113063) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113064](https://nvd.nist.gov/vuln/detail/CVE-2026-113064) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113065](https://nvd.nist.gov/vuln/detail/CVE-2026-113065) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113066](https://nvd.nist.gov/vuln/detail/CVE-2026-113066) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113067](https://nvd.nist.gov/vuln/detail/CVE-2026-113067) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113068](https://nvd.nist.gov/vuln/detail/CVE-2026-113068) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113069](https://nvd.nist.gov/vuln/detail/CVE-2026-113069) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113070](https://nvd.nist.gov/vuln/detail/CVE-2026-113070) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113071](https://nvd.nist.gov/vuln/detail/CVE-2026-113071) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113072](https://nvd.nist.gov/vuln/detail/CVE-2026-113072) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113073](https://nvd.nist.gov/vuln/detail/CVE-2026-113073) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113074](https://nvd.nist.gov/vuln/detail/CVE-2026-113074) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113075](https://nvd.nist.gov/vuln/detail/CVE-2026-113075) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113076](https://nvd.nist.gov/vuln/detail/CVE-2026-113076) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113077](https://nvd.nist.gov/vuln/detail/CVE-2026-113077) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113078](https://nvd.nist.gov/vuln/detail/CVE-2026-113078) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113079](https://nvd.nist.gov/vuln/detail/CVE-2026-113079) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113080](https://nvd.nist.gov/vuln/detail/CVE-2026-113080) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113081](https://nvd.nist.gov/vuln/detail/CVE-2026-113081) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113082](https://nvd.nist.gov/vuln/detail/CVE-2026-113082) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113083](https://nvd.nist.gov/vuln/detail/CVE-2026-113083) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113084](https://nvd.nist.gov/vuln/detail/CVE-2026-113084) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113085](https://nvd.nist.gov/vuln/detail/CVE-2026-113085) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113086](https://nvd.nist.gov/vuln/detail/CVE-2026-113086) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113087](https://nvd.nist.gov/vuln/detail/CVE-2026-113087) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113088](https://nvd.nist.gov/vuln/detail/CVE-2026-113088) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113089](https://nvd.nist.gov/vuln/detail/CVE-2026-113089) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113090](https://nvd.nist.gov/vuln/detail/CVE-2026-113090) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113092](https://nvd.nist.gov/vuln/detail/CVE-2026-113092) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113093](https://nvd.nist.gov/vuln/detail/CVE-2026-113093) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113094](https://nvd.nist.gov/vuln/detail/CVE-2026-113094) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113095](https://nvd.nist.gov/vuln/detail/CVE-2026-113095) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113096](https://nvd.nist.gov/vuln/detail/CVE-2026-113096) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113097](https://nvd.nist.gov/vuln/detail/CVE-2026-113097) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113098](https://nvd.nist.gov/vuln/detail/CVE-2026-113098) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113099](https://nvd.nist.gov/vuln/detail/CVE-2026-113099) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113100](https://nvd.nist.gov/vuln/detail/CVE-2026-113100) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113101](https://nvd.nist.gov/vuln/detail/CVE-2026-113101) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113102](https://nvd.nist.gov/vuln/detail/CVE-2026-113102) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113103](https://nvd.nist.gov/vuln/detail/CVE-2026-113103) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113104](https://nvd.nist.gov/vuln/detail/CVE-2026-113104) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113106](https://nvd.nist.gov/vuln/detail/CVE-2026-113106) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113107](https://nvd.nist.gov/vuln/detail/CVE-2026-113107) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113108](https://nvd.nist.gov/vuln/detail/CVE-2026-113108) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113109](https://nvd.nist.gov/vuln/detail/CVE-2026-113109) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113110](https://nvd.nist.gov/vuln/detail/CVE-2026-113110) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113111](https://nvd.nist.gov/vuln/detail/CVE-2026-113111) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113112](https://nvd.nist.gov/vuln/detail/CVE-2026-113112) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113113](https://nvd.nist.gov/vuln/detail/CVE-2026-113113) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113114](https://nvd.nist.gov/vuln/detail/CVE-2026-113114) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113115](https://nvd.nist.gov/vuln/detail/CVE-2026-113115) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113116](https://nvd.nist.gov/vuln/detail/CVE-2026-113116) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113117](https://nvd.nist.gov/vuln/detail/CVE-2026-113117) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113118](https://nvd.nist.gov/vuln/detail/CVE-2026-113118) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113119](https://nvd.nist.gov/vuln/detail/CVE-2026-113119) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113120](https://nvd.nist.gov/vuln/detail/CVE-2026-113120) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113121](https://nvd.nist.gov/vuln/detail/CVE-2026-113121) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113122](https://nvd.nist.gov/vuln/detail/CVE-2026-113122) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113123](https://nvd.nist.gov/vuln/detail/CVE-2026-113123) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113124](https://nvd.nist.gov/vuln/detail/CVE-2026-113124) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113125](https://nvd.nist.gov/vuln/detail/CVE-2026-113125) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113126](https://nvd.nist.gov/vuln/detail/CVE-2026-113126) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113127](https://nvd.nist.gov/vuln/detail/CVE-2026-113127) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113128](https://nvd.nist.gov/vuln/detail/CVE-2026-113128) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113129](https://nvd.nist.gov/vuln/detail/CVE-2026-113129) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113130](https://nvd.nist.gov/vuln/detail/CVE-2026-113130) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113131](https://nvd.nist.gov/vuln/detail/CVE-2026-113131) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113132](https://nvd.nist.gov/vuln/detail/CVE-2026-113132) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113133](https://nvd.nist.gov/vuln/detail/CVE-2026-113133) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113134](https://nvd.nist.gov/vuln/detail/CVE-2026-113134) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113135](https://nvd.nist.gov/vuln/detail/CVE-2026-113135) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113136](https://nvd.nist.gov/vuln/detail/CVE-2026-113136) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113137](https://nvd.nist.gov/vuln/detail/CVE-2026-113137) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113138](https://nvd.nist.gov/vuln/detail/CVE-2026-113138) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113139](https://nvd.nist.gov/vuln/detail/CVE-2026-113139) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113140](https://nvd.nist.gov/vuln/detail/CVE-2026-113140) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113141](https://nvd.nist.gov/vuln/detail/CVE-2026-113141) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113142](https://nvd.nist.gov/vuln/detail/CVE-2026-113142) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113143](https://nvd.nist.gov/vuln/detail/CVE-2026-113143) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113144](https://nvd.nist.gov/vuln/detail/CVE-2026-113144) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113145](https://nvd.nist.gov/vuln/detail/CVE-2026-113145) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113146](https://nvd.nist.gov/vuln/detail/CVE-2026-113146) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113147](https://nvd.nist.gov/vuln/detail/CVE-2026-113147) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113148](https://nvd.nist.gov/vuln/detail/CVE-2026-113148) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113149](https://nvd.nist.gov/vuln/detail/CVE-2026-113149) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113150](https://nvd.nist.gov/vuln/detail/CVE-2026-113150) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113151](https://nvd.nist.gov/vuln/detail/CVE-2026-113151) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113152](https://nvd.nist.gov/vuln/detail/CVE-2026-113152) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113153](https://nvd.nist.gov/vuln/detail/CVE-2026-113153) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113154](https://nvd.nist.gov/vuln/detail/CVE-2026-113154) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113155](https://nvd.nist.gov/vuln/detail/CVE-2026-113155) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113156](https://nvd.nist.gov/vuln/detail/CVE-2026-113156) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113157](https://nvd.nist.gov/vuln/detail/CVE-2026-113157) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113158](https://nvd.nist.gov/vuln/detail/CVE-2026-113158) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113159](https://nvd.nist.gov/vuln/detail/CVE-2026-113159) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113160](https://nvd.nist.gov/vuln/detail/CVE-2026-113160) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113161](https://nvd.nist.gov/vuln/detail/CVE-2026-113161) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113162](https://nvd.nist.gov/vuln/detail/CVE-2026-113162) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113163](https://nvd.nist.gov/vuln/detail/CVE-2026-113163) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113164](https://nvd.nist.gov/vuln/detail/CVE-2026-113164) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113165](https://nvd.nist.gov/vuln/detail/CVE-2026-113165) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113166](https://nvd.nist.gov/vuln/detail/CVE-2026-113166) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113167](https://nvd.nist.gov/vuln/detail/CVE-2026-113167) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113168](https://nvd.nist.gov/vuln/detail/CVE-2026-113168) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113169](https://nvd.nist.gov/vuln/detail/CVE-2026-113169) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113170](https://nvd.nist.gov/vuln/detail/CVE-2026-113170) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113171](https://nvd.nist.gov/vuln/detail/CVE-2026-113171) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113172](https://nvd.nist.gov/vuln/detail/CVE-2026-113172) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113173](https://nvd.nist.gov/vuln/detail/CVE-2026-113173) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113174](https://nvd.nist.gov/vuln/detail/CVE-2026-113174) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113175](https://nvd.nist.gov/vuln/detail/CVE-2026-113175) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113176](https://nvd.nist.gov/vuln/detail/CVE-2026-113176) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113177](https://nvd.nist.gov/vuln/detail/CVE-2026-113177) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113178](https://nvd.nist.gov/vuln/detail/CVE-2026-113178) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113179](https://nvd.nist.gov/vuln/detail/CVE-2026-113179) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113180](https://nvd.nist.gov/vuln/detail/CVE-2026-113180) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113181](https://nvd.nist.gov/vuln/detail/CVE-2026-113181) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113182](https://nvd.nist.gov/vuln/detail/CVE-2026-113182) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113183](https://nvd.nist.gov/vuln/detail/CVE-2026-113183) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113184](https://nvd.nist.gov/vuln/detail/CVE-2026-113184) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113185](https://nvd.nist.gov/vuln/detail/CVE-2026-113185) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113186](https://nvd.nist.gov/vuln/detail/CVE-2026-113186) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113187](https://nvd.nist.gov/vuln/detail/CVE-2026-113187) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113188](https://nvd.nist.gov/vuln/detail/CVE-2026-113188) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113189](https://nvd.nist.gov/vuln/detail/CVE-2026-113189) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113190](https://nvd.nist.gov/vuln/detail/CVE-2026-113190) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113191](https://nvd.nist.gov/vuln/detail/CVE-2026-113191) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113192](https://nvd.nist.gov/vuln/detail/CVE-2026-113192) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113193](https://nvd.nist.gov/vuln/detail/CVE-2026-113193) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113194](https://nvd.nist.gov/vuln/detail/CVE-2026-113194) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113195](https://nvd.nist.gov/vuln/detail/CVE-2026-113195) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113196](https://nvd.nist.gov/vuln/detail/CVE-2026-113196) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113197](https://nvd.nist.gov/vuln/detail/CVE-2026-113197) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113198](https://nvd.nist.gov/vuln/detail/CVE-2026-113198) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113199](https://nvd.nist.gov/vuln/detail/CVE-2026-113199) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113200](https://nvd.nist.gov/vuln/detail/CVE-2026-113200) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113201](https://nvd.nist.gov/vuln/detail/CVE-2026-113201) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113202](https://nvd.nist.gov/vuln/detail/CVE-2026-113202) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113204](https://nvd.nist.gov/vuln/detail/CVE-2026-113204) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113205](https://nvd.nist.gov/vuln/detail/CVE-2026-113205) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113206](https://nvd.nist.gov/vuln/detail/CVE-2026-113206) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113207](https://nvd.nist.gov/vuln/detail/CVE-2026-113207) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113208](https://nvd.nist.gov/vuln/detail/CVE-2026-113208) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113209](https://nvd.nist.gov/vuln/detail/CVE-2026-113209) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113210](https://nvd.nist.gov/vuln/detail/CVE-2026-113210) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113211](https://nvd.nist.gov/vuln/detail/CVE-2026-113211) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113212](https://nvd.nist.gov/vuln/detail/CVE-2026-113212) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113213](https://nvd.nist.gov/vuln/detail/CVE-2026-113213) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113214](https://nvd.nist.gov/vuln/detail/CVE-2026-113214) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113215](https://nvd.nist.gov/vuln/detail/CVE-2026-113215) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113216](https://nvd.nist.gov/vuln/detail/CVE-2026-113216) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113217](https://nvd.nist.gov/vuln/detail/CVE-2026-113217) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113218](https://nvd.nist.gov/vuln/detail/CVE-2026-113218) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113219](https://nvd.nist.gov/vuln/detail/CVE-2026-113219) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113220](https://nvd.nist.gov/vuln/detail/CVE-2026-113220) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113221](https://nvd.nist.gov/vuln/detail/CVE-2026-113221) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113222](https://nvd.nist.gov/vuln/detail/CVE-2026-113222) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113223](https://nvd.nist.gov/vuln/detail/CVE-2026-113223) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113224](https://nvd.nist.gov/vuln/detail/CVE-2026-113224) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113225](https://nvd.nist.gov/vuln/detail/CVE-2026-113225) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113226](https://nvd.nist.gov/vuln/detail/CVE-2026-113226) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113227](https://nvd.nist.gov/vuln/detail/CVE-2026-113227) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113228](https://nvd.nist.gov/vuln/detail/CVE-2026-113228) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113229](https://nvd.nist.gov/vuln/detail/CVE-2026-113229) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113230](https://nvd.nist.gov/vuln/detail/CVE-2026-113230) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113231](https://nvd.nist.gov/vuln/detail/CVE-2026-113231) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113232](https://nvd.nist.gov/vuln/detail/CVE-2026-113232) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113233](https://nvd.nist.gov/vuln/detail/CVE-2026-113233) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113234](https://nvd.nist.gov/vuln/detail/CVE-2026-113234) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113235](https://nvd.nist.gov/vuln/detail/CVE-2026-113235) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113236](https://nvd.nist.gov/vuln/detail/CVE-2026-113236) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113237](https://nvd.nist.gov/vuln/detail/CVE-2026-113237) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113238](https://nvd.nist.gov/vuln/detail/CVE-2026-113238) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113239](https://nvd.nist.gov/vuln/detail/CVE-2026-113239) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113240](https://nvd.nist.gov/vuln/detail/CVE-2026-113240) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113241](https://nvd.nist.gov/vuln/detail/CVE-2026-113241) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113242](https://nvd.nist.gov/vuln/detail/CVE-2026-113242) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113243](https://nvd.nist.gov/vuln/detail/CVE-2026-113243) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113244](https://nvd.nist.gov/vuln/detail/CVE-2026-113244) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113245](https://nvd.nist.gov/vuln/detail/CVE-2026-113245) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113246](https://nvd.nist.gov/vuln/detail/CVE-2026-113246) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113247](https://nvd.nist.gov/vuln/detail/CVE-2026-113247) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113248](https://nvd.nist.gov/vuln/detail/CVE-2026-113248) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113249](https://nvd.nist.gov/vuln/detail/CVE-2026-113249) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113250](https://nvd.nist.gov/vuln/detail/CVE-2026-113250) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113251](https://nvd.nist.gov/vuln/detail/CVE-2026-113251) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113252](https://nvd.nist.gov/vuln/detail/CVE-2026-113252) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113253](https://nvd.nist.gov/vuln/detail/CVE-2026-113253) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113254](https://nvd.nist.gov/vuln/detail/CVE-2026-113254) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113255](https://nvd.nist.gov/vuln/detail/CVE-2026-113255) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113257](https://nvd.nist.gov/vuln/detail/CVE-2026-113257) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113258](https://nvd.nist.gov/vuln/detail/CVE-2026-113258) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113259](https://nvd.nist.gov/vuln/detail/CVE-2026-113259) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113260](https://nvd.nist.gov/vuln/detail/CVE-2026-113260) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113261](https://nvd.nist.gov/vuln/detail/CVE-2026-113261) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113262](https://nvd.nist.gov/vuln/detail/CVE-2026-113262) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113263](https://nvd.nist.gov/vuln/detail/CVE-2026-113263) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113264](https://nvd.nist.gov/vuln/detail/CVE-2026-113264) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113265](https://nvd.nist.gov/vuln/detail/CVE-2026-113265) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113266](https://nvd.nist.gov/vuln/detail/CVE-2026-113266) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113267](https://nvd.nist.gov/vuln/detail/CVE-2026-113267) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113268](https://nvd.nist.gov/vuln/detail/CVE-2026-113268) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113269](https://nvd.nist.gov/vuln/detail/CVE-2026-113269) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113270](https://nvd.nist.gov/vuln/detail/CVE-2026-113270) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113271](https://nvd.nist.gov/vuln/detail/CVE-2026-113271) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113272](https://nvd.nist.gov/vuln/detail/CVE-2026-113272) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113273](https://nvd.nist.gov/vuln/detail/CVE-2026-113273) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113274](https://nvd.nist.gov/vuln/detail/CVE-2026-113274) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113275](https://nvd.nist.gov/vuln/detail/CVE-2026-113275) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113276](https://nvd.nist.gov/vuln/detail/CVE-2026-113276) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113277](https://nvd.nist.gov/vuln/detail/CVE-2026-113277) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113278](https://nvd.nist.gov/vuln/detail/CVE-2026-113278) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113279](https://nvd.nist.gov/vuln/detail/CVE-2026-113279) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113280](https://nvd.nist.gov/vuln/detail/CVE-2026-113280) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113281](https://nvd.nist.gov/vuln/detail/CVE-2026-113281) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113282](https://nvd.nist.gov/vuln/detail/CVE-2026-113282) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113283](https://nvd.nist.gov/vuln/detail/CVE-2026-113283) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113284](https://nvd.nist.gov/vuln/detail/CVE-2026-113284) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113285](https://nvd.nist.gov/vuln/detail/CVE-2026-113285) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113286](https://nvd.nist.gov/vuln/detail/CVE-2026-113286) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113287](https://nvd.nist.gov/vuln/detail/CVE-2026-113287) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113288](https://nvd.nist.gov/vuln/detail/CVE-2026-113288) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113289](https://nvd.nist.gov/vuln/detail/CVE-2026-113289) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113290](https://nvd.nist.gov/vuln/detail/CVE-2026-113290) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113291](https://nvd.nist.gov/vuln/detail/CVE-2026-113291) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113292](https://nvd.nist.gov/vuln/detail/CVE-2026-113292) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113293](https://nvd.nist.gov/vuln/detail/CVE-2026-113293) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113294](https://nvd.nist.gov/vuln/detail/CVE-2026-113294) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113295](https://nvd.nist.gov/vuln/detail/CVE-2026-113295) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113296](https://nvd.nist.gov/vuln/detail/CVE-2026-113296) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113297](https://nvd.nist.gov/vuln/detail/CVE-2026-113297) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113298](https://nvd.nist.gov/vuln/detail/CVE-2026-113298) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113299](https://nvd.nist.gov/vuln/detail/CVE-2026-113299) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113300](https://nvd.nist.gov/vuln/detail/CVE-2026-113300) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113301](https://nvd.nist.gov/vuln/detail/CVE-2026-113301) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113302](https://nvd.nist.gov/vuln/detail/CVE-2026-113302) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113303](https://nvd.nist.gov/vuln/detail/CVE-2026-113303) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113304](https://nvd.nist.gov/vuln/detail/CVE-2026-113304) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113305](https://nvd.nist.gov/vuln/detail/CVE-2026-113305) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113306](https://nvd.nist.gov/vuln/detail/CVE-2026-113306) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113307](https://nvd.nist.gov/vuln/detail/CVE-2026-113307) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113308](https://nvd.nist.gov/vuln/detail/CVE-2026-113308) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113309](https://nvd.nist.gov/vuln/detail/CVE-2026-113309) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113311](https://nvd.nist.gov/vuln/detail/CVE-2026-113311) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113312](https://nvd.nist.gov/vuln/detail/CVE-2026-113312) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113313](https://nvd.nist.gov/vuln/detail/CVE-2026-113313) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113315](https://nvd.nist.gov/vuln/detail/CVE-2026-113315) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113316](https://nvd.nist.gov/vuln/detail/CVE-2026-113316) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113317](https://nvd.nist.gov/vuln/detail/CVE-2026-113317) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113318](https://nvd.nist.gov/vuln/detail/CVE-2026-113318) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113319](https://nvd.nist.gov/vuln/detail/CVE-2026-113319) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113320](https://nvd.nist.gov/vuln/detail/CVE-2026-113320) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113321](https://nvd.nist.gov/vuln/detail/CVE-2026-113321) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113322](https://nvd.nist.gov/vuln/detail/CVE-2026-113322) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113323](https://nvd.nist.gov/vuln/detail/CVE-2026-113323) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113324](https://nvd.nist.gov/vuln/detail/CVE-2026-113324) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113325](https://nvd.nist.gov/vuln/detail/CVE-2026-113325) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113326](https://nvd.nist.gov/vuln/detail/CVE-2026-113326) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113327](https://nvd.nist.gov/vuln/detail/CVE-2026-113327) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113328](https://nvd.nist.gov/vuln/detail/CVE-2026-113328) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113329](https://nvd.nist.gov/vuln/detail/CVE-2026-113329) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113330](https://nvd.nist.gov/vuln/detail/CVE-2026-113330) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113331](https://nvd.nist.gov/vuln/detail/CVE-2026-113331) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113332](https://nvd.nist.gov/vuln/detail/CVE-2026-113332) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113333](https://nvd.nist.gov/vuln/detail/CVE-2026-113333) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113334](https://nvd.nist.gov/vuln/detail/CVE-2026-113334) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113335](https://nvd.nist.gov/vuln/detail/CVE-2026-113335) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113336](https://nvd.nist.gov/vuln/detail/CVE-2026-113336) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113337](https://nvd.nist.gov/vuln/detail/CVE-2026-113337) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113338](https://nvd.nist.gov/vuln/detail/CVE-2026-113338) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113340](https://nvd.nist.gov/vuln/detail/CVE-2026-113340) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113341](https://nvd.nist.gov/vuln/detail/CVE-2026-113341) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113342](https://nvd.nist.gov/vuln/detail/CVE-2026-113342) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113343](https://nvd.nist.gov/vuln/detail/CVE-2026-113343) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
-| [CVE-2026-113344](https://nvd.nist.gov/vuln/detail/CVE-2026-113344) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-112992](https://nvd.nist.gov/vuln/detail/CVE-2026-112992) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-112994](https://nvd.nist.gov/vuln/detail/CVE-2026-112994) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-112995](https://nvd.nist.gov/vuln/detail/CVE-2026-112995) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-112996](https://nvd.nist.gov/vuln/detail/CVE-2026-112996) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-112997](https://nvd.nist.gov/vuln/detail/CVE-2026-112997) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-112998](https://nvd.nist.gov/vuln/detail/CVE-2026-112998) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-112999](https://nvd.nist.gov/vuln/detail/CVE-2026-112999) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113000](https://nvd.nist.gov/vuln/detail/CVE-2026-113000) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113001](https://nvd.nist.gov/vuln/detail/CVE-2026-113001) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113002](https://nvd.nist.gov/vuln/detail/CVE-2026-113002) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113003](https://nvd.nist.gov/vuln/detail/CVE-2026-113003) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113004](https://nvd.nist.gov/vuln/detail/CVE-2026-113004) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113005](https://nvd.nist.gov/vuln/detail/CVE-2026-113005) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113007](https://nvd.nist.gov/vuln/detail/CVE-2026-113007) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113008](https://nvd.nist.gov/vuln/detail/CVE-2026-113008) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113009](https://nvd.nist.gov/vuln/detail/CVE-2026-113009) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113012](https://nvd.nist.gov/vuln/detail/CVE-2026-113012) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113013](https://nvd.nist.gov/vuln/detail/CVE-2026-113013) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113014](https://nvd.nist.gov/vuln/detail/CVE-2026-113014) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113015](https://nvd.nist.gov/vuln/detail/CVE-2026-113015) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113016](https://nvd.nist.gov/vuln/detail/CVE-2026-113016) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113018](https://nvd.nist.gov/vuln/detail/CVE-2026-113018) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113019](https://nvd.nist.gov/vuln/detail/CVE-2026-113019) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113020](https://nvd.nist.gov/vuln/detail/CVE-2026-113020) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113021](https://nvd.nist.gov/vuln/detail/CVE-2026-113021) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113022](https://nvd.nist.gov/vuln/detail/CVE-2026-113022) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113023](https://nvd.nist.gov/vuln/detail/CVE-2026-113023) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113024](https://nvd.nist.gov/vuln/detail/CVE-2026-113024) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113026](https://nvd.nist.gov/vuln/detail/CVE-2026-113026) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113027](https://nvd.nist.gov/vuln/detail/CVE-2026-113027) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113028](https://nvd.nist.gov/vuln/detail/CVE-2026-113028) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113031](https://nvd.nist.gov/vuln/detail/CVE-2026-113031) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113032](https://nvd.nist.gov/vuln/detail/CVE-2026-113032) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113034](https://nvd.nist.gov/vuln/detail/CVE-2026-113034) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113036](https://nvd.nist.gov/vuln/detail/CVE-2026-113036) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113038](https://nvd.nist.gov/vuln/detail/CVE-2026-113038) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113040](https://nvd.nist.gov/vuln/detail/CVE-2026-113040) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113041](https://nvd.nist.gov/vuln/detail/CVE-2026-113041) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113042](https://nvd.nist.gov/vuln/detail/CVE-2026-113042) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113044](https://nvd.nist.gov/vuln/detail/CVE-2026-113044) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113045](https://nvd.nist.gov/vuln/detail/CVE-2026-113045) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113046](https://nvd.nist.gov/vuln/detail/CVE-2026-113046) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113047](https://nvd.nist.gov/vuln/detail/CVE-2026-113047) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113048](https://nvd.nist.gov/vuln/detail/CVE-2026-113048) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113049](https://nvd.nist.gov/vuln/detail/CVE-2026-113049) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113051](https://nvd.nist.gov/vuln/detail/CVE-2026-113051) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113052](https://nvd.nist.gov/vuln/detail/CVE-2026-113052) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113053](https://nvd.nist.gov/vuln/detail/CVE-2026-113053) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113055](https://nvd.nist.gov/vuln/detail/CVE-2026-113055) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113056](https://nvd.nist.gov/vuln/detail/CVE-2026-113056) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113058](https://nvd.nist.gov/vuln/detail/CVE-2026-113058) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113059](https://nvd.nist.gov/vuln/detail/CVE-2026-113059) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113060](https://nvd.nist.gov/vuln/detail/CVE-2026-113060) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113061](https://nvd.nist.gov/vuln/detail/CVE-2026-113061) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113062](https://nvd.nist.gov/vuln/detail/CVE-2026-113062) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113063](https://nvd.nist.gov/vuln/detail/CVE-2026-113063) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113064](https://nvd.nist.gov/vuln/detail/CVE-2026-113064) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113065](https://nvd.nist.gov/vuln/detail/CVE-2026-113065) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113066](https://nvd.nist.gov/vuln/detail/CVE-2026-113066) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113067](https://nvd.nist.gov/vuln/detail/CVE-2026-113067) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113069](https://nvd.nist.gov/vuln/detail/CVE-2026-113069) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113070](https://nvd.nist.gov/vuln/detail/CVE-2026-113070) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113071](https://nvd.nist.gov/vuln/detail/CVE-2026-113071) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113072](https://nvd.nist.gov/vuln/detail/CVE-2026-113072) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113075](https://nvd.nist.gov/vuln/detail/CVE-2026-113075) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113076](https://nvd.nist.gov/vuln/detail/CVE-2026-113076) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113077](https://nvd.nist.gov/vuln/detail/CVE-2026-113077) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113078](https://nvd.nist.gov/vuln/detail/CVE-2026-113078) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113079](https://nvd.nist.gov/vuln/detail/CVE-2026-113079) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113080](https://nvd.nist.gov/vuln/detail/CVE-2026-113080) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113083](https://nvd.nist.gov/vuln/detail/CVE-2026-113083) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113084](https://nvd.nist.gov/vuln/detail/CVE-2026-113084) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113085](https://nvd.nist.gov/vuln/detail/CVE-2026-113085) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113086](https://nvd.nist.gov/vuln/detail/CVE-2026-113086) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113087](https://nvd.nist.gov/vuln/detail/CVE-2026-113087) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113088](https://nvd.nist.gov/vuln/detail/CVE-2026-113088) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113089](https://nvd.nist.gov/vuln/detail/CVE-2026-113089) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113090](https://nvd.nist.gov/vuln/detail/CVE-2026-113090) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113092](https://nvd.nist.gov/vuln/detail/CVE-2026-113092) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113093](https://nvd.nist.gov/vuln/detail/CVE-2026-113093) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113094](https://nvd.nist.gov/vuln/detail/CVE-2026-113094) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113095](https://nvd.nist.gov/vuln/detail/CVE-2026-113095) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113096](https://nvd.nist.gov/vuln/detail/CVE-2026-113096) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113097](https://nvd.nist.gov/vuln/detail/CVE-2026-113097) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113098](https://nvd.nist.gov/vuln/detail/CVE-2026-113098) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113099](https://nvd.nist.gov/vuln/detail/CVE-2026-113099) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113100](https://nvd.nist.gov/vuln/detail/CVE-2026-113100) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113101](https://nvd.nist.gov/vuln/detail/CVE-2026-113101) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113102](https://nvd.nist.gov/vuln/detail/CVE-2026-113102) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113103](https://nvd.nist.gov/vuln/detail/CVE-2026-113103) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113104](https://nvd.nist.gov/vuln/detail/CVE-2026-113104) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113105](https://nvd.nist.gov/vuln/detail/CVE-2026-113105) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113107](https://nvd.nist.gov/vuln/detail/CVE-2026-113107) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113108](https://nvd.nist.gov/vuln/detail/CVE-2026-113108) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113109](https://nvd.nist.gov/vuln/detail/CVE-2026-113109) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113110](https://nvd.nist.gov/vuln/detail/CVE-2026-113110) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113111](https://nvd.nist.gov/vuln/detail/CVE-2026-113111) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113112](https://nvd.nist.gov/vuln/detail/CVE-2026-113112) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113114](https://nvd.nist.gov/vuln/detail/CVE-2026-113114) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113116](https://nvd.nist.gov/vuln/detail/CVE-2026-113116) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113118](https://nvd.nist.gov/vuln/detail/CVE-2026-113118) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113119](https://nvd.nist.gov/vuln/detail/CVE-2026-113119) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113120](https://nvd.nist.gov/vuln/detail/CVE-2026-113120) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113121](https://nvd.nist.gov/vuln/detail/CVE-2026-113121) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113122](https://nvd.nist.gov/vuln/detail/CVE-2026-113122) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113123](https://nvd.nist.gov/vuln/detail/CVE-2026-113123) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113124](https://nvd.nist.gov/vuln/detail/CVE-2026-113124) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113125](https://nvd.nist.gov/vuln/detail/CVE-2026-113125) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113126](https://nvd.nist.gov/vuln/detail/CVE-2026-113126) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113127](https://nvd.nist.gov/vuln/detail/CVE-2026-113127) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113129](https://nvd.nist.gov/vuln/detail/CVE-2026-113129) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113131](https://nvd.nist.gov/vuln/detail/CVE-2026-113131) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113132](https://nvd.nist.gov/vuln/detail/CVE-2026-113132) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113133](https://nvd.nist.gov/vuln/detail/CVE-2026-113133) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113135](https://nvd.nist.gov/vuln/detail/CVE-2026-113135) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113136](https://nvd.nist.gov/vuln/detail/CVE-2026-113136) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113138](https://nvd.nist.gov/vuln/detail/CVE-2026-113138) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113139](https://nvd.nist.gov/vuln/detail/CVE-2026-113139) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113141](https://nvd.nist.gov/vuln/detail/CVE-2026-113141) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113142](https://nvd.nist.gov/vuln/detail/CVE-2026-113142) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113144](https://nvd.nist.gov/vuln/detail/CVE-2026-113144) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113145](https://nvd.nist.gov/vuln/detail/CVE-2026-113145) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113146](https://nvd.nist.gov/vuln/detail/CVE-2026-113146) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113147](https://nvd.nist.gov/vuln/detail/CVE-2026-113147) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113148](https://nvd.nist.gov/vuln/detail/CVE-2026-113148) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113149](https://nvd.nist.gov/vuln/detail/CVE-2026-113149) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113150](https://nvd.nist.gov/vuln/detail/CVE-2026-113150) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113152](https://nvd.nist.gov/vuln/detail/CVE-2026-113152) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113153](https://nvd.nist.gov/vuln/detail/CVE-2026-113153) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113154](https://nvd.nist.gov/vuln/detail/CVE-2026-113154) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113155](https://nvd.nist.gov/vuln/detail/CVE-2026-113155) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113156](https://nvd.nist.gov/vuln/detail/CVE-2026-113156) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113158](https://nvd.nist.gov/vuln/detail/CVE-2026-113158) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113159](https://nvd.nist.gov/vuln/detail/CVE-2026-113159) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113160](https://nvd.nist.gov/vuln/detail/CVE-2026-113160) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113162](https://nvd.nist.gov/vuln/detail/CVE-2026-113162) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113163](https://nvd.nist.gov/vuln/detail/CVE-2026-113163) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113164](https://nvd.nist.gov/vuln/detail/CVE-2026-113164) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113166](https://nvd.nist.gov/vuln/detail/CVE-2026-113166) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113167](https://nvd.nist.gov/vuln/detail/CVE-2026-113167) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113168](https://nvd.nist.gov/vuln/detail/CVE-2026-113168) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113169](https://nvd.nist.gov/vuln/detail/CVE-2026-113169) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113170](https://nvd.nist.gov/vuln/detail/CVE-2026-113170) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113171](https://nvd.nist.gov/vuln/detail/CVE-2026-113171) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113172](https://nvd.nist.gov/vuln/detail/CVE-2026-113172) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113173](https://nvd.nist.gov/vuln/detail/CVE-2026-113173) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113174](https://nvd.nist.gov/vuln/detail/CVE-2026-113174) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113175](https://nvd.nist.gov/vuln/detail/CVE-2026-113175) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113176](https://nvd.nist.gov/vuln/detail/CVE-2026-113176) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113177](https://nvd.nist.gov/vuln/detail/CVE-2026-113177) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113178](https://nvd.nist.gov/vuln/detail/CVE-2026-113178) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113179](https://nvd.nist.gov/vuln/detail/CVE-2026-113179) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113180](https://nvd.nist.gov/vuln/detail/CVE-2026-113180) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113181](https://nvd.nist.gov/vuln/detail/CVE-2026-113181) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113182](https://nvd.nist.gov/vuln/detail/CVE-2026-113182) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113183](https://nvd.nist.gov/vuln/detail/CVE-2026-113183) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113184](https://nvd.nist.gov/vuln/detail/CVE-2026-113184) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113185](https://nvd.nist.gov/vuln/detail/CVE-2026-113185) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113186](https://nvd.nist.gov/vuln/detail/CVE-2026-113186) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113187](https://nvd.nist.gov/vuln/detail/CVE-2026-113187) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113188](https://nvd.nist.gov/vuln/detail/CVE-2026-113188) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113189](https://nvd.nist.gov/vuln/detail/CVE-2026-113189) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113190](https://nvd.nist.gov/vuln/detail/CVE-2026-113190) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113191](https://nvd.nist.gov/vuln/detail/CVE-2026-113191) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113192](https://nvd.nist.gov/vuln/detail/CVE-2026-113192) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113193](https://nvd.nist.gov/vuln/detail/CVE-2026-113193) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113194](https://nvd.nist.gov/vuln/detail/CVE-2026-113194) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113195](https://nvd.nist.gov/vuln/detail/CVE-2026-113195) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113196](https://nvd.nist.gov/vuln/detail/CVE-2026-113196) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113197](https://nvd.nist.gov/vuln/detail/CVE-2026-113197) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113198](https://nvd.nist.gov/vuln/detail/CVE-2026-113198) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113199](https://nvd.nist.gov/vuln/detail/CVE-2026-113199) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113201](https://nvd.nist.gov/vuln/detail/CVE-2026-113201) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113202](https://nvd.nist.gov/vuln/detail/CVE-2026-113202) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113203](https://nvd.nist.gov/vuln/detail/CVE-2026-113203) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113204](https://nvd.nist.gov/vuln/detail/CVE-2026-113204) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113205](https://nvd.nist.gov/vuln/detail/CVE-2026-113205) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113206](https://nvd.nist.gov/vuln/detail/CVE-2026-113206) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113208](https://nvd.nist.gov/vuln/detail/CVE-2026-113208) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113209](https://nvd.nist.gov/vuln/detail/CVE-2026-113209) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113211](https://nvd.nist.gov/vuln/detail/CVE-2026-113211) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113212](https://nvd.nist.gov/vuln/detail/CVE-2026-113212) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113213](https://nvd.nist.gov/vuln/detail/CVE-2026-113213) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113214](https://nvd.nist.gov/vuln/detail/CVE-2026-113214) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113215](https://nvd.nist.gov/vuln/detail/CVE-2026-113215) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113218](https://nvd.nist.gov/vuln/detail/CVE-2026-113218) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113219](https://nvd.nist.gov/vuln/detail/CVE-2026-113219) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113220](https://nvd.nist.gov/vuln/detail/CVE-2026-113220) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113221](https://nvd.nist.gov/vuln/detail/CVE-2026-113221) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113222](https://nvd.nist.gov/vuln/detail/CVE-2026-113222) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113223](https://nvd.nist.gov/vuln/detail/CVE-2026-113223) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113224](https://nvd.nist.gov/vuln/detail/CVE-2026-113224) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113225](https://nvd.nist.gov/vuln/detail/CVE-2026-113225) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113226](https://nvd.nist.gov/vuln/detail/CVE-2026-113226) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113227](https://nvd.nist.gov/vuln/detail/CVE-2026-113227) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113228](https://nvd.nist.gov/vuln/detail/CVE-2026-113228) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113229](https://nvd.nist.gov/vuln/detail/CVE-2026-113229) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113230](https://nvd.nist.gov/vuln/detail/CVE-2026-113230) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113231](https://nvd.nist.gov/vuln/detail/CVE-2026-113231) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113232](https://nvd.nist.gov/vuln/detail/CVE-2026-113232) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113235](https://nvd.nist.gov/vuln/detail/CVE-2026-113235) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113236](https://nvd.nist.gov/vuln/detail/CVE-2026-113236) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113237](https://nvd.nist.gov/vuln/detail/CVE-2026-113237) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113238](https://nvd.nist.gov/vuln/detail/CVE-2026-113238) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113239](https://nvd.nist.gov/vuln/detail/CVE-2026-113239) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113240](https://nvd.nist.gov/vuln/detail/CVE-2026-113240) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113241](https://nvd.nist.gov/vuln/detail/CVE-2026-113241) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113243](https://nvd.nist.gov/vuln/detail/CVE-2026-113243) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113244](https://nvd.nist.gov/vuln/detail/CVE-2026-113244) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113245](https://nvd.nist.gov/vuln/detail/CVE-2026-113245) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113246](https://nvd.nist.gov/vuln/detail/CVE-2026-113246) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113247](https://nvd.nist.gov/vuln/detail/CVE-2026-113247) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113248](https://nvd.nist.gov/vuln/detail/CVE-2026-113248) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113249](https://nvd.nist.gov/vuln/detail/CVE-2026-113249) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113251](https://nvd.nist.gov/vuln/detail/CVE-2026-113251) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113253](https://nvd.nist.gov/vuln/detail/CVE-2026-113253) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113254](https://nvd.nist.gov/vuln/detail/CVE-2026-113254) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113255](https://nvd.nist.gov/vuln/detail/CVE-2026-113255) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113256](https://nvd.nist.gov/vuln/detail/CVE-2026-113256) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113257](https://nvd.nist.gov/vuln/detail/CVE-2026-113257) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113258](https://nvd.nist.gov/vuln/detail/CVE-2026-113258) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113259](https://nvd.nist.gov/vuln/detail/CVE-2026-113259) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113260](https://nvd.nist.gov/vuln/detail/CVE-2026-113260) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113261](https://nvd.nist.gov/vuln/detail/CVE-2026-113261) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113262](https://nvd.nist.gov/vuln/detail/CVE-2026-113262) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113263](https://nvd.nist.gov/vuln/detail/CVE-2026-113263) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113265](https://nvd.nist.gov/vuln/detail/CVE-2026-113265) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113267](https://nvd.nist.gov/vuln/detail/CVE-2026-113267) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113268](https://nvd.nist.gov/vuln/detail/CVE-2026-113268) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113269](https://nvd.nist.gov/vuln/detail/CVE-2026-113269) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113270](https://nvd.nist.gov/vuln/detail/CVE-2026-113270) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113271](https://nvd.nist.gov/vuln/detail/CVE-2026-113271) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113272](https://nvd.nist.gov/vuln/detail/CVE-2026-113272) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113275](https://nvd.nist.gov/vuln/detail/CVE-2026-113275) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113276](https://nvd.nist.gov/vuln/detail/CVE-2026-113276) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113279](https://nvd.nist.gov/vuln/detail/CVE-2026-113279) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113280](https://nvd.nist.gov/vuln/detail/CVE-2026-113280) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113281](https://nvd.nist.gov/vuln/detail/CVE-2026-113281) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113282](https://nvd.nist.gov/vuln/detail/CVE-2026-113282) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113283](https://nvd.nist.gov/vuln/detail/CVE-2026-113283) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113284](https://nvd.nist.gov/vuln/detail/CVE-2026-113284) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113286](https://nvd.nist.gov/vuln/detail/CVE-2026-113286) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113287](https://nvd.nist.gov/vuln/detail/CVE-2026-113287) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113288](https://nvd.nist.gov/vuln/detail/CVE-2026-113288) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113289](https://nvd.nist.gov/vuln/detail/CVE-2026-113289) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113290](https://nvd.nist.gov/vuln/detail/CVE-2026-113290) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113291](https://nvd.nist.gov/vuln/detail/CVE-2026-113291) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113292](https://nvd.nist.gov/vuln/detail/CVE-2026-113292) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113294](https://nvd.nist.gov/vuln/detail/CVE-2026-113294) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113296](https://nvd.nist.gov/vuln/detail/CVE-2026-113296) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113297](https://nvd.nist.gov/vuln/detail/CVE-2026-113297) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113298](https://nvd.nist.gov/vuln/detail/CVE-2026-113298) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113299](https://nvd.nist.gov/vuln/detail/CVE-2026-113299) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113300](https://nvd.nist.gov/vuln/detail/CVE-2026-113300) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113301](https://nvd.nist.gov/vuln/detail/CVE-2026-113301) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113302](https://nvd.nist.gov/vuln/detail/CVE-2026-113302) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113303](https://nvd.nist.gov/vuln/detail/CVE-2026-113303) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113304](https://nvd.nist.gov/vuln/detail/CVE-2026-113304) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113306](https://nvd.nist.gov/vuln/detail/CVE-2026-113306) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113307](https://nvd.nist.gov/vuln/detail/CVE-2026-113307) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113308](https://nvd.nist.gov/vuln/detail/CVE-2026-113308) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113309](https://nvd.nist.gov/vuln/detail/CVE-2026-113309) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113310](https://nvd.nist.gov/vuln/detail/CVE-2026-113310) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113311](https://nvd.nist.gov/vuln/detail/CVE-2026-113311) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113312](https://nvd.nist.gov/vuln/detail/CVE-2026-113312) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113313](https://nvd.nist.gov/vuln/detail/CVE-2026-113313) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113316](https://nvd.nist.gov/vuln/detail/CVE-2026-113316) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113317](https://nvd.nist.gov/vuln/detail/CVE-2026-113317) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113318](https://nvd.nist.gov/vuln/detail/CVE-2026-113318) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113320](https://nvd.nist.gov/vuln/detail/CVE-2026-113320) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113322](https://nvd.nist.gov/vuln/detail/CVE-2026-113322) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113325](https://nvd.nist.gov/vuln/detail/CVE-2026-113325) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113326](https://nvd.nist.gov/vuln/detail/CVE-2026-113326) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113327](https://nvd.nist.gov/vuln/detail/CVE-2026-113327) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113328](https://nvd.nist.gov/vuln/detail/CVE-2026-113328) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113329](https://nvd.nist.gov/vuln/detail/CVE-2026-113329) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113330](https://nvd.nist.gov/vuln/detail/CVE-2026-113330) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113331](https://nvd.nist.gov/vuln/detail/CVE-2026-113331) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113332](https://nvd.nist.gov/vuln/detail/CVE-2026-113332) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113333](https://nvd.nist.gov/vuln/detail/CVE-2026-113333) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113335](https://nvd.nist.gov/vuln/detail/CVE-2026-113335) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113336](https://nvd.nist.gov/vuln/detail/CVE-2026-113336) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113337](https://nvd.nist.gov/vuln/detail/CVE-2026-113337) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113338](https://nvd.nist.gov/vuln/detail/CVE-2026-113338) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113339](https://nvd.nist.gov/vuln/detail/CVE-2026-113339) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113342](https://nvd.nist.gov/vuln/detail/CVE-2026-113342) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
+| [CVE-2026-113343](https://nvd.nist.gov/vuln/detail/CVE-2026-113343) | UNKNOWN | `chromium-sandbox` | unpatched · no fix | 3 images · v3.8, v4.2 |
 | [CVE-2026-27890](https://nvd.nist.gov/vuln/detail/CVE-2026-27890) | UNKNOWN | `firebird-utils` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2026-28212](https://nvd.nist.gov/vuln/detail/CVE-2026-28212) | UNKNOWN | `firebird-utils` | unpatched · no fix | 1 image · v5.2 |
 | [CVE-2026-28224](https://nvd.nist.gov/vuln/detail/CVE-2026-28224) | UNKNOWN | `firebird-utils` | unpatched · no fix | 1 image · v5.2 |
@@ -2355,6 +2337,8 @@ _Generated 2026-10-21 17:53 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-71890](https://nvd.nist.gov/vuln/detail/CVE-2026-71890) | UNKNOWN | `libbcutil-java` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-71891](https://nvd.nist.gov/vuln/detail/CVE-2026-71891) | UNKNOWN | `libbcutil-java` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-85515](https://nvd.nist.gov/vuln/detail/CVE-2026-85515) | UNKNOWN | `libbcutil-java` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-111497](https://nvd.nist.gov/vuln/detail/CVE-2026-111497) | UNKNOWN | `libbrotli-dev` | unpatched · no fix | 12 images · v3.8, v4.2 |
+| [CVE-2026-111497](https://nvd.nist.gov/vuln/detail/CVE-2026-111497) | UNKNOWN | `libbrotli1` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | `TEMP-0000000-3F659E` | UNKNOWN | `libcups2` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | `TEMP-0000000-51E1F8` | UNKNOWN | `libcups2` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | `TEMP-0000000-71B844` | UNKNOWN | `libcups2` | unpatched · no fix | 12 images · v3.8, v4.2 |
@@ -2532,6 +2516,11 @@ _Generated 2026-10-21 17:53 UTC._ Back to the [summary](known-cves.md).
 | [CVE-2026-75904](https://nvd.nist.gov/vuln/detail/CVE-2026-75904) | UNKNOWN | `libmodplug1` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-82560](https://nvd.nist.gov/vuln/detail/CVE-2026-82560) | UNKNOWN | `libperl5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
 | [CVE-2026-82560](https://nvd.nist.gov/vuln/detail/CVE-2026-82560) | UNKNOWN | `libperl5.40` | unpatched · no fix | 5 images · v5.2 |
+| [CVE-2026-109125](https://nvd.nist.gov/vuln/detail/CVE-2026-109125) | UNKNOWN | `libunbound8` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-35501](https://nvd.nist.gov/vuln/detail/CVE-2026-35501) | UNKNOWN | `libunbound8` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-50106](https://nvd.nist.gov/vuln/detail/CVE-2026-50106) | UNKNOWN | `libunbound8` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-96405](https://nvd.nist.gov/vuln/detail/CVE-2026-96405) | UNKNOWN | `libunbound8` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
+| [CVE-2026-97206](https://nvd.nist.gov/vuln/detail/CVE-2026-97206) | UNKNOWN | `libunbound8` | unpatched · no fix | 4 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-82560](https://nvd.nist.gov/vuln/detail/CVE-2026-82560) | UNKNOWN | `perl` | unpatched · no fix | 17 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-82560](https://nvd.nist.gov/vuln/detail/CVE-2026-82560) | UNKNOWN | `perl-base` | unpatched · no fix | 20 images · v3.8, v4.2, v5.2 |
 | [CVE-2026-82560](https://nvd.nist.gov/vuln/detail/CVE-2026-82560) | UNKNOWN | `perl-modules-5.36` | unpatched · no fix | 12 images · v3.8, v4.2 |
