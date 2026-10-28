@@ -81,14 +81,17 @@ COPY --from=runtime-probe /usr/lib /probe/usr/lib
 
 # Stage everything the runtime needs under /out:
 #   - the extension .so files
-#   - every shared library they link against that the runtime image lacks
+#   - /usr/bin/env: the composer phar starts with `#!/usr/bin/env php` (its stub is covered
+#     by the phar signature, so the shebang cannot be rewritten); env needs only libc
+#   - every shared library the above link against that the runtime image lacks
 #   - one ini file per extension in the scan dir ($PHP_INI_DIR/conf.d)
 RUN set -eux; \
     EXTDIR="$(php-config --extension-dir)"; \
-    mkdir -p "/out${EXTDIR}" "/out${PHP_PREFIX}/etc/php/conf.d"; \
+    mkdir -p "/out${EXTDIR}" "/out${PHP_PREFIX}/etc/php/conf.d" /out/usr/bin; \
     cp "${EXTDIR}"/*.so "/out${EXTDIR}/"; \
-    for so in "${EXTDIR}"/*.so; do \
-        ldd "$so" | awk '/=> \// {print $3}'; \
+    cp -L /usr/bin/env /out/usr/bin/env; \
+    for bin in "${EXTDIR}"/*.so /usr/bin/env; do \
+        ldd "$bin" | awk '/=> \// {print $3}'; \
     done | sort -u | while read -r lib; do \
         # merged-/usr: /lib/<arch>/x -> /usr/lib/<arch>/x
         norm="$(printf '%s' "$lib" | sed -E 's#^/lib/#/usr/lib/#')"; \
