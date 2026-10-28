@@ -112,9 +112,14 @@ jobs:
                     # pimcore.ini env substitution works
                     docker run --rm -e PHP_MEMORY_LIMIT=333M dhi-min php -r 'exit(ini_get("memory_limit") === "333M" ? 0 : 1);'
 
-                    # composer works without root and without a shell
+                    # composer starts without root and without a shell. Anything that spawns a
+                    # process (create-project, install with scripts, `rm -rf` in composer's
+                    # Filesystem) needs /bin/sh and fails in a distroless image: the application
+                    # has to be built in another image/stage and copied in. So only --version here.
                     docker run --rm dhi-min composer --version
-                    docker run --rm dhi-min composer create-project pimcore/skeleton:2026.x-dev /tmp/pimcore --no-scripts --no-interaction --prefer-dist --ignore-platform-reqs
+
+                    # a real PHP workload: the pimcore composer.json platform requirements are met
+                    docker run --rm dhi-min php -r 'foreach (["SimpleXML","curl","dom","exif","fileinfo","gd","iconv","intl","json","mbstring","openssl","pdo","pdo_mysql","zip","zlib"] as $e) { if (!extension_loaded($e)) { fwrite(STDERR, "missing ext-$e\n"); exit(1); } }'
 
             -   name: Trivy scan - regular min vs DHI min
                 run: |

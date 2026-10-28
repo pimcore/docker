@@ -93,6 +93,10 @@ base image is a better path than Copa. It may change or disappear without notice
   `conf.d` overrides work as with the regular images.
 - Same extensions as `min` (`amqp bcmath exif gd intl pcntl pdo_mysql sockets zip`), same
   `php.ini`/`php-fpm` environment variables, `php` CLI and `composer` included.
+- **Runtime image only.** Without `/bin/sh`, anything that spawns a process fails: `composer
+  create-project`/`install` (composer shells out for `rm -rf`, `git`, `unzip`), composer scripts and
+  Pimcore commands that call external tools. Build the application with the regular image or a
+  `-dev` stage and copy it in.
 - Built, tested and scanned by `hardened-test.yml` on pull requests that touch it and on manual dispatch;
   published only on a manual dispatch with `publish=true`. It is not part of the release matrix, has no
   `-latest`/ghcr tags and no attached SBOM.
