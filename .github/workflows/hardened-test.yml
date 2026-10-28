@@ -3,10 +3,17 @@ name: Hardened test image (DHI pilot)
 # EXPERIMENTAL. Builds the `min` flavor from Docker Hardened Images (Dockerfile.dhi),
 # compares its Trivy result with the regular `min` image and -- only when explicitly
 # requested -- pushes it as `php<ver>-min-v5-hardened-test`. amd64 only.
-# Manual dispatch only; never runs on schedule, push or pull_request.
+# Runs build + test + scan on pull requests that touch the pilot files, and on manual
+# dispatch. Publishing is only possible on a manual dispatch with publish=true.
 # Context: https://github.com/pimcore/DevOps-Tasks/issues/84
 
 on:
+    pull_request:
+        paths:
+            - 'Dockerfile.dhi'
+            - '.github/workflows/hardened-test.yml'
+            - 'files/conf/php/php.ini'
+            - 'files/conf/php-fpm/php-fpm.conf'
     workflow_dispatch:
         inputs:
             php:
@@ -22,13 +29,16 @@ on:
 
 env:
     IMAGE_NAME: pimcore/pimcore
+    # inputs.* are empty on pull_request runs
+    PHP: ${{ inputs.php || '8.5' }}
+    PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == true }}
 
 permissions:
     contents: read
 
 jobs:
     dhi-min:
-        name: "Build, test and scan DHI min (php ${{ inputs.php }})"
+        name: "Build, test and scan DHI min (php ${{ inputs.php || '8.5' }})"
         runs-on: ubuntu-22.04
         if: github.repository == 'pimcore/docker'
 
@@ -43,7 +53,7 @@ jobs:
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login dhi.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
             -   name: Login to DockerHub Registry
-                if: ${{ inputs.publish }}
+                if: ${{ env.PUBLISH == 'true' }}
                 run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
             -   name: Install Trivy
@@ -61,7 +71,7 @@ jobs:
                     set -eux
                     docker build --load --pull \
                         --target pimcore_php_min \
-                        --build-arg PHP_VERSION="${{ inputs.php }}" \
+                        --build-arg PHP_VERSION="${PHP}" \
                         --build-arg DEBIAN_VERSION=trixie \
                         --tag plain-min .
 
@@ -71,7 +81,7 @@ jobs:
                     docker build --load --pull \
                         --file Dockerfile.dhi \
                         --target pimcore_php_min \
-                        --build-arg PHP_VERSION="${{ inputs.php }}" \
+                        --build-arg PHP_VERSION="${PHP}" \
                         --tag dhi-min .
 
             # The image has no shell: every check is a direct `php` / `php-fpm` / `composer` invocation.
@@ -110,7 +120,7 @@ jobs:
                 run: |
                     set -euo pipefail
                     {
-                        echo "## DHI pilot: regular min vs DHI min (php ${{ inputs.php }}, amd64)"
+                        echo "## DHI pilot: regular min vs DHI min (php ${PHP}, amd64)"
                         echo ""
                         echo "| Image | CRITICAL | HIGH | MEDIUM | LOW | UNKNOWN | total | fixable |"
                         echo "|-------|----------|------|--------|-----|---------|-------|---------|"
@@ -137,7 +147,7 @@ jobs:
                 if: always()
                 uses: actions/upload-artifact@v7
                 with:
-                    name: trivy-dhi-pilot_php${{ inputs.php }}
+                    name: trivy-dhi-pilot_php${{ inputs.php || '8.5' }}
                     path: |
                         trivy-*.json
                         trivy-*.txt
@@ -145,10 +155,10 @@ jobs:
                     if-no-files-found: ignore
 
             -   name: Publish -hardened-test tag
-                if: ${{ inputs.publish }}
+                if: ${{ env.PUBLISH == 'true' }}
                 run: |
                     set -eux
-                    TAG="${IMAGE_NAME}:php${{ inputs.php }}-min-v5-hardened-test"
+                    TAG="${IMAGE_NAME}:php${PHP}-min-v5-hardened-test"
                     docker tag dhi-min "$TAG"
                     docker push "$TAG"
                     echo "Published ${TAG} (amd64 only, experimental)" >> "$GITHUB_STEP_SUMMARY"
