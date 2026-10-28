@@ -24,6 +24,8 @@ ARG PHP_VERSION
 
 # Build dependencies. The -dev image's apt points at dhi.io/deb (hardened rebuilds of
 # Debian packages) and falls back to upstream Debian for everything else.
+# libpcre2-dev and zlib1g-dev: PHP is built against the system pcre2/zlib, and the -dev image
+# ships only the runtime libraries, not the headers the extension builds need.
 # libbrotli1/libbrotli-dev are pinned to one version: the DHI repo intermittently serves
 # them out of sync, which breaks libfreetype-dev (docker-hardened-images/catalog#677, #682).
 RUN set -eux; \
@@ -34,10 +36,12 @@ RUN set -eux; \
         "libbrotli-dev=${BROTLI}" \
         libfreetype-dev \
         libjpeg62-turbo-dev \
+        libpcre2-dev \
         libpng-dev \
         librabbitmq-dev \
         libwebp-dev \
         libzip-dev \
+        zlib1g-dev \
     ; \
     rm -rf /var/lib/apt/lists/*
 
