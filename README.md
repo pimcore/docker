@@ -28,7 +28,15 @@ Additionally we're offering 2 special tag suffixes:
 We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`. 
 
 ## Hardened images
-For our stable release tags we publish each image in two flavors so you can choose your trade-off:
+
+> **Status (2026-10-28): publishing of `-hardened` tags is paused.** The last `-hardened` tags were
+> pushed on 2026-07-31 and are not refreshed. Use the plain tags; they are the supported images and
+> are rebuilt on every scheduled run with all Debian security updates available at build time.
+> Hardened publishing resumes once there is a strategy that delivers it consistently
+> (see [pimcore/DevOps-Tasks#84](https://github.com/pimcore/DevOps-Tasks/issues/84)).
+> The description below documents what the `-hardened` flavor is when it is enabled.
+
+For our stable release tags the release workflow can publish each image in two flavors so you can choose your trade-off:
 
 - **plain** (default, unsuffixed) – the image exactly as built from the Dockerfile, e.g. `php8.5-debug-v5`. Published as-is; it may carry known OS-level CVEs.
 - **hardened** (`-hardened` suffix) – the same image with OS-level CVEs patched in via [Copacetic (Copa)](https://github.com/project-copacetic/copacetic), e.g. `php8.5-debug-v5-hardened`.
@@ -68,6 +76,25 @@ oras pull ghcr.io/pimcore/pimcore@<referrer-digest> -o ./sbom
 ```
 
 Attaching is best-effort (it's skipped if the registry rejects OCI referrers), so if `oras discover` comes up empty, fall back to the guaranteed copy: download the `sboms_*` artifact from the corresponding release workflow run.
+
+### Experimental: `-hardened-test` (Docker Hardened Images pilot)
+
+`pimcore/pimcore:php8.5-min-v5-hardened-test` is an **experimental, unsupported** image built from
+[Docker Hardened Images](https://docs.docker.com/dhi/) (`dhi.io/php`, Apache-2.0) instead of the
+official `php` image, see [`Dockerfile.dhi`](Dockerfile.dhi). It exists to measure whether a hardened
+base image is a better path than Copa. It may change or disappear without notice.
+
+- **`min` flavor only, PHP 8.5, Debian 13, amd64 only.** No `default`, `max`, `debug` or `supervisord`
+  flavor: DHI does not provide ghostscript, ImageMagick, ffmpeg, poppler, LibreOffice or Chromium, so
+  those tools would come unpatched from plain Debian and a distroless runtime cannot install them.
+- **Distroless runtime:** no shell, no package manager, runs as uid/gid `65532` (`nonroot`), not root.
+  Mounted volumes must be writable by that user. Use `docker debug` for troubleshooting.
+- PHP lives under `/opt/php-8.5`; `/usr/local/etc/php` is a symlink to its ini directory, so
+  `conf.d` overrides work as with the regular images.
+- Same extensions as `min` (`amqp bcmath exif gd intl pcntl pdo_mysql sockets zip`), same
+  `php.ini`/`php-fpm` environment variables, `php` CLI and `composer` included.
+- Built and published only by the manual workflow `hardened-test.yml`; it is not part of the release
+  matrix, has no `-latest`/ghcr tags and no attached SBOM.
 
 ## Known CVEs
 
