@@ -32,8 +32,7 @@ We're also offering special tags for specific PHP versions, e.g. `php8.2.5-v2.0`
 > **Status (2026-10-28): publishing of `-hardened` tags is paused.** The last `-hardened` tags were
 > pushed on 2026-07-31 and are not refreshed. Use the plain tags; they are the supported images and
 > are rebuilt on every scheduled run with all Debian security updates available at build time.
-> Hardened publishing resumes once there is a strategy that delivers it consistently
-> (see [pimcore/DevOps-Tasks#84](https://github.com/pimcore/DevOps-Tasks/issues/84)).
+> Hardened publishing resumes once there is a strategy that delivers it consistently.
 > The description below documents what the `-hardened` flavor is when it is enabled.
 
 For our stable release tags the release workflow can publish each image in two flavors so you can choose your trade-off:

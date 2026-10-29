@@ -40,7 +40,11 @@ jobs:
     dhi-min:
         name: "Build, test and scan DHI min (php ${{ inputs.php || '8.5' }})"
         runs-on: ubuntu-22.04
-        if: github.repository == 'pimcore/docker'
+        # Fork PRs get no repository secrets, and the dhi.io login needs them: run only for
+        # branches of this repository (pull_request from the same repo, or a dispatch).
+        if: >-
+            github.repository == 'pimcore/docker' &&
+            (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
 
         steps:
             -   uses: actions/checkout@v5
