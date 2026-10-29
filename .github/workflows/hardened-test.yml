@@ -5,7 +5,6 @@ name: Hardened test image (DHI pilot)
 # requested -- pushes it as `php<ver>-min-v5-hardened-test`. amd64 only.
 # Runs build + test + scan on pull requests that touch the pilot files, and on manual
 # dispatch. Publishing is only possible on a manual dispatch with publish=true.
-# Context: https://github.com/pimcore/DevOps-Tasks/issues/84
 
 on:
     pull_request:
