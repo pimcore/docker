@@ -140,7 +140,7 @@ jobs:
                     fi
                     printf '%s\n' "${imageVariants[@]}" > .docker-state/variants.txt
 
-                    PHP_SUB_VERSION=$(docker run -i --rm php:${{ matrix.build.php }}-fpm-${{ matrix.build.distro }} php -r 'echo PHP_VERSION;')
+                    PHP_SUB_VERSION=$(docker run --pull=always -i --rm php:${{ matrix.build.php }}-fpm-${{ matrix.build.distro }} php -r 'echo PHP_VERSION;')
 
                     for imageVariant in "${imageVariants[@]}"; do
                         echo "Building plain image: $imageVariant"
@@ -184,7 +184,7 @@ jobs:
                         echo "${VERSION}"     > ".docker-state/${imageVariant}/version.txt"
                         echo "${TAG}"         > ".docker-state/${imageVariant}/tag.txt"
 
-                        docker build --load \
+                        docker build --pull --load \
                             --provenance=false \
                             --platform "linux/${ARCH_TAG}" \
                             --target="pimcore_php_${imageVariant}" \
