@@ -1,0 +1,173 @@
+# syntax=docker/dockerfile:1
+#
+# EXPERIMENTAL -- Docker Hardened Images (DHI) pilot for the `min` flavor.
+# Published only as `php<ver>-min-v5-hardened-test` from .github/workflows/hardened-test.yml.
+# Not part of the regular release matrix. See README.md "Hardened images".
+#
+# Differences to the regular Dockerfile:
+#   - base is dhi.io/php (Debian 13 only, Apache-2.0, needs `docker login dhi.io`)
+#   - runtime is distroless: no shell, no apt, runs as uid 65532 (nonroot)
+#   - PHP lives under /opt/php-<ver>; /usr/local/etc/php is a symlink to its ini dir
+#   - no docker-php-ext-* helpers, so extensions are built with phpize in the -dev stage
+#     and copied (with the shared libraries they need) into the runtime stage
+#   - the -fpm runtime is built with --disable-cli; the `php` CLI is taken from the
+#     DHI CLI runtime image of the same version
+
+ARG PHP_VERSION="8.5"
+
+# ---------------------------------------------------------------------------
+# builder: root, bash, apt, gcc, pecl, phpize, PHP source in $PHP_SRC_DIR
+# ---------------------------------------------------------------------------
+FROM dhi.io/php:${PHP_VERSION}-debian13-dev AS builder
+
+# Build dependencies. The -dev image's apt points at dhi.io/deb (hardened rebuilds of
+# Debian packages) and falls back to upstream Debian for everything else.
+# libpcre2-dev and zlib1g-dev: PHP is built against the system pcre2/zlib, and the -dev image
+# ships only the runtime libraries, not the headers the extension builds need.
+# libbrotli1/libbrotli-dev are pinned to one version: the DHI repo intermittently serves
+# them out of sync, which breaks libfreetype-dev (docker-hardened-images/catalog#677, #682).
+# The -dev candidate is the anchor: its exact-version runtime dependency always exists in
+# the repo, while the newest runtime build may have no matching -dev package yet. The base
+# image can already carry that newer runtime build, hence --allow-downgrades.
+RUN set -eux; \
+    apt-get update; \
+    BROTLI="$(apt-cache policy libbrotli-dev | awk '/Candidate:/ {print $2}')"; \
+    apt-get install -y --no-install-recommends --allow-downgrades \
+        "libbrotli1=${BROTLI}" \
+        "libbrotli-dev=${BROTLI}" \
+        libfreetype-dev \
+        libjpeg62-turbo-dev \
+        libpcre2-dev \
+        libpng-dev \
+        librabbitmq-dev \
+        libwebp-dev \
+        libzip-dev \
+        zlib1g-dev \
+    ; \
+    rm -rf /var/lib/apt/lists/*
+
+# Extensions bundled with PHP but not compiled into the DHI image.
+# Each one is built out-of-tree with phpize and installed into `php-config --extension-dir`.
+RUN set -eux; \
+    for ext in bcmath exif pcntl sockets zip; do \
+        ( cd "${PHP_SRC_DIR}/ext/${ext}" && phpize && ./configure && make -j"$(nproc)" && make install ); \
+    done; \
+    ( cd "${PHP_SRC_DIR}/ext/gd" && phpize \
+        && ./configure --with-jpeg --with-webp --with-freetype \
+        && make -j"$(nproc)" && make install ); \
+    ( cd "${PHP_SRC_DIR}/ext/pdo_mysql" && phpize \
+        && ./configure --with-pdo-mysql=mysqlnd \
+        && make -j"$(nproc)" && make install )
+
+# PECL extension: amqp (librabbitmq from the DHI apt repo).
+# `pecl download` + phpize avoids the interactive prompt of `pecl install amqp`.
+RUN set -eux; \
+    cd /tmp; \
+    pecl download amqp; \
+    mkdir amqp && tar -xzf amqp-*.tgz -C amqp --strip-components=1; \
+    cd amqp && phpize && ./configure && make -j"$(nproc)" && make install; \
+    rm -rf /tmp/amqp /tmp/amqp-*.tgz
+
+# ---------------------------------------------------------------------------
+# runtime-probe: the file list of the runtime image, used to copy only the shared
+# libraries the runtime does NOT already ship (keeps the DHI base untouched)
+# ---------------------------------------------------------------------------
+FROM dhi.io/php:${PHP_VERSION}-debian13-fpm AS runtime-probe
+
+FROM builder AS payload
+
+COPY --from=runtime-probe /usr/lib /probe/usr/lib
+
+# Stage everything the runtime needs under /out:
+#   - the extension .so files
+#   - /usr/bin/env: the composer phar starts with `#!/usr/bin/env php` (its stub is covered
+#     by the phar signature, so the shebang cannot be rewritten); env needs only libc
+#   - every shared library the above link against that the runtime image lacks
+#   - the dpkg status record of each package those files come from, in
+#     /var/lib/dpkg/status.d/ (the distroless convention Trivy reads next to the main
+#     status file), so the copied libraries stay visible to vulnerability scanners
+#   - one ini file per extension in the scan dir ($PHP_INI_DIR/conf.d)
+RUN set -eux; \
+    EXTDIR="$(php-config --extension-dir)"; \
+    mkdir -p "/out${EXTDIR}" "/out${PHP_PREFIX}/etc/php/conf.d" /out/usr/bin /out/var/lib/dpkg/status.d; \
+    cp "${EXTDIR}"/*.so "/out${EXTDIR}/"; \
+    cp -L /usr/bin/env /out/usr/bin/env; \
+    record_pkg() { \
+        pkg="$(dpkg -S "$1" | head -n1 | cut -d: -f1)"; \
+        [ -n "$pkg" ] || { echo "no package owns $1" >&2; exit 1; }; \
+        [ -e "/out/var/lib/dpkg/status.d/${pkg}" ] || dpkg-query --status "$pkg" > "/out/var/lib/dpkg/status.d/${pkg}"; \
+    }; \
+    record_pkg /usr/bin/env; \
+    for bin in "${EXTDIR}"/*.so /usr/bin/env; do \
+        ldd "$bin" | awk '/=> \// {print $3}'; \
+    done | sort -u | while read -r lib; do \
+        # merged-/usr: /lib/<arch>/x -> /usr/lib/<arch>/x
+        norm="$(printf '%s' "$lib" | sed -E 's#^/lib/#/usr/lib/#')"; \
+        case "$norm" in /usr/lib/*) ;; *) echo "unexpected library path: $lib" >&2; exit 1;; esac; \
+        if [ ! -e "/probe${norm}" ]; then \
+            mkdir -p "/out$(dirname "$norm")"; \
+            cp -L "$lib" "/out${norm}"; \
+            record_pkg "$norm"; \
+        fi; \
+    done; \
+    for ext in bcmath exif gd pcntl pdo_mysql sockets zip amqp; do \
+        echo "extension=${ext}.so" > "/out${PHP_PREFIX}/etc/php/conf.d/10-${ext}.ini"; \
+    done; \
+    find /out -type f | sort
+
+# ---------------------------------------------------------------------------
+# cli: the DHI CLI runtime of the same version, source of the `php` binary
+# ---------------------------------------------------------------------------
+FROM dhi.io/php:${PHP_VERSION}-debian13 AS cli
+
+# ---------------------------------------------------------------------------
+# runtime: distroless, nonroot (uid 65532), no shell, no package manager
+# ---------------------------------------------------------------------------
+FROM dhi.io/php:${PHP_VERSION}-debian13-fpm AS pimcore_php_min
+
+# Paths below use PHP_PREFIX (ENV from the DHI base, e.g. /opt/php-8.5) rather than the
+# PHP_VERSION build arg, so they stay correct whatever the base image sets PHP_VERSION to.
+COPY --from=payload /out/ /
+COPY --from=cli ${PHP_PREFIX}/bin/php ${PHP_PREFIX}/bin/php
+
+COPY files/conf/php/php.ini ${PHP_PREFIX}/etc/php/conf.d/20-pimcore.ini
+COPY files/conf/php-fpm/php-fpm.conf ${PHP_PREFIX}/etc/php-fpm.d/zz-www.conf
+
+# env php.ini
+ENV PHP_TIMEZONE="UTC"
+ENV PHP_MEMORY_LIMIT="256M"
+ENV PHP_POST_MAX_SIZE="100M"
+ENV PHP_UPLOAD_MAX_FILESIZE="100M"
+ENV PHP_DISPLAY_STARTUP_ERRORS=1
+ENV PHP_MAX_EXECUTION_TIME="30"
+ENV PHP_ERROR_REPORTING="E_ALL"
+ENV PHP_EXPOSE_PHP="Off"
+
+# opcache settings
+ENV OPCACHE_ENABLE=1
+ENV OPCACHE_ENABLE_CLI=0
+ENV OPCACHE_MEMORY_CONSUMPTION=128
+ENV OPCACHE_MAX_ACCELERATED_FILES=10000
+ENV OPCACHE_VALIDATE_TIMESTAMPS=1
+ENV OPCACHE_CONSISTENCY_CHECKS=0
+
+# fpm settings
+ENV PHP_FPM_LISTEN=0.0.0.0:9000
+ENV PHP_FPM_PM=dynamic
+ENV PHP_FPM_PM_MAX_CHILDREN=5
+ENV PHP_FPM_PM_START_SERVERS=2
+ENV PHP_FPM_PM_MAX_SPARE_SERVERS=3
+ENV PHP_FPM_PM_MIN_SPARE_SERVERS=1
+ENV PHP_FPM_PM_MAX_REQUESTS=10000
+
+# Composer runs as uid 65532 here (not root), so it needs a writable home.
+ENV COMPOSER_HOME=/tmp/composer
+ENV COMPOSER_MEMORY_LIMIT=-1
+COPY --from=composer/composer:2-bin /composer /usr/local/bin/composer
+
+WORKDIR /var/www/html
+
+# DHI sets ENTRYPOINT to the php-fpm binary. Reset it so `docker run <image> php bin/console`
+# works exactly like with the regular images (there is no shell for an entrypoint script).
+ENTRYPOINT []
+CMD ["php-fpm"]

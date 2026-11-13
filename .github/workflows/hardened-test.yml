@@ -1,0 +1,172 @@
+name: Hardened test image (DHI pilot)
+
+# EXPERIMENTAL. Builds the `min` flavor from Docker Hardened Images (Dockerfile.dhi),
+# compares its Trivy result with the regular `min` image and -- only when explicitly
+# requested -- pushes it as `php<ver>-min-v5-hardened-test`. amd64 only.
+# Runs build + test + scan on pull requests that touch the pilot files, and on manual
+# dispatch. Publishing is only possible on a manual dispatch with publish=true.
+
+on:
+    pull_request:
+        paths:
+            - 'Dockerfile.dhi'
+            - '.github/workflows/hardened-test.yml'
+            - 'files/conf/php/php.ini'
+            - 'files/conf/php-fpm/php-fpm.conf'
+    workflow_dispatch:
+        inputs:
+            php:
+                description: 'PHP minor version (must exist as dhi.io/php:<php>-debian13-{dev,fpm} and as php:<php>-fpm-trixie)'
+                required: false
+                default: '8.5'
+                type: string
+            publish:
+                description: 'Push pimcore/pimcore:php<php>-min-v5-hardened-test to Docker Hub. Off by default: build, test and scan only.'
+                required: false
+                default: false
+                type: boolean
+
+env:
+    IMAGE_NAME: pimcore/pimcore
+    # inputs.* are empty on pull_request runs
+    PHP: ${{ inputs.php || '8.5' }}
+    PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == true }}
+
+permissions:
+    contents: read
+
+jobs:
+    dhi-min:
+        name: "Build, test and scan DHI min (php ${{ inputs.php || '8.5' }})"
+        runs-on: ubuntu-22.04
+        # Fork PRs get no repository secrets, and the dhi.io login needs them: run only for
+        # branches of this repository (pull_request from the same repo, or a dispatch).
+        if: >-
+            github.repository == 'pimcore/docker' &&
+            (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+
+        steps:
+            -   uses: actions/checkout@v5
+
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v4
+
+            # dhi.io accepts the Docker Hub account credentials (password or access token).
+            -   name: Login to dhi.io
+                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login dhi.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            -   name: Login to DockerHub Registry
+                if: ${{ env.PUBLISH == 'true' }}
+                run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            -   name: Install Trivy
+                run: |
+                    set -euxo pipefail
+                    sudo apt-get update
+                    sudo apt-get install -y wget curl apt-transport-https gnupg lsb-release jq
+                    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+                    echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee /etc/apt/sources.list.d/trivy.list
+                    sudo apt-get update
+                    sudo apt-get install -y trivy
+
+            -   name: Build regular min image (baseline)
+                run: |
+                    set -eux
+                    docker build --load --pull \
+                        --target pimcore_php_min \
+                        --build-arg PHP_VERSION="${PHP}" \
+                        --build-arg DEBIAN_VERSION=trixie \
+                        --tag plain-min .
+
+            -   name: Build DHI min image
+                run: |
+                    set -eux
+                    docker build --load --pull \
+                        --file Dockerfile.dhi \
+                        --target pimcore_php_min \
+                        --build-arg PHP_VERSION="${PHP}" \
+                        --tag dhi-min .
+
+            # The image has no shell: every check is a direct `php` / `php-fpm` / `composer` invocation.
+            -   name: Smoke checks
+                run: |
+                    set -eux
+
+                    # same extension list as test.yml
+                    for ext in amqp bcmath exif gd intl pcntl pdo_mysql sockets zip; do
+                        docker run --rm dhi-min php -m | grep -Fx "$ext"
+                    done
+                    docker run --rm dhi-min php -m | grep -Fx 'Zend OPcache' || echo "::warning::Zend OPcache is not loaded in the CLI of dhi-min (check how DHI enables opcache)"
+
+                    # gd must have jpeg, webp and freetype support
+                    docker run --rm dhi-min php -r '$i = gd_info(); foreach (["JPEG Support","WebP Support","FreeType Support"] as $k) { if (empty($i[$k])) { fwrite(STDERR, "gd: $k missing\n"); exit(1); } }'
+
+                    # the CLI binary and the fpm binary must agree on the extension ABI
+                    docker run --rm dhi-min php -i     | grep -E '^(extension_dir|Thread Safety|Debug Build) ' | tee cli.abi
+                    docker run --rm dhi-min php-fpm -i | grep -E '^(extension_dir|Thread Safety|Debug Build) ' | tee fpm.abi
+                    diff cli.abi fpm.abi
+
+                    # fpm config (incl. our zz-www.conf env overrides) is valid and loads all extensions
+                    docker run --rm dhi-min php-fpm -t
+
+                    # runs as the DHI nonroot user
+                    docker run --rm dhi-min php -r 'exit(posix_getuid() === 65532 ? 0 : 1);'
+
+                    # pimcore.ini env substitution works
+                    docker run --rm -e PHP_MEMORY_LIMIT=333M dhi-min php -r 'exit(ini_get("memory_limit") === "333M" ? 0 : 1);'
+
+                    # composer starts without root and without a shell. Anything that spawns a
+                    # process (create-project, install with scripts, `rm -rf` in composer's
+                    # Filesystem) needs /bin/sh and fails in a distroless image: the application
+                    # has to be built in another image/stage and copied in. So only --version here.
+                    docker run --rm dhi-min composer --version
+
+                    # a real PHP workload: the pimcore composer.json platform requirements are met
+                    docker run --rm dhi-min php -r 'foreach (["SimpleXML","curl","dom","exif","fileinfo","gd","iconv","intl","json","mbstring","openssl","pdo","pdo_mysql","zip","zlib"] as $e) { if (!extension_loaded($e)) { fwrite(STDERR, "missing ext-$e\n"); exit(1); } }'
+
+            -   name: Trivy scan - regular min vs DHI min
+                run: |
+                    set -euo pipefail
+                    {
+                        echo "## DHI pilot: regular min vs DHI min (php ${PHP}, amd64)"
+                        echo ""
+                        echo "| Image | CRITICAL | HIGH | MEDIUM | LOW | UNKNOWN | total | fixable |"
+                        echo "|-------|----------|------|--------|-----|---------|-------|---------|"
+                    } > summary.md
+                    for img in plain-min dhi-min; do
+                        trivy image --pkg-types os,library --format json -o "trivy-${img}.json" "$img"
+                        trivy image --pkg-types os,library --format table -o "trivy-${img}.txt" "$img"
+                        jq -r --arg img "$img" '
+                            [.Results[]?.Vulnerabilities[]?] as $v
+                            | [$img]
+                              + (["CRITICAL","HIGH","MEDIUM","LOW","UNKNOWN"] | map(. as $s | ($v | map(select(.Severity == $s)) | length)))
+                              + [($v | length), ($v | map(select(.FixedVersion != null and .FixedVersion != "")) | length)]
+                            | "| " + (map(tostring) | join(" | ")) + " |"' "trivy-${img}.json" >> summary.md
+                    done
+                    {
+                        echo ""
+                        echo "Counts are vulnerability rows (one per package and CVE), all severities, fixable and unfixable, OS and library packages."
+                        echo "Full tables: \`trivy-plain-min.txt\` and \`trivy-dhi-min.txt\` in the \`trivy-dhi-pilot\` artifact."
+                    } >> summary.md
+                    cat summary.md >> "$GITHUB_STEP_SUMMARY"
+                    cat summary.md
+
+            -   name: Upload Trivy results
+                if: always()
+                uses: actions/upload-artifact@v7
+                with:
+                    name: trivy-dhi-pilot_php${{ inputs.php || '8.5' }}
+                    path: |
+                        trivy-*.json
+                        trivy-*.txt
+                        summary.md
+                    if-no-files-found: ignore
+
+            -   name: Publish -hardened-test tag
+                if: ${{ env.PUBLISH == 'true' }}
+                run: |
+                    set -eux
+                    TAG="${IMAGE_NAME}:php${PHP}-min-v5-hardened-test"
+                    docker tag dhi-min "$TAG"
+                    docker push "$TAG"
+                    echo "Published ${TAG} (amd64 only, experimental)" >> "$GITHUB_STEP_SUMMARY"
