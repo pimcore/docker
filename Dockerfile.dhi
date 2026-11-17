@@ -7,11 +7,10 @@
 # Differences to the regular Dockerfile:
 #   - base is dhi.io/php (Debian 13 only, Apache-2.0, needs `docker login dhi.io`)
 #   - runtime is distroless: no shell, no apt, runs as uid 65532 (nonroot)
-#   - PHP lives under /opt/php-<ver>; /usr/local/etc/php is a symlink to its ini dir
+#   - PHP's install and config paths are DHI's own and have changed between DHI releases,
+#     so none are hardcoded here: they are read from `php-config` in the payload stage
 #   - no docker-php-ext-* helpers, so extensions are built with phpize in the -dev stage
 #     and copied (with the shared libraries they need) into the runtime stage
-#   - the -fpm runtime is built with --disable-cli; the `php` CLI is taken from the
-#     DHI CLI runtime image of the same version
 
 ARG PHP_VERSION="8.5"
 
@@ -22,8 +21,8 @@ FROM dhi.io/php:${PHP_VERSION}-debian13-dev AS builder
 
 # Build dependencies. The -dev image's apt points at dhi.io/deb (hardened rebuilds of
 # Debian packages) and falls back to upstream Debian for everything else.
-# libpcre2-dev and zlib1g-dev: PHP is built against the system pcre2/zlib, and the -dev image
-# ships only the runtime libraries, not the headers the extension builds need.
+# libpcre2-dev and zlib1g-dev: PHP is built against the system pcre2/zlib, so the extension
+# builds need their headers.
 # libbrotli1/libbrotli-dev are pinned to one version. DHI briefly served them out of sync,
 # which broke libfreetype-dev (docker-hardened-images/catalog#677, #682); DHI has fixed this
 # upstream, the pin is kept as a cheap safeguard against the same drift.
@@ -78,6 +77,8 @@ FROM dhi.io/php:${PHP_VERSION}-debian13-fpm AS runtime-probe
 FROM builder AS payload
 
 COPY --from=runtime-probe /usr/lib /probe/usr/lib
+COPY files/conf/php/php.ini /conf/php.ini
+COPY files/conf/php-fpm/php-fpm.conf /conf/php-fpm.conf
 
 # Stage everything the runtime needs under /out:
 #   - the extension .so files
@@ -87,10 +88,15 @@ COPY --from=runtime-probe /usr/lib /probe/usr/lib
 #   - the dpkg status record of each package those files come from, in
 #     /var/lib/dpkg/status.d/ (the distroless convention Trivy reads next to the main
 #     status file), so the copied libraries stay visible to vulnerability scanners
-#   - one ini file per extension in the scan dir ($PHP_INI_DIR/conf.d)
+#   - one ini file per extension plus our php.ini in PHP's ini scan dir, and our pool config
+#     in php-fpm.d. Both directories come from the configure options of this PHP build
+#     (scan dir and <sysconfdir>/php-fpm.d), as real paths without symlinks.
 RUN set -eux; \
     EXTDIR="$(php-config --extension-dir)"; \
-    mkdir -p "/out${EXTDIR}" "/out${PHP_PREFIX}/etc/php/conf.d" /out/usr/bin /out/var/lib/dpkg/status.d; \
+    INIDIR="$(readlink -f "$(php-config --ini-dir)")"; \
+    SYSCONFDIR="$(php-config --configure-options | tr ' ' '\n' | sed -n 's/^--sysconfdir=//p')"; \
+    FPMDIR="$(readlink -f "${SYSCONFDIR}")/php-fpm.d"; \
+    mkdir -p "/out${EXTDIR}" "/out${INIDIR}" "/out${FPMDIR}" /out/usr/bin /out/var/lib/dpkg/status.d; \
     cp "${EXTDIR}"/*.so "/out${EXTDIR}/"; \
     cp -L /usr/bin/env /out/usr/bin/env; \
     record_pkg() { \
@@ -112,27 +118,20 @@ RUN set -eux; \
         fi; \
     done; \
     for ext in bcmath exif gd pcntl pdo_mysql sockets zip amqp; do \
-        echo "extension=${ext}.so" > "/out${PHP_PREFIX}/etc/php/conf.d/10-${ext}.ini"; \
+        echo "extension=${ext}.so" > "/out${INIDIR}/10-${ext}.ini"; \
     done; \
+    install -m 0644 /conf/php.ini "/out${INIDIR}/20-pimcore.ini"; \
+    install -m 0644 /conf/php-fpm.conf "/out${FPMDIR}/zz-www.conf"; \
     find /out -type f | sort
-
-# ---------------------------------------------------------------------------
-# cli: the DHI CLI runtime of the same version, source of the `php` binary
-# ---------------------------------------------------------------------------
-FROM dhi.io/php:${PHP_VERSION}-debian13 AS cli
 
 # ---------------------------------------------------------------------------
 # runtime: distroless, nonroot (uid 65532), no shell, no package manager
 # ---------------------------------------------------------------------------
 FROM dhi.io/php:${PHP_VERSION}-debian13-fpm AS pimcore_php_min
 
-# Paths below use PHP_PREFIX (ENV from the DHI base, e.g. /opt/php-8.5) rather than the
-# PHP_VERSION build arg, so they stay correct whatever the base image sets PHP_VERSION to.
+# Extensions with their libraries and package records, /usr/bin/env, the extension ini
+# files, our php.ini (20-pimcore.ini) and our pool config (zz-www.conf).
 COPY --from=payload /out/ /
-COPY --from=cli ${PHP_PREFIX}/bin/php ${PHP_PREFIX}/bin/php
-
-COPY files/conf/php/php.ini ${PHP_PREFIX}/etc/php/conf.d/20-pimcore.ini
-COPY files/conf/php-fpm/php-fpm.conf ${PHP_PREFIX}/etc/php-fpm.d/zz-www.conf
 
 # env php.ini
 ENV PHP_TIMEZONE="UTC"

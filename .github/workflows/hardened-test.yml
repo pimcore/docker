@@ -106,8 +106,10 @@ jobs:
                     docker run --rm dhi-min php-fpm -i | grep -E '^(extension_dir|Thread Safety|Debug Build) ' | tee fpm.abi
                     diff cli.abi fpm.abi
 
-                    # fpm config (incl. our zz-www.conf env overrides) is valid and loads all extensions
+                    # fpm config is valid, and our zz-www.conf is really read: DHI's default is
+                    # `listen = 9000`, ours (PHP_FPM_LISTEN) is `0.0.0.0:9000`
                     docker run --rm dhi-min php-fpm -t
+                    docker run --rm dhi-min php-fpm -tt 2>&1 | grep -F 'listen = 0.0.0.0:9000'
 
                     # runs as the DHI nonroot user
                     docker run --rm dhi-min php -r 'exit(posix_getuid() === 65532 ? 0 : 1);'

@@ -82,8 +82,8 @@ base image is a better path than Copa. It may change or disappear without notice
   those tools would come unpatched from plain Debian and a distroless runtime cannot install them.
 - **Distroless runtime:** no shell, no package manager, runs as uid/gid `65532` (`nonroot`), not root.
   Mounted volumes must be writable by that user. Use `docker debug` for troubleshooting.
-- PHP lives under `/opt/php-8.5`; `/usr/local/etc/php` is a symlink to its ini directory, so
-  `conf.d` overrides work as with the regular images.
+- PHP's install paths are DHI's own and differ from the official image. `/usr/local/etc/php` is a
+  symlink to its ini directory, so `conf.d` overrides work as with the regular images.
 - Same extensions as `min` (`amqp bcmath exif gd intl pcntl pdo_mysql sockets zip`), same
   `php.ini`/`php-fpm` environment variables, `php` CLI and `composer` included.
 - **Runtime image only.** Without `/bin/sh`, anything that spawns a process fails: `composer
