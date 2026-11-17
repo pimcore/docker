@@ -24,11 +24,12 @@ FROM dhi.io/php:${PHP_VERSION}-debian13-dev AS builder
 # Debian packages) and falls back to upstream Debian for everything else.
 # libpcre2-dev and zlib1g-dev: PHP is built against the system pcre2/zlib, and the -dev image
 # ships only the runtime libraries, not the headers the extension builds need.
-# libbrotli1/libbrotli-dev are pinned to one version: the DHI repo intermittently serves
-# them out of sync, which breaks libfreetype-dev (docker-hardened-images/catalog#677, #682).
-# The -dev candidate is the anchor: its exact-version runtime dependency always exists in
-# the repo, while the newest runtime build may have no matching -dev package yet. The base
-# image can already carry that newer runtime build, hence --allow-downgrades.
+# libbrotli1/libbrotli-dev are pinned to one version. DHI briefly served them out of sync,
+# which broke libfreetype-dev (docker-hardened-images/catalog#677, #682); DHI has fixed this
+# upstream, the pin is kept as a cheap safeguard against the same drift.
+# The -dev candidate is the anchor: its exact-version runtime dependency exists in the repo,
+# while a newer runtime build may have no matching -dev package. The base image can already
+# carry that newer runtime build, hence --allow-downgrades.
 RUN set -eux; \
     apt-get update; \
     BROTLI="$(apt-cache policy libbrotli-dev | awk '/Candidate:/ {print $2}')"; \
