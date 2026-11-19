@@ -166,16 +166,17 @@ jobs:
                         {
                             echo "${IMAGE_NAME}:${TAG}"
                             echo "${IMAGE_NAME}:${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
-                            echo "ghcr.io/pimcore/pimcore:${TAG}"
-                            echo "ghcr.io/pimcore/pimcore:${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
+                            # TEMP 2026-11-19: ghcr.io refuses uploads with HTTP 500; Docker Hub only for this run.
+                            # echo "ghcr.io/pimcore/pimcore:${TAG}"
+                            # echo "ghcr.io/pimcore/pimcore:${BASE_TAG_DETAILED}-${VERSION}-${ARCH_TAG}"
                             if [ "true" = "${{ matrix.build.latest-tag }}" ]; then
                                 echo "${IMAGE_NAME}:${BASE_TAG}-latest-${ARCH_TAG}"
-                                echo "ghcr.io/pimcore/pimcore:${BASE_TAG}-latest-${ARCH_TAG}"
+                                # echo "ghcr.io/pimcore/pimcore:${BASE_TAG}-latest-${ARCH_TAG}"
                             fi
                             if [[ $VERSION =~ ^v[0-9]+\.[0-9]+$ ]]; then
                                 VERSION_MAJOR="${VERSION%.*}"
                                 echo "${IMAGE_NAME}:${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
-                                echo "ghcr.io/pimcore/pimcore:${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
+                                # echo "ghcr.io/pimcore/pimcore:${BASE_TAG}-${VERSION_MAJOR}-${ARCH_TAG}"
                             fi
                         } > ".docker-state/${imageVariant}/plain_tags.txt"
 
@@ -227,7 +228,7 @@ jobs:
                             echo "${PLAIN_DIGEST:-unpublished}" > ".docker-state/${imageVariant}/plain_digest.txt"
 
                             _ci/.github/scripts/attach-sbom.sh "${PLAIN_IMAGE}" "${PLAIN_SBOM}"
-                            _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
+                            # _ci/.github/scripts/attach-sbom.sh "ghcr.io/pimcore/pimcore:${TAG}" "${PLAIN_SBOM}"
 
                             # Record the full per-arch tags pushed THIS run, paired with the SBOM
                             # that documents that image; process-tags merges a logical tag only
