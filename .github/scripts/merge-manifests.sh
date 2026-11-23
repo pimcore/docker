@@ -20,7 +20,8 @@ failed=0
 for lt in "${!LOGICAL[@]}"; do
     if [ -n "${HAS_AMD64[$lt]:-}" ] && [ -n "${HAS_ARM64[$lt]:-}" ]; then
         echo "Creating multi-arch manifest: $lt"
-        if ! docker buildx imagetools create --tag "$lt" "${lt}-amd64" "${lt}-arm64"; then
+        # Retried (with-retry.sh): a brief registry 5xx must not leave this tag stale or missing.
+        if ! "$HERE/with-retry.sh" docker buildx imagetools create --tag "$lt" "${lt}-amd64" "${lt}-arm64"; then
             echo "::error::Failed to create multi-arch manifest for $lt"
             failed=1
             continue

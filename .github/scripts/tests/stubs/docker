@@ -7,9 +7,15 @@ if [ "$1 $2" = "image inspect" ]; then
     if printf '%s ' "$@" | grep -q -- '--format'; then echo "sha256:deadbeefcafe0000"; fi
     exit 0
 fi
-# imagetools create failure knob: STUB_IMAGETOOLS=fail
+# imagetools create failure knobs: STUB_IMAGETOOLS=fail (every call), or
+# STUB_IMAGETOOLS=flaky (first call only, like a brief registry 5xx; the marker
+# file STUB_FLAKY_MARK records that the one failure already happened).
 if [ "${1:-}" = "buildx" ] && [ "${2:-}" = "imagetools" ] && [ "${3:-}" = "create" ]; then
     [ "${STUB_IMAGETOOLS:-ok}" = "fail" ] && { echo "stub docker: imagetools create failed" >&2; exit 1; }
+    if [ "${STUB_IMAGETOOLS:-ok}" = "flaky" ] && [ ! -e "${STUB_FLAKY_MARK:?}" ]; then
+        : > "$STUB_FLAKY_MARK"
+        echo "stub docker: imagetools create failed (transient)" >&2; exit 1
+    fi
     exit 0
 fi
 exit 0

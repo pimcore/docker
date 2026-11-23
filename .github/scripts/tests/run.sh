@@ -263,11 +263,21 @@ assert_contains "$(cat "$logM")" "buildx imagetools create --tag pimcore/pimcore
 assert_not_contains "$outM" "Creating multi-arch manifest: pimcore/pimcore:php8.5-onlyone" "M single-arch tag skipped (not created)"
 assert_contains "$outM" "Skipping pimcore/pimcore:php8.5-onlyone" "M single-arch tag reported as skipped"
 
-# imagetools create failure -> non-zero exit
+# imagetools create keeps failing -> non-zero exit once the retries are used up
+# (RETRY_DELAY=0: no sleeps between attempts)
 wMf="$(mktemp -d)"; tmpdirs+=("$wMf")
 printf '%s\n' "pimcore/pimcore:x-amd64" "pimcore/pimcore:x-arm64" > "$wMf/agg.txt"
-AGG_FILE="$wMf/agg.txt" STUB_IMAGETOOLS=fail STUB_LOG="$wMf/stub.log" "${ROOT}/.github/scripts/merge-manifests.sh"; rcMf=$?
+AGG_FILE="$wMf/agg.txt" STUB_IMAGETOOLS=fail RETRY_DELAY=0 STUB_LOG="$wMf/stub.log" "${ROOT}/.github/scripts/merge-manifests.sh"; rcMf=$?
 [ "$rcMf" != 0 ] && echo "  ok: Mf exit non-zero on create failure" || { echo "  FAIL: Mf should fail"; fail=1; }
+assert_eq "$(grep -c 'imagetools create' "$wMf/stub.log")" "3" "Mf create attempted RETRY_MAX (default 3) times before giving up"
+
+# REGRESSION: a transient imagetools create failure (brief registry 5xx) is retried,
+# so the logical tag is still published instead of being left stale or missing.
+wMr="$(mktemp -d)"; tmpdirs+=("$wMr")
+printf '%s\n' "pimcore/pimcore:x-amd64" "pimcore/pimcore:x-arm64" > "$wMr/agg.txt"
+AGG_FILE="$wMr/agg.txt" STUB_IMAGETOOLS=flaky STUB_FLAKY_MARK="$wMr/failed-once" RETRY_DELAY=0 STUB_LOG="$wMr/stub.log" "${ROOT}/.github/scripts/merge-manifests.sh"; rcMr=$?
+assert_eq "$rcMr" "0" "Mr transient create failure is retried -> exit 0"
+assert_eq "$(grep -c 'imagetools create' "$wMr/stub.log")" "2" "Mr create attempted twice (1 failure + 1 retry)"
 
 # Task 2: tag<TAB>sbom format -> attach both per-arch SBOMs to the logical tag
 wS="$(mktemp -d)"; tmpdirs+=("$wS"); mkdir -p "$wS/sboms"
