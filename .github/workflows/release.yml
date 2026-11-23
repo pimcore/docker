@@ -221,7 +221,7 @@ jobs:
                         # Plain ships unconditionally, before the gate ever runs.
                         # Do NOT rmi here: the gate step patches this image into the hardened one.
                         if [[ "$PUSH" == "true" ]]; then
-                            printf '%s\n' "${PLAIN_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
+                            printf '%s\n' "${PLAIN_TAGS[@]}" | xargs -P 4 -I {} _ci/.github/scripts/with-retry.sh docker push "{}"
 
                             PLAIN_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$PLAIN_IMAGE" 2>/dev/null | sed 's/.*@//')
                             echo "${PLAIN_DIGEST:-unpublished}" > ".docker-state/${imageVariant}/plain_digest.txt"
@@ -319,7 +319,7 @@ jobs:
                         done
 
                         if [[ "$PUSH_HARDENED" == "true" ]]; then
-                            printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} docker push "{}"
+                            printf '%s\n' "${HARDENED_TAGS[@]}" | xargs -P 4 -I {} _ci/.github/scripts/with-retry.sh docker push "{}"
 
                             HARDENED_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' "$HARDENED_IMAGE" 2>/dev/null | sed 's/.*@//')
                             echo "${HARDENED_DIGEST:-unpublished}" > ".docker-state/${imageVariant}/hardened_digest.txt"
