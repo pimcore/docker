@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Stub sudo: records the call and runs nothing, so the tests never touch the system.
+echo "sudo $*" >> "${STUB_LOG:-/dev/null}"
+exit 0

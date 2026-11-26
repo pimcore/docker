@@ -3,8 +3,10 @@
 set -euxo pipefail
 : "${ORAS_VERSION:?ORAS_VERSION must be set}"
 ORAS_ARCH="$(dpkg --print-architecture)"
-curl -fsSL -o oras.tar.gz "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz"
-curl -fsSL -o oras_checksums.txt "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_checksums.txt"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+# Retried (with-retry.sh): github.com sometimes answers 503 for a few seconds.
+"$HERE/with-retry.sh" curl -fsSL -o oras.tar.gz "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz"
+"$HERE/with-retry.sh" curl -fsSL -o oras_checksums.txt "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_checksums.txt"
 # Match the filename exactly ($2 == f): a substring match can also hit
 # a sibling entry like *.tar.gz.sbom.json and return two hashes.
 EXPECTED_SHA=$(awk -v f="oras_${ORAS_VERSION}_linux_${ORAS_ARCH}.tar.gz" '$2 == f {print $1}' oras_checksums.txt)

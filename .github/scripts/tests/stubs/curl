@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Stub curl for install-oras.sh: writes a tiny oras tarball, or a checksums file
+# matching it, to the -o target. Failure knobs: STUB_CURL=fail (every call), or
+# STUB_CURL=flaky (first call only, like github.com answering 503 once; the marker
+# file STUB_FLAKY_MARK records that the one failure already happened). Both exit
+# 22, which is what `curl -f` returns for an HTTP error.
+echo "curl $*" >> "${STUB_LOG:-/dev/null}"
+out=""; url=""
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -o) out="$2"; shift ;;
+        http*) url="$1" ;;
+    esac
+    shift
+done
+fail503() { echo "curl: (22) The requested URL returned error: 503" >&2; exit 22; }
+[ "${STUB_CURL:-ok}" = "fail" ] && fail503
+if [ "${STUB_CURL:-ok}" = "flaky" ] && [ ! -e "${STUB_FLAKY_MARK:?}" ]; then
+    : > "$STUB_FLAKY_MARK"
+    fail503
+fi
+case "$url" in
+    *checksums.txt)
+        sha="$(sha256sum oras.tar.gz | cut -d' ' -f1)"
+        for arch in amd64 arm64; do
+            echo "${sha}  oras_${ORAS_VERSION}_linux_${arch}.tar.gz"
+        done > "$out" ;;
+    *)
+        tmp="$(mktemp -d)"; echo "stub oras binary" > "${tmp}/oras"
+        tar -czf "$out" -C "$tmp" oras; rm -rf "$tmp" ;;
+esac
+exit 0

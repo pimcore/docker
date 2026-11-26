@@ -324,6 +324,22 @@ CF="$cf3" RETRY_DELAY=0 RETRY_MAX=2 "$WR" bash -c 'echo $(( $(cat "$CF") + 1 )) 
 "$WR" >/dev/null 2>&1; rc=$?
 [ "$rc" = 2 ] && echo "  ok: no-args -> exit 2 (usage)" || { echo "  FAIL: no-args rc $rc (want 2)"; fail=1; }
 
+echo "== install-oras.sh =="
+# REGRESSION: a release download that fails once (github.com answering 503) is retried;
+# the checksum is still verified and oras installed. curl and sudo are stubs.
+wO="$(mktemp -d)"; tmpdirs+=("$wO")
+( cd "$wO" && ORAS_VERSION=1.2.0 STUB_CURL=flaky STUB_FLAKY_MARK="$wO/failed-once" RETRY_DELAY=0 STUB_LOG="$wO/stub.log" "${ROOT}/.github/scripts/install-oras.sh" ) >/dev/null 2>&1; rcO=$?
+assert_eq "$rcO" "0" "O transient download failure is retried -> exit 0"
+assert_eq "$(grep -c '^curl ' "$wO/stub.log")" "3" "O three curl calls (1 failure + 1 retry + checksums)"
+assert_contains "$(cat "$wO/stub.log")" "sudo mv oras /usr/local/bin/oras" "O oras installed after the retry"
+
+# a download that keeps failing still fails the script, after RETRY_MAX attempts
+wOf="$(mktemp -d)"; tmpdirs+=("$wOf")
+( cd "$wOf" && ORAS_VERSION=1.2.0 STUB_CURL=fail RETRY_DELAY=0 STUB_LOG="$wOf/stub.log" "${ROOT}/.github/scripts/install-oras.sh" ) >/dev/null 2>&1; rcOf=$?
+assert_eq "$rcOf" "22" "Of permanent download failure -> curl's exit code (22)"
+assert_eq "$(grep -c '^curl ' "$wOf/stub.log")" "3" "Of download attempted RETRY_MAX (default 3) times before giving up"
+assert_not_contains "$(cat "$wOf/stub.log")" "sudo mv" "Of nothing installed"
+
 echo "== cve-aggregate.sh =="
 CVE_FIX="${ROOT}/.github/scripts/tests/fixtures/cve"
 AGG="$(mktemp)"; tmpdirs+=("$AGG")
